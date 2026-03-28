@@ -38,16 +38,16 @@
 ## 4. Radna pravila tima
 
 **Kada i kako tim radi zajedno:**
->
+> Sastanci se održavaju u prethodno dogovorenim terminima putem Google Meet-a
 
 **Kako se zadaci dogovaraju i prate:**
->
+> Zadaci se na sastancima definišu i raspodjeljuju članovima tima, koristi se GitHub za praćenje napretka
 
 **Kako se dokumentuju odluke:**
-> 
+> Odluke se donose na timskim sastancima, zatim se dokumentuju putem Viber grupe gdje svaki član potvrđuje i preuzima odgovornost za svoj zadatak.
 
 **Kako se rješavaju neslaganja:**
->
+> Neslaganja se rješavaju otvorenom diskusijom u grupi, a ako se ne postigne dogovor, konačnu odluku donosi vođa grupe.
 
 ---
 
