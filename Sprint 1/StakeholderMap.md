@@ -16,8 +16,7 @@ U ovom dokumentu navodimo stakeholdere zainteresirane za **Sistem za AI asistira
 
 
 ## Stakeholder Map
-<img width="788" height="441" alt="stakeholderMap" src="https://github.com/user-attachments/assets/a7e806af-97c3-4684-8088-9fba19f70d3a" />
-
+<img width="987" height="523" alt="stakeholderMapIspravljeno" src="https://github.com/user-attachments/assets/8f7acfc1-dbfe-4d69-a068-3d9d871ce746" />
 
 Navedene stakeholdere smo vizuelno sortirali u četiri kategorije: 
 
