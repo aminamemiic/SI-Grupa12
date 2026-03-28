@@ -8,10 +8,12 @@ U ovom dokumentu navodimo stakeholdere zainteresirane za **Sistem za AI asistira
 
 | Stakeholder | Uloga u sistemu | Interes od sistema | Uticaj na sistem | Važnost |
 |-------------|-----------------|--------------------|------------------|---------|
-|  | | | | |
-|  | | | | |
-|  | | | | |
-|  | | | | |
+| Finanijski direktor |Donošenje ključnoih finansijskih odluka |Smanjenje odstupanja i tačni izvještaji |Visok | Visoka |
+| Glavni računovođa |Upravljanje računovodstvom i podacima |Tačnost podataka, lakše praćenje troškova |     Visok | Visoka|
+| Vođa IT odjela |Razvoj i održavanje sistema |Stabilan i funkcionalan sistem | | |
+| Project manager | Koordinacija projekta| Uspješna implementacija sistema|Srednji | Srednja |
+| Službenik za usklađenost | Praćenje zakonskih i internih pravila | Usklađenost sa regulativama i sigurnost podataka | Nizak | Srednja |  
+
 
 ## Stakeholder Map
 <img width="788" height="441" alt="stakeholderMap" src="https://github.com/user-attachments/assets/a7e806af-97c3-4684-8088-9fba19f70d3a" />
