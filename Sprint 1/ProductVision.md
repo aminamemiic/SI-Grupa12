@@ -28,4 +28,33 @@ Rješenje ovog problema omogućilo bi preraspodjelu sredstava po potrebi, brzu r
 - Historijski podaci omogućavaju preciznije planiranje budžeta  
 
 ---
+## Scope MVP verzije
+- Unos troškova ručno i uvoz iz CSV/Excel datoteka  
+- Klasifikacija troškova po kategorijama, odjelima, projektima i vremenskim periodima  
+- Pregled i poređenje planiranih i stvarnih troškova  
+- Identifikacija odstupanja i neuobičajenih obrazaca  
+- Generisanje upozorenja za prekoračenja  
+- AI sažeti izvještaji za menadžment  
+- Evidencija komentara uz troškove  
+- Osnovni izvještaji (mjesečni, po odjelu, po projektu)  
+- Upravljanje korisnicima (admin, menadžer, korisnik)  
 
+---
+
+## Šta ne ulazi u MVP
+- Mobilna aplikacija  
+- Višejezičnost  
+- Integracija sa postojećim računovodstvenim sistemima  
+
+---
+
+## Ključna ograničenja i pretpostavke
+
+### Pretpostavke
+- Podaci su dostupni u formatu pogodnom za uvoz  
+- Podaci se redovno unose  
+- Uposlenici su obučeni za korištenje sistema  
+
+### Ograničenja
+- Sistem mora biti usklađen sa GDPR-om  
+- Sistem je prilagođen jednoj firmi
