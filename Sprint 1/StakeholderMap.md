@@ -8,10 +8,10 @@ U ovom dokumentu navodimo stakeholdere zainteresirane za **Sistem za AI asistira
 
 | Stakeholder | Uloga u sistemu | Interes od sistema | Uticaj na sistem | Važnost |
 |-------------|-----------------|--------------------|------------------|---------|
-| Finanijski direktor |Donošenje ključnih finansijskih odluka |Smanjenje odstupanja i tačni izvještaji |Visok | Visoka |
+| Finansijski direktor |Donošenje ključnih finansijskih odluka |Smanjenje odstupanja i tačni izvještaji |Visok | Visoka |
 | Glavni računovođa |Upravljanje računovodstvom i podacima |Tačnost podataka, lakše praćenje troškova |     Visok | Visoka|
 | Vođa IT odjela |Razvoj i održavanje sistema |Stabilan i funkcionalan sistem | Visok| Srednja|
-| Vlasnici/Investitori | Donošenje strateških odluka i praćenje finansijskog stanja firme| UProfitabilnost firme i kontrola troškova|Visok | Srednja |
+| Vlasnici/Investitori | Donošenje strateških odluka i praćenje finansijskog stanja firme| Profitabilnost firme i kontrola troškova|Visok | Srednja |
 | Službenik za usklađenost | Praćenje zakonskih i internih pravila | Usklađenost sa regulativama i sigurnost podataka | Nizak | Srednja |  
 |Administrativni zaposlenici|Unos i ažuriranje podataka o troškovima | Jednostavan unos i rad sa sistemom| Nizak| Visoka|
 
