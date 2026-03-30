@@ -53,14 +53,14 @@
 
 ## 5. Početne odgovornosti
 
-| Oblast | Opis odgovornosti | Odgovorna osoba | 
-|--------|-----------------| --------|
-| Koordinacija sprinta | Zadužen za organizaciju rada tima, praćenje rokova, dogovor oko sastanaka i podsjećanje članova na obaveze. | Amina Memić |
-| Backlog i zahtjevi | Vode računa da projektni zahtjevi ostanu usklađeni sa Product Vision dokumentom i backlogom  | Ramiz Plančić i Elvedina Halilović |
-| Arhitektura i tehničke odluke | Zaduženi za tehničku strukturu sistema: model podataka, organizaciju baze, logiku za unos/uvoz, obradu podataka i AI dio | Adna Bajramović i Faris Aljić |
-| Testiranje i kvalitet | Provjerava da li funkcionalnosti rade ispravno i kvalitetu njihove implementacije | Nejla Ćenanović |
-| Dokumentacija i evidencije | Ažurira dokumente, prati šta je završeno i održava evidenciju promjena | Omer Valjevac |
-> Članovi tima učestvuju podjednako u svim navedenim oblastima projektnih zadataka, odgovorne osobe za svaki dio su podložne promjenama
+| Oblast | Opis odgovornosti | 
+|--------|-----------------| 
+| Koordinacija sprinta | Zadužen za organizaciju rada tima, praćenje rokova, dogovor oko sastanaka i podsjećanje članova na obaveze. | 
+| Backlog i zahtjevi | Vode računa da projektni zahtjevi ostanu usklađeni sa Product Vision dokumentom i backlogom  |
+| Arhitektura i tehničke odluke | Zaduženi za tehničku strukturu sistema: model podataka, organizaciju baze, logiku za unos/uvoz, obradu podataka i AI dio |
+| Testiranje i kvalitet | Provjerava da li funkcionalnosti rade ispravno i kvalitetu njihove implementacije | 
+| Dokumentacija i evidencije | Ažurira dokumente, prati šta je završeno i održava evidenciju promjena | 
+> Članovi tima učestvuju podjednako u svim navedenim oblastima projektnih zadataka, odgovorne osobe za svaki dio će se mijenjati iz sprinta u sprint
 
 ---
 
