@@ -20,3 +20,5 @@ Sistem treba podržati pregled i poređenje planiranih i stvarnih troškova, ide
 | 11 | Evidencija komentara | Feature | Low | To do | Pisanje i pregled komentara odgovornih osoba. |
 | 12 | Sign in | Technical Task | Low | To do | Sistem za autentifikaciju korisnika. |
 | 13 | Sign out | Technical Task | Low | To do | Funkcionalnost odjave iz sistema. |
+| 14 | Upravljanje korisnicima (RBAC) | Feature | Medium | To do | Sistem koji će regulisati različite nivoe pristupa (admin, menadžer, korisnik). |
+| 15 | GDPR & Security | Technical Task | Medium | To do | Osigurati zaštitu osjetljivih finansijskih podataka, plata zaposlenika i slično. |
