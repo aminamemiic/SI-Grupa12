@@ -20,11 +20,6 @@ Sve planirane stavke za Sprint 1 su uspješno završene.
 
 
 # 4. Demonstrirane funkcionalnosti ili artefakti
-Svi urađeni artefakti su uspješno predstavljeni Product Owneru. Pri tome je urađeno:
-
-- Prezentacija vizije
-- Definisanje odgovornosti 
-- Prioritizacija backloga sa fokusom na MVP 
 
 
 # 5. Glavni problemi i blokeri
@@ -46,8 +41,7 @@ Svi urađeni artefakti su uspješno predstavljeni Product Owneru. Pri tome je ur
 # 8. Zaključak za naredni sprint
 Na osnovu uspješno završenog prvog sprinta, za naredni sprint (Sprint 2) planira se sljedeće:
 - Završiti istraživanje AI dijela i donijeti konkretne tehničke odluke o pristupu implementaciji.
-- Finalizovati dizajn baze podataka.
-- Početi rad na Feature stavkama visokog prioriteta.
+- Početi rad na stavkama visokog prioriteta.
 - Ažurirati Product Backlog
 - Postaviti set prioritetnih User Stories
 - Definisati Acceptance Criteria
