@@ -6,7 +6,7 @@ Sprint 1
 ---
 
 ## Sprint cilj
-Upoznati se sa temom projekta, formirati tim i uspostaviti zajedničko razumijevanje problema koji sistem treba riješiti, definirati ciljne korisnike, okvirni MVP opseg i ključne zainteresovane strane.
+Upoznati se sa temom projekta, formirati tim i uspostaviti zajedničko razumijevanje problema koji sistem treba riješiti, definirati ciljne korisnike, okvirni MVP opseg i stakeholdere.
 
 ---
 
