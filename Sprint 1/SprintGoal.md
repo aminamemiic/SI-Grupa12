@@ -15,7 +15,7 @@ Upoznati se sa temom projekta, formirati tim i uspostaviti zajedničko razumijev
 - Izrada Product Vision dokumenta  
 - Izrada Stakeholder Map dokumenta  
 - Izrada početnog Product Backloga  
-- Sedmični sastanak tima  
+- Sastanak tima  
 
 ---
 
