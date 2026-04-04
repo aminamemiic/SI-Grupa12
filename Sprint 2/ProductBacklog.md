@@ -1,5 +1,11 @@
 ## Sprint 2
 
+> Izmjene u odnosu na Sprint 1:
+> - Stavke 1 i 2 su završene
+> - Stavka 3 je prebačena u "In process" sa povišenim prioritetom (Medium -> High)
+> - Stavka 4 je prebačena u "In process" sa povećanom procjenom složenosti (5 -> 8) jer se nakon istraživanja pokazalo da je zadatak složeniji
+> - Dodane su nove stavke (16 - 20) 
+
 | ID | Naziv stavke | Tip | Prioritet | Status | Procjena složenosti | Opis |
 |:---|:---|:---|:---|:---|:---|:---|
 | 1 | Isplanirati izgled baze podataka | Technical Task | - | Done | - | Isplanirati organizaciju baze podataka koja će biti srce sistema i koja će čuvati informacije o planiranim budžetima, stvarnim računima i troškovima, korisnicima, kategorijama, odjelima, projektima, vremenskim periodima. |
@@ -14,11 +20,11 @@
 | 10 | Generisanje upozorenja | Feature | Medium | To do | 3 | Kreirati sistem koji će na osnovu analize koju provodi AI izvršiti generisanje upozorenja sa sažetkom za zaposlene o zaključcima koje je AI donio. Gdje je uočena anomalija, šta je u pitanju, koliko je odstupanje. |
 | 11 | Izvještaj | Feature | Medium | To do | 3 | Sistem za izvoz podataka (export) po uzoru na uvoz. |
 | 12 | Evidencija komentara | Feature | Low | To do | 2 | Pisanje i pregled komentara odgovornih osoba. |
-| 13 | Sign in | Technical Task | Medium | To do | 2 | Sistem za autentifikaciju korisnika. |
-| 14 | Sign out | Technical Task | Medium | To do | 1 | Funkcionalnost odjave iz sistema. |
+| 13 | Sign in | Technical Task | Low | To do | 2 | Sistem za autentifikaciju korisnika. |
+| 14 | Sign out | Technical Task | Low | To do | 1 | Funkcionalnost odjave iz sistema. |
 | 15 | Upravljanje korisnicima (RBAC) | Feature | Medium | To do | 5 | Sistem koji će regulisati različite nivoe pristupa (admin, menadžer, korisnik). |
-| 16 | Postavljanje razvojnog okruženja | Technical Task | **High** | To do | 3 | Konfiguracija Docker-a, baze podataka i backend frameworka. |
+| 16 | Postavljanje razvojnog okruženja | Technical Task | Medium | To do | 3 | Konfiguracija Docker-a, baze podataka i backend frameworka. |
 | 17 | Definisanje API ugovora | Technical Task | Medium | To do | 2 | Dokumentacija ruta između Frontenda i Backenda kako bi timovi radili paralelno. | 
 | 18 | Razvoj osnovnog UI Dashboarda | Feature | Low | To do | 5 | Kreiranje vizuelnog kostura (mockup) za pregled sistema. |
 | 19 | Implementacija CRUD za Troškove | Feature | Medium | To do | 5 | Osnovne operacije (Create, Read, Update, Delete) nad tabelom troškova u bazi. | 
-| 20 | Integracija OCR biblioteke | Technical Task | **High** | To do | 8 | Povezivanje odabranog OCR alata sa backend kodom. | 
+| 20 | Integracija OCR biblioteke | Technical Task | Medium | To do | 8 | Povezivanje odabranog OCR alata sa backend kodom. | 
