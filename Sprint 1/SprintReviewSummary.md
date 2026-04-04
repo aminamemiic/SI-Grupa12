@@ -20,7 +20,11 @@ Sve planirane stavke za Sprint 1 su uspješno završene.
 
 
 # 4. Demonstrirane funkcionalnosti ili artefakti
+Svi urađeni artefakti su uspješno predstavljeni Product Owneru. Pri tome je urađeno:
 
+- Prezentacija vizije
+- Definisanje odgovornosti 
+- Prioritizacija backloga sa fokusom na MVP 
 
 # 5. Glavni problemi i blokeri
 
@@ -36,6 +40,7 @@ Sve planirane stavke za Sprint 1 su uspješno završene.
 
 
 # 7. Povratna informacija Product Ownera
+Product Owner je zadovoljan sa predstavljenim Sprintom, te ga je ocijenio maksimalnim brojem bodova.
 
 
 # 8. Zaključak za naredni sprint
