@@ -389,7 +389,6 @@ Kao glavni računovoća želim imati jedan ekran s grafičkim prikazom ključnih
 
 # Planiranje budžeta
 
-## US-03a – Kreiranje novog budžeta
 **ID storyja:** US-03a  
 **Naziv storyja:** Kreiranje novog budžeta  
 
@@ -402,86 +401,78 @@ Kreiranje budžeta je temeljna funkcionalnost cijelog sistema, bez unesenog plan
 **Prioritet:** High  
 
 ---
+## Planiranje budžeta
 
-## Pregled postojećeg budžeta
-**ID storyja:** US-03b  
-**Naziv storyja:** Pregled postojećeg budžeta  
+### User story 1
+#### ID: US-03a  
+#### Naziv: Kreiranje novog budžeta  
+Kao menadžer ili računovođa želim kreirati novi budžet po kategorijama, odjelima i vremenskom periodu kako bih mogao planirati troškove firme  
 
-**Opis:**  
-Kao menadžer, računovođa ili finansijski direktor, želim pregledati listu svih kreiranih budžeta i njihove detalje, kako bih imao uvid u planirane iznose po kategorijama, odjelima i vremenskim periodima.
-
-**Poslovna vrijednost:**  
-Pregled budžeta omogućava svim odgovornim osobama da u svakom trenutku imaju jasnu sliku finansijskog plana firme.
-
+**Poslovna vrijednost:** Kreiranje budžeta je temeljna funkcionalnost cijelog sistema, bez unesenog plana nije moguće pratiti odstupanja, generisati upozorenja niti provoditi AI analizu  
 **Prioritet:** High  
 
 ---
 
-**ID storyja:** US-03c  
-**Naziv storyja:** Uređivanje postojećeg budžeta  
+### User story 2
+#### ID: US-03b  
+#### Naziv: Pregled postojećeg budžeta  
+Kao menadžer, računovođa ili finansijski direktor želim pregledati listu svih kreiranih budžeta i njihove detalje kako bih imao uvid u planirane iznose po kategorijama, odjelima i vremenskim periodima  
 
-**Opis:**  
-Kao menadžer ili računovođa, želim urediti postojeći budžet, kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima.
-
-**Poslovna vrijednost:**  
-Projekti se proširuju i bez mogućnosti uređivanja, tim bi morao brisati i ponovo kreirati budžete, što može dovesti do čestih grešaka.
-
+**Poslovna vrijednost:** Pregled budžeta omogućava svim odgovornim osobama da u svakom trenutku imaju jasnu sliku finansijskog plana firme  
 **Prioritet:** High  
 
 ---
 
-# Sign In
+### User story 3
+#### ID: US-03c  
+#### Naziv: Uređivanje postojećeg budžeta  
+Kao menadžer ili računovođa želim urediti postojeći budžet kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima  
 
-**ID storyja:** US-13a  
-**Naziv storyja:** Prijava  
+**Poslovna vrijednost:** Projekti se proširuju i bez mogućnosti uređivanja tim bi morao brisati i ponovo kreirati budžete što može dovesti do čestih grešaka  
+**Prioritet:** High  
 
-**Opis:**  
-Kao ovlašteni korisnik sistema, želim unijeti svoje korisničko ime i lozinku, kako bih koristio funkcionalnosti prilagođene mojoj korisničkoj ulozi.
+---
 
-**Poslovna vrijednost:**  
-Prijava je ključna za ovaj sistem, jer bez nje nijedan korisnik ne može pristupiti ni jednoj funkcionalnosti.
+## Sign In
 
+### User story 1
+#### ID: US-13a  
+#### Naziv: Prijava  
+Kao ovlašteni korisnik sistema želim unijeti svoje korisničko ime i lozinku kako bih koristio funkcionalnosti prilagođene mojoj korisničkoj ulozi  
+
+**Poslovna vrijednost:** Prijava je ključna za ovaj sistem jer bez nje nijedan korisnik ne može pristupiti funkcionalnostima  
 **Prioritet:** Low  
 
 ---
 
-# Sign Out
+## Sign Out
 
-**ID storyja:** US-14  
-**Naziv storyja:** Odjava  
+### User story 1
+#### ID: US-14  
+#### Naziv: Odjava  
+Kao prijavljeni korisnik želim odjaviti se iz sistema kako bih zaštitio svoje podatke i spriječio neovlašteni pristup kada završim s radom  
 
-**Opis:**  
-Kao prijavljeni korisnik, želim odjaviti se iz sistema, kako bih zaštitio svoje podatke i spriječio neovlašteni pristup kada završim s radom.
-
-**Poslovna vrijednost:**  
-Odjava je osnovna sigurnosna mjera koja štiti osjetljive finansijske podatke firme.
-
+**Poslovna vrijednost:** Odjava je osnovna sigurnosna mjera koja štiti osjetljive finansijske podatke firme  
 **Prioritet:** Low  
 
 ---
 
-# Evidencija komentara
+## Evidencija komentara
 
-**ID storyja:** US-12a  
-**Naziv storyja:** Dodavanje komentara  
+### User story 1
+#### ID: US-12a  
+#### Naziv: Dodavanje komentara  
+Kao menadžer ili računovođa želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku  
 
-**Opis:**  
-Kao menadžer ili računovođa, želim dodati komentar na trošak, kako bih dodatno pojasnio određenu stavku.
-
-**Poslovna vrijednost:**  
-Omogućava bolju interpretaciju troškova i komunikaciju između korisnika.
-
+**Poslovna vrijednost:** Omogućava bolju interpretaciju troškova i komunikaciju između korisnika  
 **Prioritet:** Low  
 
 ---
 
-**ID storyja:** US-12b  
-**Naziv storyja:** Pregled komentara  
+### User story 2
+#### ID: US-12b  
+#### Naziv: Pregled komentara  
+Kao menadžer ili računovođa želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja  
 
-**Opis:**  
-Kao menadžer ili računovođa, želim pregledati komentare uz trošak, kako bih imao uvid u dodatna objašnjenja.
-
-**Poslovna vrijednost:**  
-Povećava transparentnost i razumijevanje podataka.
-
-**Prioritet:** Low  
+**Poslovna vrijednost:** Povećava transparentnost i razumijevanje podataka  
+**Prioritet:** Low 
