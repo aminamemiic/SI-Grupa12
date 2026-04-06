@@ -110,7 +110,7 @@ Kao administrator, želim mijenjati uloge korisnicima kako bih prilagodio njihov
 ### User story 1
 #### ID:  
 #### Naziv: Ručni unos troška  
-Kao administrativni zaposlenik želim unijeti trošak putem forme kako bih mogao evidentirati sve relevantne finansijske podatke (iznos, datum, kategoriju, projekat i odjel) na jednom mjestu  
+Kao administrativni zaposlenik želim unijeti trošak putem forme kako bih mogao evidentirati sve relevantne finansijske podatke
 
 **Poslovna vrijednost:** Omogućava centralizovanu i strukturiranu evidenciju troškova  
 **Prioritet:** High  
@@ -172,7 +172,7 @@ Kao korisnik sistema želim imati mogućnost kreiranja novog troška kako bih mo
 ### User story 2
 #### ID:  
 #### Naziv: Ažuriranje troška  
-Kao korisnik sistema želim izmijeniti postojeći trošak kako bih mogao ispraviti greške ili ažurirati podatke kada se promijene  
+Kao administrativni zaposlenik želim izmijeniti postojeći trošak kako bih mogao ispraviti greške ili ažurirati podatke kada se promijene  
 
 **Poslovna vrijednost:** Održava tačnost i ažurnost podataka  
 **Prioritet:** High  
@@ -187,7 +187,7 @@ Kao korisnik sistema želim izmijeniti postojeći trošak kako bih mogao ispravi
 ### User story 3
 #### ID:  
 #### Naziv: Brisanje troška  
-Kao korisnik sistema želim obrisati trošak kako bih uklonio netačne, duplirane ili nepotrebne zapise iz sistema  
+Kao administrativni zaposlenik želim obrisati trošak kako bih uklonio netačne, duplirane ili nepotrebne zapise iz sistema  
 
 **Poslovna vrijednost:** Održava kvalitet i čistoću baze podataka  
 **Prioritet:** Medium  
@@ -234,7 +234,7 @@ Kao administrativni zaposlenik želim uvesti veći broj troškova putem CSV ili 
 ### User story 2
 #### ID:  
 #### Naziv: Obrada podataka  
-Kao sistem želim automatski parsirati i obraditi uvezene podatke kako bi se mogli pravilno spremiti u bazu  
+Kao administrativni zaposlenik želim da sistem automatski obradi podatke iz uvezenog fajla kako bih ih mogao brzo i bez dodatnog ručnog rada spremiti u bazu 
 
 **Poslovna vrijednost:** Omogućava automatizovan unos podataka  
 **Prioritet:** High  
@@ -249,7 +249,7 @@ Kao sistem želim automatski parsirati i obraditi uvezene podatke kako bi se mog
 ### User story 3
 #### ID:  
 #### Naziv: Validacija podataka  
-Kao sistem želim provjeriti ispravnost svih uvezenih podataka kako bih spriječio unos netačnih ili nepotpunih zapisa  
+Kao administrativni zaposlenik želim provjeriti ispravnost svih uvezenih podataka kako bih spriječio unos netačnih ili nepotpunih zapisa  
 
 **Poslovna vrijednost:** Održava kvalitet i pouzdanost baze podataka  
 **Prioritet:** High  
