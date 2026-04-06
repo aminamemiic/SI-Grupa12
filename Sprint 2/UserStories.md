@@ -355,3 +355,34 @@ Kao glavni računovođa želim dobiti tekstualni opis uz svaku notifikaciju kako
 **Poslovna vrijednost:** Omogućava da se odmah stvori početna slika kakav problem je u pitanju
 
 **Prioritet:** High
+
+## AI analiza
+
+### User story 1
+#### ID: 1
+#### Naziv: Automatska validacija i detekcija anomalija pri unosu
+Kao glavni računovođa želim da sistem odmah provjeri svaki uneseni trošak u odnosu na prosjek kategorije i prethodne obrasce kako bi spriječio unos nerealnih cifara ili duplih računa
+
+**Poslovna vrijednost:** Osigurava čistu bazu podataka
+
+**Prioritet:** High
+
+### User story 2
+#### ID: 2
+#### Naziv: Dubinska analiza trendova na zahtjev
+Kao glavni računovođa želim jednim klikom pokrenuti AI analizu cjelokupne baze kako bih dobio izvještaj o kretanju troškova i predviđanje budžeta za naredni period
+
+**Poslovna vrijednost:** Pruža dubinski uvid u poslovanje i pomaže u planiranju
+
+**Prioritet:** High
+
+## Razvoj osnovnog UI Dashboarda
+
+### User story 1
+#### ID: 1
+#### Naziv: Centralni vizuelni prikaz
+Kao glavni računovoća želim imati jedan ekran s grafičkim prikazom ključnih pokazatelja kako bih vidio odnos planiranih i stvarnih troškova
+
+**Poslovna vrijednost:** Štedi vrijeme jer se svi bitni podaci nalaze na jednom mjestu
+
+**Prioritet:** High
