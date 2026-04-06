@@ -387,19 +387,6 @@ Kao glavni računovoća želim imati jedan ekran s grafičkim prikazom ključnih
 
 **Prioritet:** High
 
-# Planiranje budžeta
-
-**ID storyja:** US-03a  
-**Naziv storyja:** Kreiranje novog budžeta  
-
-**Opis:**  
-Kao menadžer ili računovođa, želim kreirati novi budžet po kategorijama, odjelima i vremenskom periodu, kako bih mogao planirati troškove firme.
-
-**Poslovna vrijednost:**  
-Kreiranje budžeta je temeljna funkcionalnost cijelog sistema, bez unesenog plana nije moguće pratiti odstupanja, generisati upozorenja niti provoditi AI analizu.
-
-**Prioritet:** High  
-
 ---
 ## Planiranje budžeta
 
