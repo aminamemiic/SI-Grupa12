@@ -334,4 +334,24 @@ Kao vlasnik ili menadžer želim vidjeti sažeti prikaz ključnih finansijskih i
 **Acceptance criteria:**
 - Given korisnik je vlasnik ili menadžer  
 - When otvori izvještaj  
-- Then sistem prikazuje ključne informacije u sažetom obliku  
+- Then sistem prikazuje ključne informacije u sažetom obliku
+
+## Generisanje upozorenja
+
+### User story 1
+#### ID: 1
+#### Naziv: Slanje notifikacije
+Kao glavni računovođa želim primiti automatsku notifikaciju kada sistem detektuje anomaliju uočenu nakon AI analize
+
+**Poslovna vrijednost:** Sprečava da greške prođu neopažene
+
+**Prioritet:** High
+
+### User story 2
+#### ID: 2
+#### Naziv: Sažetak o uočenoj anomaliji
+Kao glavni računovođa želim dobiti tekstualni opis uz svaku notifikaciju kako bih razumio ozbiljnost situacije
+
+**Poslovna vrijednost:** Omogućava da se odmah stvori početna slika kakav problem je u pitanju
+
+**Prioritet:** High
