@@ -432,7 +432,7 @@ Kao glavni računovođa ili finansijski direktor želim pregledati listu svih kr
 ## Acceptance Criteria
 - Kada ovlašteni korisnik pristupi modulu za planiranje budžeta, tada sistem mora prikazati listu svih kreiranih budžeta..
 - Kada korisnik odabere određeni budžet iz liste, tada sistem mora prikazati detaljan pregled tog budžeta sa svim stavkama raspoređenim po kategorijama, odjelima.
-- Kada ne postoji nijedan kreiran budžet, tada sistem mora prikazati poruku "Trenutno nema kreiranih budžeta" umjesto prazne liste.
+- Kada korisnik pristupi modulu za pregled budžeta, ako ne postoji nijedan kreiran budžet, tada sistem mora prikazati poruku "Trenutno nema kreiranih budžeta" umjesto prazne liste.
 - Sistem ne smije prikazati opciju za uređivanje za neovlaštene korisnike.
 
 ### User story 3
