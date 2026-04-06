@@ -11,6 +11,16 @@ Kao korisnik želim vidjeti listu podataka kako bih imao uvid u dostupne informa
 
 **Prioritet:** High  
 
+**Pretpostavke i otvorena pitanja**
+
+**Veze sa drugim storyjima ili zavisnostima**
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik otvori stranicu sa podacima, sistem mora prikazati listu podataka <br>
+Kada nema podataka, sistem mora prkazati odgovarajuću poruku  <br>
+Lista podataka mora biti učitana bez greške
+
+
 ### User story 2
 #### ID: 2 
 #### Naziv: Filtriranje podataka
@@ -19,6 +29,16 @@ Kao korisnik želim filtrirati podatke po određenim kriterijima kako bih mogao 
 **Poslovna vrijednost:** Smanjuje vrijeme pretrage
 
 **Prioritet:** High  
+
+
+**Pretpostavke i otvorena pitanja**
+
+**Veze sa drugim storyjima ili zavisnostima**
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik odabere filter kriterij, sistem mora prikazati filtrirane podatke <br>
+Kada nema podataka, sistem mora prikazati poruku "Nema rezultata" <br>
+Sistem mora omogućiti reset filtera
 
 ### User story 3
 #### ID: 3
@@ -29,6 +49,16 @@ Kao korisnik želim pretraživati podatke u listi putem ključnih riječi
 
 **Prioritet:** High  
 
+
+**Pretpostavke i otvorena pitanja**
+
+**Veze sa drugim storyjima ili zavisnostima**
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik unese ključnu riječ, sistem mora prikazati odgovarajuće podatke <br>
+Kada nema podataka, sistem mora prikazati poruku "Nema rezultata" <br>
+
+
 ### User story 4
 #### ID: 4
 #### Naziv: Detaljan prikaz podataka
@@ -38,6 +68,15 @@ Kao korisnik želim otvoriti detalje pojedinačnog zapisa kako bih vidio sve det
 
 **Prioritet:** Medium
 
+**Pretpostavke i otvorena pitanja**
+
+**Veze sa drugim storyjima ili zavisnostima**
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik klikne na zapis, sistem mora prikazati detalje tog zapisa <br>
+Prikaz mora sadržavati sve relevantne informacije  <br>
+Sistem ne smije prikazati grešku prilkom učitavanja detalja
+
 ### User story 5
 #### ID: 5
 #### Naziv: Sortiranje podataka
@@ -46,6 +85,15 @@ Kao korisnik želim sortirati podatke po datumu, nazivu, vrijednosti kako bih ih
 **Poslovna vrijednost:** Pomaže u analizi i organizaciji podataka
 
 **Prioritet:** Medium 
+
+*Pretpostavke i otvorena pitanja**
+
+**Veze sa drugim storyjima ili zavisnostima**
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik odabere kriterij sortiranja, podaci se moraju sortirati ispravno <br>
+Promjena sortiranja mora odmah ažurirati prikaz  <br>
+
 
 ## Poređenje podataka
 
