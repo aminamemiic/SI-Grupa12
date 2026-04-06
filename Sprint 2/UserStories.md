@@ -393,23 +393,25 @@ Kao glavni računovoća želim imati jedan ekran s grafičkim prikazom ključnih
 ### User story 1
 #### ID: US-03a  
 #### Naziv: Kreiranje novog budžeta  
-Kao menadžer ili računovođa želim kreirati novi budžet po kategorijama, odjelima i vremenskom periodu kako bih mogao planirati troškove firme  
+Kao glavni računovođa želim kreirati novi budžet po kategorijama, odjelima i vremenskom periodu kako bih mogao planirati troškove firme  
 
 **Poslovna vrijednost:** Kreiranje budžeta je temeljna funkcionalnost cijelog sistema, bez unesenog plana nije moguće pratiti odstupanja, generisati upozorenja niti provoditi AI analizu  
 **Prioritet:** High  
 
+
 ### User story 2
 #### ID: US-03b  
 #### Naziv: Pregled postojećeg budžeta  
-Kao menadžer, računovođa ili finansijski direktor želim pregledati listu svih kreiranih budžeta i njihove detalje kako bih imao uvid u planirane iznose po kategorijama, odjelima i vremenskim periodima  
+Kao glavni računovođa ili finansijski direktor želim pregledati listu svih kreiranih budžeta i njihove detalje kako bih imao uvid u planirane iznose po kategorijama, odjelima i vremenskim periodima  
 
 **Poslovna vrijednost:** Pregled budžeta omogućava svim odgovornim osobama da u svakom trenutku imaju jasnu sliku finansijskog plana firme  
 **Prioritet:** High  
 
+
 ### User story 3
 #### ID: US-03c  
 #### Naziv: Uređivanje postojećeg budžeta  
-Kao menadžer ili računovođa želim urediti postojeći budžet kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima  
+Kao glavni računovođa želim urediti postojeći budžet kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima  
 
 **Poslovna vrijednost:** Projekti se proširuju i bez mogućnosti uređivanja tim bi morao brisati i ponovo kreirati budžete što može dovesti do čestih grešaka  
 **Prioritet:** High  
@@ -445,15 +447,16 @@ Kao prijavljeni korisnik želim odjaviti se iz sistema kako bih zaštitio svoje 
 ### User story 1
 #### ID: US-12a  
 #### Naziv: Dodavanje komentara  
-Kao menadžer ili računovođa želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku  
+Kao glavni računovođa želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku  
 
 **Poslovna vrijednost:** Omogućava bolju interpretaciju troškova i komunikaciju između korisnika  
 **Prioritet:** Low  
 
+
 ### User story 2
 #### ID: US-12b  
 #### Naziv: Pregled komentara  
-Kao menadžer ili računovođa želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja  
+Kao glavni računovođa ili finansijski direktor želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja  
 
 **Poslovna vrijednost:** Povećava transparentnost i razumijevanje podataka  
-**Prioritet:** Low 
+**Prioritet:** Low  
