@@ -411,8 +411,6 @@ Kao menadžer ili računovođa želim kreirati novi budžet po kategorijama, odj
 **Poslovna vrijednost:** Kreiranje budžeta je temeljna funkcionalnost cijelog sistema, bez unesenog plana nije moguće pratiti odstupanja, generisati upozorenja niti provoditi AI analizu  
 **Prioritet:** High  
 
----
-
 ### User story 2
 #### ID: US-03b  
 #### Naziv: Pregled postojećeg budžeta  
@@ -420,8 +418,6 @@ Kao menadžer, računovođa ili finansijski direktor želim pregledati listu svi
 
 **Poslovna vrijednost:** Pregled budžeta omogućava svim odgovornim osobama da u svakom trenutku imaju jasnu sliku finansijskog plana firme  
 **Prioritet:** High  
-
----
 
 ### User story 3
 #### ID: US-03c  
@@ -466,8 +462,6 @@ Kao menadžer ili računovođa želim dodati komentar na trošak kako bih dodatn
 
 **Poslovna vrijednost:** Omogućava bolju interpretaciju troškova i komunikaciju između korisnika  
 **Prioritet:** Low  
-
----
 
 ### User story 2
 #### ID: US-12b  
