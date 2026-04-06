@@ -386,3 +386,102 @@ Kao glavni računovoća želim imati jedan ekran s grafičkim prikazom ključnih
 **Poslovna vrijednost:** Štedi vrijeme jer se svi bitni podaci nalaze na jednom mjestu
 
 **Prioritet:** High
+
+# Planiranje budžeta
+
+## US-03a – Kreiranje novog budžeta
+**ID storyja:** US-03a  
+**Naziv storyja:** Kreiranje novog budžeta  
+
+**Opis:**  
+Kao menadžer ili računovođa, želim kreirati novi budžet po kategorijama, odjelima i vremenskom periodu, kako bih mogao planirati troškove firme.
+
+**Poslovna vrijednost:**  
+Kreiranje budžeta je temeljna funkcionalnost cijelog sistema, bez unesenog plana nije moguće pratiti odstupanja, generisati upozorenja niti provoditi AI analizu.
+
+**Prioritet:** High  
+
+---
+
+## Pregled postojećeg budžeta
+**ID storyja:** US-03b  
+**Naziv storyja:** Pregled postojećeg budžeta  
+
+**Opis:**  
+Kao menadžer, računovođa ili finansijski direktor, želim pregledati listu svih kreiranih budžeta i njihove detalje, kako bih imao uvid u planirane iznose po kategorijama, odjelima i vremenskim periodima.
+
+**Poslovna vrijednost:**  
+Pregled budžeta omogućava svim odgovornim osobama da u svakom trenutku imaju jasnu sliku finansijskog plana firme.
+
+**Prioritet:** High  
+
+---
+
+**ID storyja:** US-03c  
+**Naziv storyja:** Uređivanje postojećeg budžeta  
+
+**Opis:**  
+Kao menadžer ili računovođa, želim urediti postojeći budžet, kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima.
+
+**Poslovna vrijednost:**  
+Projekti se proširuju i bez mogućnosti uređivanja, tim bi morao brisati i ponovo kreirati budžete, što može dovesti do čestih grešaka.
+
+**Prioritet:** High  
+
+---
+
+# Sign In
+
+**ID storyja:** US-13a  
+**Naziv storyja:** Prijava  
+
+**Opis:**  
+Kao ovlašteni korisnik sistema, želim unijeti svoje korisničko ime i lozinku, kako bih koristio funkcionalnosti prilagođene mojoj korisničkoj ulozi.
+
+**Poslovna vrijednost:**  
+Prijava je ključna za ovaj sistem, jer bez nje nijedan korisnik ne može pristupiti ni jednoj funkcionalnosti.
+
+**Prioritet:** Low  
+
+---
+
+# Sign Out
+
+**ID storyja:** US-14  
+**Naziv storyja:** Odjava  
+
+**Opis:**  
+Kao prijavljeni korisnik, želim odjaviti se iz sistema, kako bih zaštitio svoje podatke i spriječio neovlašteni pristup kada završim s radom.
+
+**Poslovna vrijednost:**  
+Odjava je osnovna sigurnosna mjera koja štiti osjetljive finansijske podatke firme.
+
+**Prioritet:** Low  
+
+---
+
+# Evidencija komentara
+
+**ID storyja:** US-12a  
+**Naziv storyja:** Dodavanje komentara  
+
+**Opis:**  
+Kao menadžer ili računovođa, želim dodati komentar na trošak, kako bih dodatno pojasnio određenu stavku.
+
+**Poslovna vrijednost:**  
+Omogućava bolju interpretaciju troškova i komunikaciju između korisnika.
+
+**Prioritet:** Low  
+
+---
+
+**ID storyja:** US-12b  
+**Naziv storyja:** Pregled komentara  
+
+**Opis:**  
+Kao menadžer ili računovođa, želim pregledati komentare uz trošak, kako bih imao uvid u dodatna objašnjenja.
+
+**Poslovna vrijednost:**  
+Povećava transparentnost i razumijevanje podataka.
+
+**Prioritet:** Low  
