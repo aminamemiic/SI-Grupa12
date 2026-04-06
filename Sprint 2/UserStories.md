@@ -391,72 +391,162 @@ Kao glavni računovoća želim imati jedan ekran s grafičkim prikazom ključnih
 ## Planiranje budžeta
 
 ### User story 1
-#### ID: US-03a  
+#### ID:
 #### Naziv: Kreiranje novog budžeta  
 Kao glavni računovođa želim kreirati novi budžet po kategorijama, odjelima i vremenskom periodu kako bih mogao planirati troškove firme  
 
 **Poslovna vrijednost:** Kreiranje budžeta je temeljna funkcionalnost cijelog sistema, bez unesenog plana nije moguće pratiti odstupanja, generisati upozorenja niti provoditi AI analizu  
 **Prioritet:** High  
+## Pretpostavke i otvorena pitanja
+Otvoreno pitanje: Da li postoji gornji limit ukupnog iznosa budžeta?
 
+## Veze sa drugim storyjima
+- Preduvjet za Pregled i uređivanje budžeta
+- Zavisi od Upravljanje korisnicima / RBAC
+- Preduvjet za Poređenje podataka
+- Zavisi od Sign in
+
+## Acceptance Criteria
+- Kada ovlašteni korisnik pristupi modulu za planiranje budžeta, ako klikne dugme "Kreiraj novi budžet", tada sistem mora prikazati formu za kreiranje novog budžeta sa obaveznim poljima: naziv budžeta, vremenski period (datum početka i završetka), odjel, kategorija i planirani iznos.
+- Kada ovlašteni korisnik ispravno popuni sva obavezna polja, ako klikne "Sačuvaj", tada sistem mora sačuvati budžet i prikazati poruku "Budžet je uspješno kreiran".
+- Sistem ne smije dozvoliti kreiranje budžeta sa iznosom manjim ili jednakim nuli. .
+- Sistem ne smije dozvoliti kreiranje budžeta ako datum završetka prethodi datumu početka.
+- Kada korisnik pokuša kreirati budžet sa praznim poljima, tada sistem mora vizualno označiti prazna obavezna polja.
 
 ### User story 2
-#### ID: US-03b  
+#### ID:  
 #### Naziv: Pregled postojećeg budžeta  
 Kao glavni računovođa ili finansijski direktor želim pregledati listu svih kreiranih budžeta i njihove detalje kako bih imao uvid u planirane iznose po kategorijama, odjelima i vremenskim periodima  
 
 **Poslovna vrijednost:** Pregled budžeta omogućava svim odgovornim osobama da u svakom trenutku imaju jasnu sliku finansijskog plana firme  
 **Prioritet:** High  
+## Pretpostavke i otvorena pitanja
+- Pretpostavlja se da je barem jedan budžet već kreiran 
 
+## Veze sa drugim storyjima
+- Zavisi od Kreiranje budžeta 
+- Zavisi od Sign in
+- Zavisi od Upravljanje korisnicima / RBAC
+- Preduvjet za Uređivanje budžeta 
+
+## Acceptance Criteria
+- Kada ovlašteni korisnik pristupi modulu za planiranje budžeta, tada sistem mora prikazati listu svih kreiranih budžeta..
+- Kada korisnik odabere određeni budžet iz liste, tada sistem mora prikazati detaljan pregled tog budžeta sa svim stavkama raspoređenim po kategorijama, odjelima.
+- Kada ne postoji nijedan kreiran budžet, tada sistem mora prikazati poruku "Trenutno nema kreiranih budžeta" umjesto prazne liste.
+- Sistem ne smije prikazati opciju za uređivanje za neovlaštene korisnike.
 
 ### User story 3
-#### ID: US-03c  
+#### ID:  
 #### Naziv: Uređivanje postojećeg budžeta  
 Kao glavni računovođa želim urediti postojeći budžet kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima  
 
 **Poslovna vrijednost:** Projekti se proširuju i bez mogućnosti uređivanja tim bi morao brisati i ponovo kreirati budžete što može dovesti do čestih grešaka  
 **Prioritet:** High  
+## Pretpostavke i otvorena pitanja
+- Pretpostavlja se da korisnik može pronaći i otvoriti budžet
+Otvoreno pitanje: Da li se budžet može obrisati?
 
+## Veze sa drugim storyjima
+- Zavisi od Pregled budžeta
+- Zavisi od Upravljanje korisnicima / RBAC)
+- Povezan sa Poređenje podataka (izmjene budžeta direktno utiču na poređenja)
+- Povezan sa Generisanje upozorenja (izmjena budžeta može promijeniti pragove upozorenja)
+
+## Acceptance Criteria
+- Kada se ovlašteni korisnik nalazi na detaljnom pregledu postojećeg budžeta, ako klikne dugme "Uredi", tada sistem mora omogućiti izmjenu.
+- Kada se ovlašteni korisnik nalazi na formi za uređivanje budžeta sa validno popunjenim poljima, ako klikne dugme "Sačuvaj", tada sistem mora ažurirati podatke budžeta.
+- Sistem ne smije dozvoliti da uređivanjem nastanu dva budžeta sa istim odjelom, kategorijom i vremenskim periodom. Korisnik treba dobiti upozorenje "Budžet za ovaj period i odjel već postoji".
+- Sistem ne smije dozvoliti uređivanje budžeta sa iznosom manjim ili jednakim nuli.
+- Kada ovlašteni korisnik počne uređivati budžet ali ne sačuva izmjene, ako pokuša napustiti stranicu, tada sistem mora prikazati upozorenje "Želite li sačuvati izmjene?"
 ---
 
 ## Sign In
 
 ### User story 1
-#### ID: US-13a  
+#### ID:   
 #### Naziv: Prijava  
 Kao ovlašteni korisnik sistema želim unijeti svoje korisničko ime i lozinku kako bih koristio funkcionalnosti prilagođene mojoj korisničkoj ulozi  
 
 **Poslovna vrijednost:** Prijava je ključna za ovaj sistem jer bez nje nijedan korisnik ne može pristupiti funkcionalnostima  
 **Prioritet:** Low  
+## Pretpostavke i otvorena pitanja
+- Pretpostavlja se da administrator unaprijed kreira korisničke račune
+- Pretpostavlja se da svaki korisnik ima dodijeljenu ulogu pri kreiranju računa
 
+## Veze sa drugim storyjima
+- Preduvjet za sve ostale user storije (korisnik mora biti prijavljen)
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada korisnik otvori aplikaciju, tada sistem mora prikazati stranicu za prijavu sa poljima za email i lozinku i dugmetom "Prijavi se".
+- Kada korisnik unese ispravne podatke, ako klikne "Prijavi se", tada sistem mora prepoznati korisnika.
+- Kada se korisnik uspješno prijavi, tada sistem mora preusmjeriti korisnika na dashboard u skladu sa njegovom ulogom
+- Kada korisnik unese neispravne podatke, tada sistem mora prikazati generičku poruku greške.
+- Sistem ne smije prikazati unesenu lozinku u čitljivom obliku.
+- Sistem ne smije dozvoliti pristup korisniku koji nije prijavljen, direktan pristup putem URL-a mora preusmjeriti korisnika na stranicu za prijavu.
+- Kada korisnik pokuša prijaviti se sa praznim poljima, tada sistem mora vizualno označiti prazna obavezna polja.
 ---
 
 ## Sign Out
 
 ### User story 1
-#### ID: US-14  
+#### ID:  
 #### Naziv: Odjava  
 Kao prijavljeni korisnik želim odjaviti se iz sistema kako bih zaštitio svoje podatke i spriječio neovlašteni pristup kada završim s radom  
 
 **Poslovna vrijednost:** Odjava je osnovna sigurnosna mjera koja štiti osjetljive finansijske podatke firme  
 **Prioritet:** Low  
+## Pretpostavke i otvorena pitanja
+- Pretpostavlja se da je korisnik prethodno prijavljen
+Otvoreno pitanje: Koliko dugo traje aktivna sesija prije automatske odjave?
 
+## Veze sa drugim storyjima
+- Zavisi od Sign in (odjava nema smisla bez prijave)
+
+## Acceptance Criteria
+- Kada je korisnik prijavljen i nalazi se na bilo kojoj stranici sistema, ako pogleda navigaciju, tada sistem mora prikazati vidljivu opciju "Odjavi se".
+- Kada se korisnik nalazi na bilo kojoj stranici sistema, ako klikne "Odjavi se", tada sistem treba preusmjeriti korisnika na stranicu za prijavu.
+- Kada se korisnik uspješno odjavio, ako pritisne dugme za povratak u browseru, tada sistem ne smije prikazati sadržaj. Korisnik mora ostati na stranici za prijavu.
 ---
 
 ## Evidencija komentara
 
 ### User story 1
-#### ID: US-12a  
+#### ID:
 #### Naziv: Dodavanje komentara  
 Kao glavni računovođa želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku  
 
 **Poslovna vrijednost:** Omogućava bolju interpretaciju troškova i komunikaciju između korisnika  
 **Prioritet:** Low  
+## Pretpostavke i otvorena pitanja:
+Otvoreno pitanje: Da li je potrebna mogućnost uređivanja ili brisanja komentara?
 
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od Sign in 
+- Zavisi od Unos troškova - komentar se veže uz postojeći trošak
+- Povezan sa Pregled podataka - komentari su vidljivi u pregledu
+
+## Acceptance Criteria
+- Kada korisnik otvori trošak, ako klikne “Dodaj komentar”, tada sistem mora omogućiti unos teksta.
+- Kada korisnik unese validan tekst i klikne "Pošalji", tada sistem mora sačuvati komentar i prikazati ga u listi komentara ispod te stavke.
+- Sistem mora povezati komentar sa odgovarajućim troškom.
+- Sistem ne smije dozvoliti unos praznog komentara.
 
 ### User story 2
-#### ID: US-12b  
+#### ID: 
 #### Naziv: Pregled komentara  
 Kao glavni računovođa ili finansijski direktor želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja  
 
 **Poslovna vrijednost:** Povećava transparentnost i razumijevanje podataka  
 **Prioritet:** Low  
+## Pretpostavke:
+- Pretpostavlja se da komentari postoje
+
+## Veze:
+- Zavisi od dodavanje komentara
+
+## Acceptance Criteria
+- Sistem mora prikazati listu komentara za odabrani trošak.
+- Kada se korisnik nalazi na detaljnom pregledu troška koji ima komentare, tada sistem mora uz svaki komentar prikazati ime autora te datum i vrijeme kreiranja.
+- Sistem mora prikazati sadržaj komentara.
+- Sistem mora prikazati komentare sortirane od najstarijeg prema najnovijem.
