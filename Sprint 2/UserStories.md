@@ -5,14 +5,14 @@
 ### User story 1
 #### ID: 1 
 #### Naziv: Pregled liste podataka
-Kao korisnik želim vidjeti listu podataka kako bih imao uvid u dostupne informacije
+Kao glavni računovođa/finansijski direktor želim vidjeti listu podataka kako bih imao uvid u dostupne informacije
 
 **Poslovna vrijednost:** Omogućava brz pregled podataka  
 
 **Prioritet:** High  
 
 **Pretpostavke i otvorena pitanja** <br>
-Pretpostavlja se da podaci postoje u sistemu
+Pretpostavlja se da podaci postoje u sistemu <br>
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Sign in
@@ -26,14 +26,14 @@ Sistem ne smije prikazati grešku prilikom učitavanja liste
 ### User story 2
 #### ID: 2 
 #### Naziv: Filtriranje podataka
-Kao korisnik želim filtrirati podatke po određenim kriterijima kako bih mogao pronaći lakše relevantne informacije
+Kao glavni računovođa/finansijski direktor želim filtrirati podatke po određenim kriterijima kako bih mogao pronaći lakše relevantne informacije
 
 **Poslovna vrijednost:** Smanjuje vrijeme pretrage
 
 **Prioritet:** High  
 
 
-**Pretpostavke i otvorena pitanja**
+**Pretpostavke i otvorena pitanja** <br>
 Pretpostavlja se da podaci postoje u sistemu <br>
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
@@ -47,7 +47,7 @@ Kada korisnik resetuje filtere, tada sistem mora prikazati sve podatke
 ### User story 3
 #### ID: 3
 #### Naziv: Pretraga podataka
-Kao korisnik želim pretraživati podatke u listi putem ključnih riječi
+Kao glavni računovođa/finansijski direktor želim pretraživati podatke u listi putem ključnih riječi
 
 **Poslovna vrijednost:** Poboljšava korisničko iskustvo
 
@@ -55,8 +55,8 @@ Kao korisnik želim pretraživati podatke u listi putem ključnih riječi
 
 
 **Pretpostavke i otvorena pitanja**
-Pretpostavlja se da postoji polje za pretragu
-**Veze sa drugim storyjima ili zavisnostima**
+Pretpostavlja se da postoji polje za pretragu <br>
+**Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Pregled liste podataka
 <br>
 **Acceptance Criteria** <br>
@@ -68,15 +68,15 @@ Sistem ne smije napraviti grešku prilikom pretrage
 ### User story 4
 #### ID: 4
 #### Naziv: Detaljan prikaz podataka
-Kao korisnik želim otvoriti detalje pojedinačnog zapisa kako bih vidio sve detalje vezane za njega
+Kao glavni računovođa/finansijski direktor želim otvoriti detalje pojedinačnog zapisa kako bih vidio sve detalje vezane za njega
 
 **Poslovna vrijednost:** Omogućava dublju analizu podataka
 
 **Prioritet:** Medium
 
 **Pretpostavke i otvorena pitanja**
-Pretpostavlja se da zapis postoji
-**Veze sa drugim storyjima ili zavisnostima**
+Pretpostavlja se da zapis postoji <br>
+**Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Pregled liste podataka
 <br>
 **Acceptance Criteria** <br>
@@ -87,16 +87,16 @@ Sistem ne smije prikazati grešku prilkom učitavanja detalja
 ### User story 5
 #### ID: 5
 #### Naziv: Sortiranje podataka
-Kao korisnik želim sortirati podatke po datumu, nazivu i vrijednosti kako bih ih lakše organizovao
+Kao glavni računovođa/finansijski direktor želim sortirati podatke po datumu, nazivu i vrijednosti kako bih ih lakše organizovao
 
 **Poslovna vrijednost:** Pomaže u analizi i organizaciji podataka
 
 **Prioritet:** Medium 
 
 **Pretpostavke i otvorena pitanja**
-Pretpostavlja se da podaci imaju atribute za sortiranje
+Pretpostavlja se da podaci imaju atribute za sortiranje <br>
 
-**Veze sa drugim storyjima ili zavisnostima**
+**Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Pregled liste podataka
 <br>
 **Acceptance Criteria** <br>
@@ -109,14 +109,14 @@ Kada korisnik promijeni način sortiranja, tada sistem mora ažurirati prikaz  <
 ### User story 1
 #### ID: 6 
 #### Naziv: Odabir podataka za poređenje
-Kao korisnik želim odabrati više zapisa kako bih ih mogao uporediti
+Kao glavni računovođa/finansijski direktor želim odabrati više zapisa kako bih ih mogao uporediti
 
 **Poslovna vrijednost:** Osnova za funkcionalnost poređenja  
 
 **Prioritet:** High  
 
 **Pretpostavke i otvorena pitanja** <br>
-Pretpostavlja se da postoji lista podataka
+Pretpostavlja se da postoji lista podataka <br>
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Pregled podataka
@@ -129,26 +129,85 @@ Sistem mora jasno označiti odabrane zapise <br>
 ### User story 2
 #### ID: 7 
 #### Naziv: Vizuelno poređenje podataka
-Kao korisnik, želim vidjeti podatke prikazane jedan pored drugog kako bih lakše uočio razlike
+Kao glavni računovođa/finansijski direktor, želim vidjeti podatke prikazane jedan pored drugog kako bih lakše uočio razlike
 
 **Poslovna vrijednost:** Poboljšava donošenje odluke
 
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja** <br>
-Pretpostavlja se da su zapisi odabrani
+Pretpostavlja se da su zapisi odabrani <br>
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
-Zavisi od Odabir podataka za poređenje
+Zavisi od Odabir podataka za poređenje 
 <br>
 **Acceptance Criteria** <br>
 Kada korisnik pokrene poređenje, tada sistem mora prikazati podatke paralelno <br>
 Sistem mora jasno prikazati razlike između podataka <br>
 Prikaz mora biti pregledan i razumljiv <br>
 
+### User story 3
+#### ID: 8
+#### Naziv: Poređenje po kategorijama
+Kao glavni računovođa/finansijski direktor, želim porediti podatke po kategorijama (npr. sektor, vremenski period) kako bih dobio detaljniji uvid u razlike.
+
+**Poslovna vrijednost:** Omogućava precizniju analizu podataka
+
+**Prioritet:** High  
+
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da podaci imaju definisane kategorije  <br>
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Odabir podataka za poređenje 
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik odabere kategoriju, tada sistem mora prikazati poređenje unutar te kategorije   <br>
+Sistem mora omogućiti izbor više kategorija   <br>
+
+### User story 4
+#### ID: 9 
+#### Naziv: Poređenje planiranih i stvarnih troškova
+Kao korisnik, želim porediti planirane i stvarne troškove kako bih identifikovao odstupanja.
+
+**Poslovna vrijednost:** Omogućava bolju kontrolu troškova
+
+**Prioritet:** High  
+
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da postoje planirani i stvarni podaci <br>
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Odabir podataka za poređenje i zavisi od Planiranje budžeta 
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik odabere podatke za poređenje, tada sistem mora prikazati planirane i stvarne troškove    <br>
+Sistem mora jasno označiti razlike tj. odstupanja <br>
+
+### User story 5
+#### ID: 10 
+#### Naziv: Grafički prikaz poređenja podataka
+Kao glavni računovođa/finansijski direktor, želim vidjeti grafički prikaz podataka kako bih lakše razumio razliike
+
+**Poslovna vrijednost:** Poboljšava vizualizaciju i razumijevanje podataka
+
+**Prioritet:** Medium
+
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da podaci postoje u strukturiranom obliku <br>
+Koji tip grafikona koristiti (bar, line, pie)?  <br>
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Odabir podataka za poređenje i zavisi od Poređenje planiranih i stvarnih troškova 
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik pokrene poređenje, tada sistem mora prikazati grafički prikaz podataka  <br>
+Sistem mora omogućiti izbor tipa grafikona  <br>
+Sistem ne smije prikazati grešku prilikom učitavanja grafikona <br>
+
 ## Upravljanje korisnicima (RBAC)
 
 ### User story 1
-#### ID:
+#### ID: 11
 #### Naziv: Dodjela uloga korisnicima
 Kao administrator, želim dodijeliti uloge korisnicima kako bih kontrolisao pristup sistemu
 
@@ -156,7 +215,7 @@ Kao administrator, želim dodijeliti uloge korisnicima kako bih kontrolisao pris
 
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja** <br>
-Pretpostavlja se da korisnici postoje u sistemu
+Pretpostavlja se da korisnici postoje u sistemu <br>
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Sign in
@@ -167,7 +226,7 @@ Korisnik mora imati pristup samo dozvoljenim funkcijama <br>
 Sistem ne smije dozvoliti nevažeće uloge <br>
 
 ### User story 2
-#### ID:
+#### ID: 12
 #### Naziv: Ograničenje pristupa funkcijama
 Kao administrator, želim ograničiti pristup određenim funkcionalnostima na osnovu uloge kako bih zaštitio osjetljive podatke
 
@@ -175,7 +234,7 @@ Kao administrator, želim ograničiti pristup određenim funkcionalnostima na os
 
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja** <br>
-Pretpostavlja se da su uloge definisane
+Pretpostavlja se da su uloge definisane <br>
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Dodjela uloga
@@ -186,7 +245,7 @@ Sistem mora prikazati poruku o zabrani pristupa <br>
 Pravila moraju važiti za sve korisnike <br>
 
 ### User story 3
-#### ID:
+#### ID: 13
 #### Naziv: Pregled korisničkih uloga
 Kao administrator, želim vidjeti sve korisnike i njihove uloge kako bih imao pregled sistema
 
@@ -195,7 +254,7 @@ Kao administrator, želim vidjeti sve korisnike i njihove uloge kako bih imao pr
 **Prioritet:** Medium
 
 **Pretpostavke i otvorena pitanja** <br>
-Pretpostavlja se da korisnici postoje
+Pretpostavlja se da korisnici postoje <br>
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Dodjela uloga
@@ -206,7 +265,7 @@ Sistem ne smije prikazati grešku <br>
 Podaci moraju biti tačni i ažurni <br>
 
 ### User story 4
-#### ID:
+#### ID: 14
 #### Naziv: Izmjena uloga
 Kao administrator, želim mijenjati uloge korisnicima kako bih prilagodio njihove privilegije
 
@@ -215,7 +274,7 @@ Kao administrator, želim mijenjati uloge korisnicima kako bih prilagodio njihov
 **Prioritet:** Medium
 
 **Pretpostavke i otvorena pitanja** <br>
-Pretpostavlja se da korisnik već ima dodijeljenu ulogu
+Pretpostavlja se da korisnik već ima dodijeljenu ulogu <br>
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
 Zavisi od Dodjela uloga i zavisi od Pregled korisnika
@@ -228,7 +287,7 @@ romjena mora odmah stupiti na snagu <br>
 ## Unos troškova
 
 ### User story 1
-#### ID:  
+#### ID: 
 #### Naziv: Ručni unos troška  
 Kao administrativni zaposlenik želim unijeti trošak putem forme kako bih mogao evidentirati sve relevantne finansijske podatke
 
