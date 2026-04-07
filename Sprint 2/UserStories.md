@@ -682,7 +682,7 @@ Otvoreno pitanje: Da li se budžet može obrisati?
 #### Naziv: Prijava  
 Kao ovlašteni korisnik sistema želim unijeti svoje korisničko ime i lozinku kako bih koristio funkcionalnosti prilagođene mojoj korisničkoj ulozi  
 
-**Poslovna vrijednost:** Prijava je ključna za ovaj sistem jer bez nje nijedan korisnik ne može pristupiti funkcionalnostima  
+**Poslovna vrijednost:** Prijava omogućava pristup svim funkcionalnostima  
 **Prioritet:** Low  
 ## Pretpostavke i otvorena pitanja
 - Pretpostavlja se da administrator unaprijed kreira korisničke račune
@@ -709,7 +709,7 @@ Kao ovlašteni korisnik sistema želim unijeti svoje korisničko ime i lozinku k
 #### Naziv: Odjava  
 Kao prijavljeni korisnik želim odjaviti se iz sistema kako bih zaštitio svoje podatke i spriječio neovlašteni pristup kada završim s radom  
 
-**Poslovna vrijednost:** Odjava je osnovna sigurnosna mjera koja štiti osjetljive finansijske podatke firme  
+**Poslovna vrijednost:** Odjava štiti osjetljive finansijske podatke firme  
 **Prioritet:** Low  
 ## Pretpostavke i otvorena pitanja
 - Pretpostavlja se da je korisnik prethodno prijavljen
