@@ -740,6 +740,18 @@ Kao glavni računovođa želim imati vizuelni prikaz ključnih metrika na jednom
 
 **Prioritet:** High
 
+# Pretpostavke i otvorena pitanja:
+- Da li Dashboard treba imati real-time osvježavanje?
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od Sign in / RBAC
+- Zavisi od AI analiza
+- Zavisi od Planiranje budžeta
+
+## Acceptance Criteria
+- Kada korisnik otvori Dashboard, tada sistem mora prikazati: odnos ukupna potrošnja-budžet, troškove po odjelima i listu posljednjih AI upozorenja
+- Sistem mora koristiti "semafor boje" kako bi dočarao stanje
+
 ### User story 2
 #### ID: 37
 #### Naziv: Bliži prikaz stanja
@@ -748,6 +760,16 @@ Kao glavni računovođa želim da klikom na npr. određeni grafikon dobijem list
 **Poslovna vrijednost:** Omogućava da "uvećamo" sliku, odnosno da umjesto na kompletan prikaz fokus prebacimo na specifičan dio
 
 **Prioritet:** Medium
+
+# Pretpostavke i otvorena pitanja:
+- 
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od Pregled podataka
+
+## Acceptance Criteria
+- Kada korisnik klikne na grafikon, tada sistem mora otvoriti tabelarni prikaz svih troškova koji pripadaju tom segmentu
+- Mora se omogućiti povratak na početni ekran
 
 ---
 ## Planiranje budžeta
