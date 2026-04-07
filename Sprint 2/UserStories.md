@@ -595,12 +595,21 @@ Kao glavni računovođa želim da sistem identifikuje troškove koji se ponavlja
 
 ### User story 1
 #### ID: 1
-#### Naziv: Centralni vizuelni prikaz
-Kao glavni računovoća želim imati jedan ekran s grafičkim prikazom ključnih pokazatelja kako bih vidio odnos planiranih i stvarnih troškova
+#### Naziv: Centralni interaktivni Dashboard
+Kao glavni računovođa želim imati vizuelni prikaz ključnih metrika na jednom mjestu kako bih odmah razumio stanje budžeta.
 
 **Poslovna vrijednost:** Štedi vrijeme jer se svi bitni podaci nalaze na jednom mjestu
 
 **Prioritet:** High
+
+### User story 2
+#### ID: 2
+#### Naziv: Bliži prikaz stanja
+Kao glavni računovođa želim da klikom na npr. određeni grafikon dobijem listu svih pojedinačnih troškova koji čine sumu.
+
+**Poslovna vrijednost:** Omogućava da "uvećamo" sliku, odnosno da umjesto na kompletan prikaz fokus prebacimo na specifičan dio
+
+**Prioritet:** Medium
 
 ---
 ## Planiranje budžeta
