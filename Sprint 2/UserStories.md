@@ -287,233 +287,277 @@ romjena mora odmah stupiti na snagu <br>
 ## Unos troškova
 
 ### User story 1
-#### ID: 
-#### Naziv: Ručni unos troška  
+#### ID: 15
+#### Naziv: Ručni unos troška
 Kao administrativni zaposlenik želim unijeti trošak putem forme kako bih mogao evidentirati sve relevantne finansijske podatke
 
-**Poslovna vrijednost:** Omogućava centralizovanu i strukturiranu evidenciju troškova  
-**Prioritet:** High  
+**Poslovna vrijednost:** Omogućava centralizovanu evidenciju troškova
 
-**Acceptance criteria:**
-- Given korisnik je prijavljen u sistem  
-- When unese sve potrebne podatke i klikne na “Sačuvaj”  
-- Then trošak se sprema u bazu i prikazuje u listi  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da korisnik ima pristup sistemu  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Sign in  
+**Acceptance Criteria**  
+Kada korisnik unese sve potrebne podatke i klikne na “Sačuvaj”, tada sistem mora spremiti trošak u bazu  
+Kada je trošak uspješno spremljen, tada sistem mora prikazati trošak u listi  
+Sistem ne smije prikazati grešku prilikom spremanja validnih podataka  
+
 
 ### User story 2
-#### ID:  
-#### Naziv: Unos atributa troška  
-Kao administrativni zaposlenik želim da prilikom unosa troška mogu odabrati kategoriju, projekat i odjel kako bi trošak bio pravilno organizovan i kasnije lako analiziran  
+#### ID: 16
+#### Naziv: Unos atributa troška
+Kao administrativni zaposlenik želim da prilikom unosa troška mogu odabrati kategoriju, projekat i odjel kako bi trošak bio pravilno organizovan
 
-**Poslovna vrijednost:** Omogućava naprednu analizu i filtriranje troškova  
-**Prioritet:** High  
+**Poslovna vrijednost:** Omogućava lakšu analizu i filtriranje troškova
 
-**Acceptance criteria:**
-- Given korisnik unosi novi trošak  
-- When popuni sva obavezna polja  
-- Then sistem ispravno povezuje trošak sa kategorijom, odjelom i projektom  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da su kategorije, projekti i odjeli definisani  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Ručni unos troška  
+**Acceptance Criteria**  
+Kada korisnik popuni sva obavezna polja, tada sistem mora povezati trošak sa odabranim atributima  
+Kada neki atribut nije odabran, tada sistem mora upozoriti korisnika  
+
 
 ### User story 3
-#### ID:  
-#### Naziv: Validacija unosa  
-Kao administrativni zaposlenik želim da sistem automatski provjerava validnost unesenih podataka kako bih izbjegao greške kao što su negativan iznos, pogrešan format datuma ili prazna obavezna polja  
+#### ID: 17
+#### Naziv: Validacija unosa troška
+Kao administrativni zaposlenik želim da sistem provjerava validnost unesenih podataka kako bih izbjegao greške
 
-**Poslovna vrijednost:** Osigurava tačnost i pouzdanost podataka  
-**Prioritet:** High  
+**Poslovna vrijednost:** Osigurava tačnost podataka
 
-**Acceptance criteria:**
-- Given korisnik unosi podatke  
-- When neko polje nije validno ili nije popunjeno  
-- Then sistem prikazuje grešku i ne dozvoljava spremanje  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da postoje definisana validaciona pravila  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Ručni unos troška  
+**Acceptance Criteria**  
+Kada korisnik unese neispravne podatke, tada sistem mora prikazati odgovarajuću grešku  
+Sistem ne smije dozvoliti spremanje nevalidnih podataka  
+
 
 ## CRUD troškova
 
 ### User story 1
-#### ID:  
-#### Naziv: Kreiranje troška  
-Kao korisnik sistema želim imati mogućnost kreiranja novog troška kako bih mogao dodavati nove zapise u sistem kada nastanu novi troškovi  
+#### ID: 18
+#### Naziv: Kreiranje troška
+Kao korisnik sistema želim kreirati novi trošak kako bih mogao dodavati nove zapise
 
-**Poslovna vrijednost:** Omogućava kontinuirano praćenje troškova  
-**Prioritet:** High  
+**Poslovna vrijednost:** Omogućava praćenje troškova
 
-**Acceptance criteria:**
-- Given korisnik ima odgovarajuća prava  
-- When kreira novi trošak  
-- Then trošak se sprema u bazu  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da korisnik ima odgovarajuća prava  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Unos troškova  
+**Acceptance Criteria**  
+Kada korisnik kreira trošak, tada sistem mora spremiti podatke u bazu  
+Sistem ne smije prikazati grešku prilikom kreiranja  
+
 
 ### User story 2
-#### ID:  
-#### Naziv: Ažuriranje troška  
-Kao administrativni zaposlenik želim izmijeniti postojeći trošak kako bih mogao ispraviti greške ili ažurirati podatke kada se promijene  
+#### ID: 19
+#### Naziv: Ažuriranje troška
+Kao administrativni zaposlenik želim izmijeniti postojeći trošak kako bih mogao ispraviti podatke
 
-**Poslovna vrijednost:** Održava tačnost i ažurnost podataka  
-**Prioritet:** High  
+**Poslovna vrijednost:** Održava tačnost podataka
 
-**Acceptance criteria:**
-- Given trošak postoji u sistemu  
-- When korisnik izmijeni podatke i potvrdi  
-- Then izmjene se spremaju i prikazuju u sistemu  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da trošak postoji u sistemu  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Pregled podataka  
+**Acceptance Criteria**  
+Kada korisnik izmijeni trošak i sačuva promjene, tada sistem mora ažurirati podatke  
+Sistem ne smije prikazati grešku prilikom ažuriranja  
+
 
 ### User story 3
-#### ID:  
-#### Naziv: Brisanje troška  
-Kao administrativni zaposlenik želim obrisati trošak kako bih uklonio netačne, duplirane ili nepotrebne zapise iz sistema  
+#### ID: 20
+#### Naziv: Brisanje troška
+Kao administrativni zaposlenik želim obrisati trošak kako bih uklonio netačne zapise
 
-**Poslovna vrijednost:** Održava kvalitet i čistoću baze podataka  
-**Prioritet:** Medium  
+**Poslovna vrijednost:** Održava kvalitet baze
 
-**Acceptance criteria:**
-- Given trošak postoji  
-- When korisnik potvrdi brisanje  
-- Then trošak se trajno uklanja iz sistema  
+**Prioritet:** Medium
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da trošak postoji  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Pregled podataka  
+**Acceptance Criteria**  
+Kada korisnik potvrdi brisanje, tada sistem mora ukloniti trošak iz baze  
+Sistem ne smije prikazati grešku prilikom brisanja  
+
 
 ### User story 4
-#### ID:  
-#### Naziv: Kontrola pristupa  
-Kao administrator želim ograničiti pristup CRUD operacijama na osnovu korisničkih uloga kako bih osigurao da samo ovlašteni korisnici mogu mijenjati ili brisati podatke  
+#### ID: 21
+#### Naziv: Kontrola pristupa CRUD operacijama
+Kao administrator želim ograničiti CRUD operacije prema ulozi korisnika
 
-**Poslovna vrijednost:** Osigurava sigurnost i kontrolu nad podacima  
-**Prioritet:** High  
+**Poslovna vrijednost:** Osigurava sigurnost sistema
 
-**Acceptance criteria:**
-- Given korisnik nema odgovarajuću ulogu  
-- When pokuša izvršiti CRUD operaciju  
-- Then sistem blokira akciju i prikazuje poruku o grešci  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da su uloge definisane  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Upravljanje korisnicima  
+**Acceptance Criteria**  
+Kada korisnik bez ovlasti pokuša izvršiti akciju, tada sistem mora blokirati pristup  
+Sistem mora prikazati poruku o zabrani pristupa  
+
 
 ## Uvoz podataka
 
 ### User story 1
-#### ID:  
-#### Naziv: Uvoz iz CSV/Excel fajla  
-Kao administrativni zaposlenik želim uvesti veći broj troškova putem CSV ili Excel fajla kako bih izbjegao ručni unos svakog pojedinačnog zapisa  
+#### ID: 22
+#### Naziv: Uvoz podataka iz fajla
+Kao administrativni zaposlenik želim uvesti troškove iz CSV ili Excel fajla kako bih ubrzao unos
 
-**Poslovna vrijednost:** Značajno ubrzava unos podataka i smanjuje manuelni rad  
-**Prioritet:** High  
+**Poslovna vrijednost:** Smanjuje manuelni rad
 
-**Acceptance criteria:**
-- Given korisnik ima validan fajl  
-- When učita fajl u sistem  
-- Then podaci se učitavaju i prikazuju za obradu  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da je fajl validnog formata  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Unos troškova  
+**Acceptance Criteria**  
+Kada korisnik učita fajl, tada sistem mora prikazati podatke za obradu  
+Sistem ne smije prikazati grešku za validan fajl  
+
 
 ### User story 2
-#### ID:  
-#### Naziv: Obrada podataka  
-Kao administrativni zaposlenik želim da sistem automatski obradi podatke iz uvezenog fajla kako bih ih mogao brzo i bez dodatnog ručnog rada spremiti u bazu 
+#### ID: 23
+#### Naziv: Obrada uvezenih podataka
+Kao administrativni zaposlenik želim da sistem automatski obradi podatke kako bi bili spremni za spremanje
 
-**Poslovna vrijednost:** Omogućava automatizovan unos podataka  
-**Prioritet:** High  
+**Poslovna vrijednost:** Automatizuje proces unosa
 
-**Acceptance criteria:**
-- Given fajl je učitan  
-- When sistem obradi podatke  
-- Then podaci se transformišu u odgovarajući format  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da su podaci strukturirani  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Uvoz podataka  
+**Acceptance Criteria**  
+Kada sistem obradi podatke, tada ih mora transformisati u odgovarajući format  
+Sistem ne smije izgubiti podatke tokom obrade  
+
 
 ### User story 3
-#### ID:  
-#### Naziv: Validacija podataka  
-Kao administrativni zaposlenik želim provjeriti ispravnost svih uvezenih podataka kako bih spriječio unos netačnih ili nepotpunih zapisa  
+#### ID: 24
+#### Naziv: Validacija uvezenih podataka
+Kao administrativni zaposlenik želim provjeriti ispravnost podataka prije spremanja
 
-**Poslovna vrijednost:** Održava kvalitet i pouzdanost baze podataka  
-**Prioritet:** High  
+**Poslovna vrijednost:** Održava kvalitet baze
 
-**Acceptance criteria:**
-- Given podaci su učitani  
-- When postoje neispravni zapisi  
-- Then sistem označava greške i preskače nevalidne unose  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da postoje validaciona pravila  
 
-### User story 4
-#### ID:  
-#### Naziv: OCR unos  
-Kao administrativni zaposlenik želim unositi troškove putem OCR tehnologije sa skeniranih računa ili dokumenata kako bih dodatno automatizovao unos podataka  
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Obrada podataka  
+**Acceptance Criteria**  
+Kada postoje neispravni zapisi, tada sistem mora označiti greške  
+Sistem ne smije spremiti nevalidne podatke  
 
-**Poslovna vrijednost:** Smanjuje potrebu za ručnim unosom i ubrzava proces digitalizacije  
-**Prioritet:** Medium  
-
-**Acceptance criteria:**
-- Given korisnik učita sliku dokumenta  
-- When sistem izvrši OCR  
-- Then podaci se automatski popunjavaju u formu  
-
----
 
 ## Izvještaj
 
 ### User story 1
-#### ID:  
-#### Naziv: Generisanje izvještaja  
-Kao finansijski direktor želim generisati pregledan izvještaj o troškovima kako bih imao jasan uvid u finansijsko stanje organizacije  
+#### ID: 25
+#### Naziv: Generisanje izvještaja
+Kao finansijski direktor želim generisati izvještaj o troškovima kako bih imao pregled finansijskog stanja
 
-**Poslovna vrijednost:** Omogućava donošenje informisanih odluka  
-**Prioritet:** High  
+**Poslovna vrijednost:** Podržava donošenje odluka
 
-**Acceptance criteria:**
-- Given korisnik ima pristup  
-- When generiše izvještaj  
-- Then sistem prikazuje podatke o troškovima  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da podaci postoje  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Pregled podataka  
+**Acceptance Criteria**  
+Kada korisnik generiše izvještaj, tada sistem mora prikazati podatke  
+Sistem ne smije prikazati grešku prilikom generisanja  
+
 
 ### User story 2
-#### ID:  
-#### Naziv: Izvještaj po periodu  
-Kao finansijski direktor želim filtrirati izvještaje po vremenskom periodu kako bih mogao analizirati trendove i promjene kroz vrijeme  
+#### ID: 26
+#### Naziv: Izvještaj po periodu
+Kao finansijski direktor želim filtrirati izvještaj po vremenskom periodu
 
-**Poslovna vrijednost:** Omogućava analizu trendova i planiranje  
-**Prioritet:** High  
+**Poslovna vrijednost:** Omogućava analizu trendova
 
-**Acceptance criteria:**
-- Given korisnik odabere period  
-- When generiše izvještaj  
-- Then prikazuju se samo relevantni podaci  
+**Prioritet:** High
 
----
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da podaci imaju vremensku oznaku  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Generisanje izvještaja  
+**Acceptance Criteria**  
+Kada korisnik odabere period, tada sistem mora prikazati relevantne podatke  
+Sistem ne smije prikazati podatke van odabranog perioda  
+
 
 ### User story 3
-#### ID:  
-#### Naziv: Export izvještaja  
-Kao korisnik želim izvesti izvještaj u različitim formatima kako bih ga mogao dijeliti sa drugim korisnicima ili arhivirati  
+#### ID: 27
+#### Naziv: Export izvještaja
+Kao korisnik želim izvesti izvještaj u različitim formatima
 
-**Poslovna vrijednost:** Olakšava komunikaciju i razmjenu podataka  
-**Prioritet:** Medium  
+**Poslovna vrijednost:** Olakšava dijeljenje podataka
 
-**Acceptance criteria:**
-- Given izvještaj je generisan  
-- When korisnik klikne export  
-- Then fajl se preuzima  
+**Prioritet:** Medium
 
----
+**Pretpostavke i otvorena pitanja**  
+Koji formati su podržani (PDF, Excel)?  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Generisanje izvještaja  
+**Acceptance Criteria**  
+Kada korisnik izvrši export, tada sistem mora preuzeti fajl  
+Sistem ne smije prikazati grešku tokom izvoza  
+
 
 ### User story 4
-#### ID:  
-#### Naziv: Sažeti izvještaj  
-Kao vlasnik ili menadžer želim vidjeti sažeti prikaz ključnih finansijskih informacija kako bih brzo procijenio stanje poslovanja  
+#### ID: 28
+#### Naziv: Sažeti izvještaj
+Kao menadžer želim vidjeti sažeti prikaz ključnih informacija
 
-**Poslovna vrijednost:** Podržava brzo i efikasno donošenje odluka  
-**Prioritet:** High  
+**Poslovna vrijednost:** Omogućava brzu procjenu stanja
 
-**Acceptance criteria:**
-- Given korisnik je vlasnik ili menadžer  
-- When otvori izvještaj  
-- Then sistem prikazuje ključne informacije u sažetom obliku
+**Prioritet:** High
+
+**Pretpostavke i otvorena pitanja**  
+Pretpostavlja se da postoje agregirani podaci  
+
+**Veze sa drugim storyjima ili zavisnostima**  
+Zavisi od Generisanje izvještaja  
+**Acceptance Criteria**  
+Kada korisnik otvori izvještaj, tada sistem mora prikazati ključne informacije  
+Sistem ne smije prikazati grešku prilikom učitavanja
+
 
 ## Generisanje upozorenja
 
