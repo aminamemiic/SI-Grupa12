@@ -558,7 +558,6 @@ Zavisi od Generisanje izvještaja
 Kada korisnik otvori izvještaj, tada sistem mora prikazati ključne informacije  
 Sistem ne smije prikazati grešku prilikom učitavanja
 
-
 ## Generisanje upozorenja
 
 ### User story 1
@@ -570,6 +569,17 @@ Kao glavni računovođa želim primiti automatsku notifikaciju kada sistem detek
 
 **Prioritet:** High
 
+# Pretpostavke i otvorena pitanja:
+- 
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od AI analiza
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada AI identifikuje anomaliju, tada sistem mora generisati notifikaciju unutar aplikacije
+- Notifikacija mora sadržavati naslov i kratki opis problema
+
 ### User story 2
 #### ID: 2
 #### Naziv: Sažetak o uočenoj anomaliji
@@ -578,6 +588,17 @@ Kao glavni računovođa želim dobiti tekstualni opis uz svaku notifikaciju kako
 **Poslovna vrijednost:** Omogućava da se odmah stvori početna slika kakav problem je u pitanju
 
 **Prioritet:** High
+
+# Pretpostavke i otvorena pitanja:
+- Da li se notifikacije slati i van aplikacije, npr. na mail?
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od AI analiza
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada korisnik otvori notifikaciju, tada sistem mora prikazati tekstualno obrazloženje
+- Sistem mora naznačiti nivo ozbiljnosti (crveno, narandžasto, žuto)
 
 ## AI analiza
 
@@ -590,6 +611,19 @@ Kao glavni računovođa želim da sistem odmah provjeri svaki uneseni trošak u 
 
 **Prioritet:** High
 
+# Pretpostavke i otvorena pitanja:
+- 
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Preduvjet za Generisanje upozorenja
+- Zavisi od Unos troškova i Uvoz podataka
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada se unese novi trošak, tada sistem mora u pozadini izvršiti poređenje s podacima te kategorije
+- Ako sistem detektuje odstupanje, tada isto mora označava
+- Sistem mora prepoznati dupli unos ako uoči podudaranje
+
 ### User story 2
 #### ID: 2
 #### Naziv: Dubinska analiza trendova na zahtjev
@@ -598,6 +632,19 @@ Kao glavni računovođa želim jednim klikom pokrenuti AI analizu cjelokupne baz
 **Poslovna vrijednost:** Pruža dubinski uvid u poslovanje i pomaže u planiranju
 
 **Prioritet:** High
+
+# Pretpostavke i otvorena pitanja:
+- Koliko unazad AI treba gledati podatke za validno predviđanje?
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od Unos i uvoz troškova
+- Zavisi od Planiranje budžeta
+- Preduvjet za Razvoj Dashboarda
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada korisnik pokrene AI analizu, tada sistem mora obraditi sve podatke i generisati vizuelni prikaz trendova
+- Rezultat analize mora uključivati procjenu troškova za naredni mjesec
 
 ### User story 3
 #### ID: 3
