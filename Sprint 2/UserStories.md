@@ -555,6 +555,42 @@ Kao glavni računovođa želim jednim klikom pokrenuti AI analizu cjelokupne baz
 
 **Prioritet:** High
 
+### User story 3
+#### ID: 3
+#### Naziv: Identifikacija sumnjivih obrazaca potrošnje
+Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unosa ili odstupanja u ponašanju korisnika kako bi se osigurala maksimalna kontrola.
+
+**Poslovna vrijednost:** Povećava sigurnost i služi kao interna revizija koja radi konstantno
+
+**Prioritet:** Medium
+
+### User story 4
+#### ID: 4
+#### Naziv: Predviđanje potrošnje do kraja perioda
+Kao glavni računovođa želim da sistem na osnovu trenutne brzine trošenja novca projektuje krajnje stanje budžeta za tekući mjesec.
+
+**Poslovna vrijednost:** Omogućava planiranje i proaktivno djelovanje
+
+**Prioritet:** High
+
+### User story 5
+#### ID: 5
+#### Naziv: Pametno grupisanje troškova
+Kao administrativni zaposlenik želim da mi AI predloži kategoriju troška na osnovu naziva stavke prilikom ručnog unosa.
+
+**Poslovna vrijednost:** Ubrzava rad administracije.
+
+**Prioritet:** Medium
+
+### User story 6
+#### ID: 6
+#### Naziv: Detekcija periodičnih troškova
+Kao glavni računovođa želim da sistem identifikuje troškove koji se ponavljaju i upozori ako neki od njih izostane.
+
+**Poslovna vrijednost:** Osigurava da se nijedna obaveza ne zaboravi
+
+**Prioritet:** Medium
+
 ## Razvoj osnovnog UI Dashboarda
 
 ### User story 1
