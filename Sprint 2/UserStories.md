@@ -536,7 +536,7 @@ Koji formati su podržani (PDF, Excel)?
 **Veze sa drugim storyjima ili zavisnostima**  
 Zavisi od Generisanje izvještaja  
 **Acceptance Criteria**  
-Kada korisnik izvrši export, tada sistem mora preuzeti fajl  
+Kada korisnik izvrši export, tada sistem mora generisati i omogućiti preuzimanje fajla  
 Sistem ne smije prikazati grešku tokom izvoza  
 
 
