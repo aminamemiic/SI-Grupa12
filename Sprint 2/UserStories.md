@@ -561,7 +561,7 @@ Sistem ne smije prikazati grešku prilikom učitavanja
 ## Generisanje upozorenja
 
 ### User story 1
-#### ID: 1
+#### ID: 29
 #### Naziv: Slanje notifikacije
 Kao glavni računovođa želim primiti automatsku notifikaciju kada sistem detektuje anomaliju uočenu nakon AI analize
 
@@ -581,7 +581,7 @@ Kao glavni računovođa želim primiti automatsku notifikaciju kada sistem detek
 - Notifikacija mora sadržavati naslov i kratki opis problema
 
 ### User story 2
-#### ID: 2
+#### ID: 30
 #### Naziv: Sažetak o uočenoj anomaliji
 Kao glavni računovođa želim dobiti tekstualni opis uz svaku notifikaciju kako bih razumio ozbiljnost situacije
 
@@ -603,7 +603,7 @@ Kao glavni računovođa želim dobiti tekstualni opis uz svaku notifikaciju kako
 ## AI analiza
 
 ### User story 1
-#### ID: 1
+#### ID: 31
 #### Naziv: Automatska validacija i detekcija anomalija pri unosu
 Kao glavni računovođa želim da sistem odmah provjeri svaki uneseni trošak u odnosu na prosjek kategorije i prethodne obrasce kako bi spriječio unos nerealnih cifara ili duplih računa
 
@@ -625,7 +625,7 @@ Kao glavni računovođa želim da sistem odmah provjeri svaki uneseni trošak u 
 - Sistem mora prepoznati dupli unos ako uoči podudaranje
 
 ### User story 2
-#### ID: 2
+#### ID: 32
 #### Naziv: Dubinska analiza trendova na zahtjev
 Kao glavni računovođa želim jednim klikom pokrenuti AI analizu cjelokupne baze kako bih dobio izvještaj o kretanju troškova i predviđanje budžeta za naredni period
 
@@ -647,7 +647,7 @@ Kao glavni računovođa želim jednim klikom pokrenuti AI analizu cjelokupne baz
 - Rezultat analize mora uključivati procjenu troškova za naredni mjesec
 
 ### User story 3
-#### ID: 3
+#### ID: 33
 #### Naziv: Identifikacija sumnjivih obrazaca potrošnje
 Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unosa ili odstupanja u ponašanju korisnika kako bi se osigurala maksimalna kontrola.
 
@@ -656,7 +656,7 @@ Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unos
 **Prioritet:** Medium
 
 ### User story 4
-#### ID: 4
+#### ID: 34
 #### Naziv: Predviđanje potrošnje do kraja perioda
 Kao glavni računovođa želim da sistem na osnovu trenutne brzine trošenja novca projektuje krajnje stanje budžeta za tekući mjesec.
 
@@ -674,7 +674,7 @@ Kao administrativni zaposlenik želim da mi AI predloži kategoriju troška na o
 **Prioritet:** Medium
 
 ### User story 6
-#### ID: 6
+#### ID: 36
 #### Naziv: Detekcija periodičnih troškova
 Kao glavni računovođa želim da sistem identifikuje troškove koji se ponavljaju i upozori ako neki od njih izostane.
 
@@ -685,7 +685,7 @@ Kao glavni računovođa želim da sistem identifikuje troškove koji se ponavlja
 ## Razvoj osnovnog UI Dashboarda
 
 ### User story 1
-#### ID: 1
+#### ID: 36
 #### Naziv: Centralni interaktivni Dashboard
 Kao glavni računovođa želim imati vizuelni prikaz ključnih metrika na jednom mjestu kako bih odmah razumio stanje budžeta.
 
@@ -694,7 +694,7 @@ Kao glavni računovođa želim imati vizuelni prikaz ključnih metrika na jednom
 **Prioritet:** High
 
 ### User story 2
-#### ID: 2
+#### ID: 37
 #### Naziv: Bliži prikaz stanja
 Kao glavni računovođa želim da klikom na npr. određeni grafikon dobijem listu svih pojedinačnih troškova koji čine sumu.
 
@@ -706,7 +706,7 @@ Kao glavni računovođa želim da klikom na npr. određeni grafikon dobijem list
 ## Planiranje budžeta
 
 ### User story 1
-#### ID:
+#### ID: 38
 #### Naziv: Kreiranje novog budžeta  
 Kao glavni računovođa želim kreirati novi budžet po kategorijama, odjelima i vremenskom periodu kako bih mogao planirati troškove firme  
 
@@ -729,7 +729,7 @@ Otvoreno pitanje: Da li postoji gornji limit ukupnog iznosa budžeta?
 - Kada korisnik pokuša kreirati budžet sa praznim poljima, tada sistem mora vizualno označiti prazna obavezna polja.
 
 ### User story 2
-#### ID:  
+#### ID: 39
 #### Naziv: Pregled postojećeg budžeta  
 Kao glavni računovođa ili finansijski direktor želim pregledati listu svih kreiranih budžeta i njihove detalje kako bih imao uvid u planirane iznose po kategorijama, odjelima i vremenskim periodima  
 
@@ -751,7 +751,7 @@ Kao glavni računovođa ili finansijski direktor želim pregledati listu svih kr
 - Sistem ne smije prikazati opciju za uređivanje za neovlaštene korisnike.
 
 ### User story 3
-#### ID:  
+#### ID: 40
 #### Naziv: Uređivanje postojećeg budžeta  
 Kao glavni računovođa želim urediti postojeći budžet kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima  
 
@@ -778,7 +778,7 @@ Otvoreno pitanje: Da li se budžet može obrisati?
 ## Sign In
 
 ### User story 1
-#### ID:   
+#### ID: 41 
 #### Naziv: Prijava  
 Kao ovlašteni korisnik sistema želim unijeti svoje korisničko ime i lozinku kako bih koristio funkcionalnosti prilagođene mojoj korisničkoj ulozi  
 
@@ -805,7 +805,7 @@ Kao ovlašteni korisnik sistema želim unijeti svoje korisničko ime i lozinku k
 ## Sign Out
 
 ### User story 1
-#### ID:  
+#### ID: 42  
 #### Naziv: Odjava  
 Kao prijavljeni korisnik želim odjaviti se iz sistema kako bih zaštitio svoje podatke i spriječio neovlašteni pristup kada završim s radom  
 
@@ -827,7 +827,7 @@ Otvoreno pitanje: Koliko dugo traje aktivna sesija prije automatske odjave?
 ## Evidencija komentara
 
 ### User story 1
-#### ID:
+#### ID: 43
 #### Naziv: Dodavanje komentara  
 Kao glavni računovođa želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku  
 
@@ -848,7 +848,7 @@ Otvoreno pitanje: Da li je potrebna mogućnost uređivanja ili brisanja komentar
 - Sistem ne smije dozvoliti unos praznog komentara.
 
 ### User story 2
-#### ID: 
+#### ID: 44 
 #### Naziv: Pregled komentara  
 Kao glavni računovođa ili finansijski direktor želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja  
 
