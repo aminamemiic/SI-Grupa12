@@ -655,7 +655,7 @@ Kao glavni računovođa ili finansijski direktor želim pregledati listu svih kr
 #### Naziv: Uređivanje postojećeg budžeta  
 Kao glavni računovođa želim urediti postojeći budžet kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima  
 
-**Poslovna vrijednost:** Projekti se proširuju i bez mogućnosti uređivanja tim bi morao brisati i ponovo kreirati budžete što može dovesti do čestih grešaka  
+**Poslovna vrijednost:** Projekti se proširuju i bez mogućnosti uređivanja računovođa bi morao ponovo kreirati budžete što može dovesti do čestih grešaka  
 **Prioritet:** High  
 ## Pretpostavke i otvorena pitanja
 - Pretpostavlja se da korisnik može pronaći i otvoriti budžet
@@ -738,8 +738,8 @@ Otvoreno pitanje: Da li je potrebna mogućnost uređivanja ili brisanja komentar
 
 ## Veze sa drugim storyjima ili zavisnostima:
 - Zavisi od Sign in 
-- Zavisi od Unos troškova - komentar se veže uz postojeći trošak
-- Povezan sa Pregled podataka - komentari su vidljivi u pregledu
+- Zavisi od Unos troškova 
+- Povezan sa Pregled podataka (komentari su vidljivi u pregledu)
 
 ## Acceptance Criteria
 - Kada korisnik otvori trošak, ako klikne “Dodaj komentar”, tada sistem mora omogućiti unos teksta.
@@ -757,7 +757,7 @@ Kao glavni računovođa ili finansijski direktor želim pregledati komentare uz 
 ## Pretpostavke:
 - Pretpostavlja se da komentari postoje
 
-## Veze:
+## Veze sa drugim storyjima ili zavisnostima:
 - Zavisi od dodavanje komentara
 
 ## Acceptance Criteria
