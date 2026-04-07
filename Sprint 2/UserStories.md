@@ -11,14 +11,16 @@ Kao korisnik želim vidjeti listu podataka kako bih imao uvid u dostupne informa
 
 **Prioritet:** High  
 
-**Pretpostavke i otvorena pitanja**
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da podaci postoje u sistemu
 
-**Veze sa drugim storyjima ili zavisnostima**
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Sign in
 <br>
 **Acceptance Criteria** <br>
-Kada korisnik otvori stranicu sa podacima, sistem mora prikazati listu podataka <br>
-Kada nema podataka, sistem mora prkazati odgovarajuću poruku  <br>
-Lista podataka mora biti učitana bez greške
+Kada korisnik otvori stranicu sa podacima, tada sistem mora prikazati listu podataka <br>
+Kada nema podataka, tada sistem mora prkazati odgovarajuću poruku  <br>
+Sistem ne smije prikazati grešku prilikom učitavanja liste
 
 
 ### User story 2
@@ -32,13 +34,15 @@ Kao korisnik želim filtrirati podatke po određenim kriterijima kako bih mogao 
 
 
 **Pretpostavke i otvorena pitanja**
+Pretpostavlja se da podaci postoje u sistemu <br>
 
-**Veze sa drugim storyjima ili zavisnostima**
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Pregled liste podataka <br>
 <br>
 **Acceptance Criteria** <br>
-Kada korisnik odabere filter kriterij, sistem mora prikazati filtrirane podatke <br>
-Kada nema podataka, sistem mora prikazati poruku "Nema rezultata" <br>
-Sistem mora omogućiti reset filtera
+Kada korisnik odabere filter kriterij, tada sistem mora prikazati filtrirane podatke <br>
+Kada nema podataka, tada sistem mora prikazati poruku "Nema rezultata" <br>
+Kada korisnik resetuje filtere, tada sistem mora prikazati sve podatke
 
 ### User story 3
 #### ID: 3
@@ -51,12 +55,14 @@ Kao korisnik želim pretraživati podatke u listi putem ključnih riječi
 
 
 **Pretpostavke i otvorena pitanja**
-
+Pretpostavlja se da postoji polje za pretragu
 **Veze sa drugim storyjima ili zavisnostima**
+Zavisi od Pregled liste podataka
 <br>
 **Acceptance Criteria** <br>
-Kada korisnik unese ključnu riječ, sistem mora prikazati odgovarajuće podatke <br>
-Kada nema podataka, sistem mora prikazati poruku "Nema rezultata" <br>
+Kada korisnik unese ključnu riječ, tada sistem mora prikazati odgovarajuće podatke <br>
+Kada nema podataka, tada sistem mora prikazati poruku "Nema rezultata" <br>
+Sistem ne smije napraviti grešku prilikom pretrage
 
 
 ### User story 4
@@ -69,30 +75,33 @@ Kao korisnik želim otvoriti detalje pojedinačnog zapisa kako bih vidio sve det
 **Prioritet:** Medium
 
 **Pretpostavke i otvorena pitanja**
-
+Pretpostavlja se da zapis postoji
 **Veze sa drugim storyjima ili zavisnostima**
+Zavisi od Pregled liste podataka
 <br>
 **Acceptance Criteria** <br>
-Kada korisnik klikne na zapis, sistem mora prikazati detalje tog zapisa <br>
-Prikaz mora sadržavati sve relevantne informacije  <br>
+Kada korisnik klikne na zapis, tada sistem mora prikazati detalje tog zapisa <br>
+Ako korisnik klikne na zapis, tada prikaz mora sadržavati sve relevantne informacije  <br>
 Sistem ne smije prikazati grešku prilkom učitavanja detalja
 
 ### User story 5
 #### ID: 5
 #### Naziv: Sortiranje podataka
-Kao korisnik želim sortirati podatke po datumu, nazivu, vrijednosti kako bih ih lakše organizovao
+Kao korisnik želim sortirati podatke po datumu, nazivu i vrijednosti kako bih ih lakše organizovao
 
 **Poslovna vrijednost:** Pomaže u analizi i organizaciji podataka
 
 **Prioritet:** Medium 
 
-*Pretpostavke i otvorena pitanja**
+**Pretpostavke i otvorena pitanja**
+Pretpostavlja se da podaci imaju atribute za sortiranje
 
 **Veze sa drugim storyjima ili zavisnostima**
+Zavisi od Pregled liste podataka
 <br>
 **Acceptance Criteria** <br>
 Kada korisnik odabere kriterij sortiranja, podaci se moraju sortirati ispravno <br>
-Promjena sortiranja mora odmah ažurirati prikaz  <br>
+Kada korisnik promijeni način sortiranja, tada sistem mora ažurirati prikaz  <br>
 
 
 ## Poređenje podataka
@@ -106,6 +115,17 @@ Kao korisnik želim odabrati više zapisa kako bih ih mogao uporediti
 
 **Prioritet:** High  
 
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da postoji lista podataka
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Pregled podataka
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik odabere više zapisa, tada sistem mora omogućiti poređenje <br>
+Kada korisnik odabere samo jedan zapis, tada sistem ne smije omogućiti poređenje  <br>
+Sistem mora jasno označiti odabrane zapise <br>
+
 ### User story 2
 #### ID: 7 
 #### Naziv: Vizuelno poređenje podataka
@@ -114,6 +134,16 @@ Kao korisnik, želim vidjeti podatke prikazane jedan pored drugog kako bih lakš
 **Poslovna vrijednost:** Poboljšava donošenje odluke
 
 **Prioritet:** High  
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da su zapisi odabrani
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Odabir podataka za poređenje
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik pokrene poređenje, tada sistem mora prikazati podatke paralelno <br>
+Sistem mora jasno prikazati razlike između podataka <br>
+Prikaz mora biti pregledan i razumljiv <br>
 
 ## Upravljanje korisnicima (RBAC)
 
@@ -125,6 +155,16 @@ Kao administrator, želim dodijeliti uloge korisnicima kako bih kontrolisao pris
 **Poslovna vrijednost:** Osigurava sigurnost sistema
 
 **Prioritet:** High  
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da korisnici postoje u sistemu
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Sign in
+<br>
+**Acceptance Criteria** <br>
+Kada administrator dodijeli ulogu korisniku, tada sistem mora sačuvati promjene <br>
+Korisnik mora imati pristup samo dozvoljenim funkcijama <br>
+Sistem ne smije dozvoliti nevažeće uloge <br>
 
 ### User story 2
 #### ID:
@@ -134,6 +174,16 @@ Kao administrator, želim ograničiti pristup određenim funkcionalnostima na os
 **Poslovna vrijednost:** Sprječava neovlašten pristup
 
 **Prioritet:** High  
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da su uloge definisane
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Dodjela uloga
+<br>
+**Acceptance Criteria** <br>
+Kada korisnik pokuša pristupiti zabranjenoj funkciji, tada sistem mora odbiti pristup <br>
+Sistem mora prikazati poruku o zabrani pristupa <br>
+Pravila moraju važiti za sve korisnike <br>
 
 ### User story 3
 #### ID:
@@ -144,6 +194,17 @@ Kao administrator, želim vidjeti sve korisnike i njihove uloge kako bih imao pr
 
 **Prioritet:** Medium
 
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da korisnici postoje
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Dodjela uloga
+<br>
+**Acceptance Criteria** <br>
+Kada administrator otvori listu korisnika, tada sistem mora prikazati korisnike i njihove uloge <br>
+Sistem ne smije prikazati grešku <br>
+Podaci moraju biti tačni i ažurni <br>
+
 ### User story 4
 #### ID:
 #### Naziv: Izmjena uloga
@@ -152,6 +213,17 @@ Kao administrator, želim mijenjati uloge korisnicima kako bih prilagodio njihov
 **Poslovna vrijednost:** Fleksibilnost sistema
 
 **Prioritet:** Medium
+
+**Pretpostavke i otvorena pitanja** <br>
+Pretpostavlja se da korisnik već ima dodijeljenu ulogu
+
+**Veze sa drugim storyjima ili zavisnostima** <br>
+Zavisi od Dodjela uloga i zavisi od Pregled korisnika
+<br>
+**Acceptance Criteria** <br>
+Kada administrator promijeni ulogu korisniku, tada sistem mora sačuvati promjenu <br>
+Sistem ne smije prikazati grešku <br>
+romjena mora odmah stupiti na snagu <br>
 
 ## Unos troškova
 
