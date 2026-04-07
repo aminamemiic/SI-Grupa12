@@ -655,6 +655,17 @@ Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unos
 
 **Prioritet:** Medium
 
+# Pretpostavke i otvorena pitanja:
+- 
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Povezan s Generisanje upozorenja
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada korisnik unese trošak u vrijeme koje odstupa od uobičajenog radnog vremena, tada sistem mora označiti taj unos zastavicom
+- Kada se detektuje učestalo brisanje ili modifikovanje unesenih zapisa od strane korisnika, tada sistem mora generisati upozorenje
+
 ### User story 4
 #### ID: 34
 #### Naziv: Predviđanje potrošnje do kraja perioda
@@ -663,6 +674,18 @@ Kao glavni računovođa želim da sistem na osnovu trenutne brzine trošenja nov
 **Poslovna vrijednost:** Omogućava planiranje i proaktivno djelovanje
 
 **Prioritet:** High
+
+# Pretpostavke i otvorena pitanja:
+- 
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od Planiranje budžeta
+- Preduvjet za UI Dashboard
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada korisnik otvori analitiku, tada sistem mora izračunati i prikazati procjenu ukupnog troška na kraju mjeseca
+- Kada projekcija pokazuje da će budžet biti premašen, tada sistem mora prikazati procenat prekoračenja
 
 ### User story 5
 #### ID: 5
@@ -673,6 +696,18 @@ Kao administrativni zaposlenik želim da mi AI predloži kategoriju troška na o
 
 **Prioritet:** Medium
 
+# Pretpostavke i otvorena pitanja:
+- Šta ako AI pogriješi, odnosno da li korisnik ima zadnju riječ (samo sugestije ili automatsko razvrstavanje)?
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od Ručni unos troška
+- Povezan s Validacija unosa
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada korisnik unese naziv troška, tada sistem mora analizirati ključne riječi i predložiti najvjerovatniju kategoriju
+- Sistem mora omogućiti korisniku da ručno promijeni predloženu kategoriju ako smatra da AI sugestija nije dobra
+  
 ### User story 6
 #### ID: 36
 #### Naziv: Detekcija periodičnih troškova
@@ -681,6 +716,18 @@ Kao glavni računovođa želim da sistem identifikuje troškove koji se ponavlja
 **Poslovna vrijednost:** Osigurava da se nijedna obaveza ne zaboravi
 
 **Prioritet:** Medium
+
+# Pretpostavke i otvorena pitanja:
+- 
+
+## Veze sa drugim storyjima ili zavisnostima:
+- Zavisi od Pregled podataka
+- Povezan s Generisanje upozorenja
+- Zavisi od Upravljanje korisnicima / RBAC
+
+## Acceptance Criteria
+- Kada sistem detektuje da se određeni trošak ponavlja u nekim intervalima, tada ga mora označiti kao periodični trošak
+- Ako periodični trošak ne bude unesen do par dana nakon uobičajenog datuma, tada sistem mora poslati podsjetnika
 
 ## Razvoj osnovnog UI Dashboarda
 
