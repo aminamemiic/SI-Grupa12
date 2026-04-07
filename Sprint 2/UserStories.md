@@ -7,6 +7,8 @@
 #### Naziv: Pregled liste podataka
 Kao glavni računovođa/finansijski direktor želim vidjeti listu podataka kako bih imao uvid u dostupne informacije
 
+**Sprint:** 7
+
 **Poslovna vrijednost:** Omogućava brz pregled podataka  
 
 **Prioritet:** High  
@@ -27,6 +29,8 @@ Sistem ne smije prikazati grešku prilikom učitavanja liste
 #### ID: 2 
 #### Naziv: Filtriranje podataka
 Kao glavni računovođa/finansijski direktor želim filtrirati podatke po određenim kriterijima kako bih mogao pronaći lakše relevantne informacije
+
+**Sprint:** 8
 
 **Poslovna vrijednost:** Smanjuje vrijeme pretrage
 
@@ -49,6 +53,8 @@ Kada korisnik resetuje filtere, tada sistem mora prikazati sve podatke
 #### Naziv: Pretraga podataka
 Kao glavni računovođa/finansijski direktor želim pretraživati podatke u listi putem ključnih riječi
 
+**Sprint:** 8
+
 **Poslovna vrijednost:** Poboljšava korisničko iskustvo
 
 **Prioritet:** High  
@@ -70,6 +76,8 @@ Sistem ne smije napraviti grešku prilikom pretrage
 #### Naziv: Detaljan prikaz podataka
 Kao glavni računovođa/finansijski direktor želim otvoriti detalje pojedinačnog zapisa kako bih vidio sve detalje vezane za njega
 
+**Sprint:** 7
+
 **Poslovna vrijednost:** Omogućava dublju analizu podataka
 
 **Prioritet:** Medium
@@ -88,6 +96,8 @@ Sistem ne smije prikazati grešku prilkom učitavanja detalja
 #### ID: 5
 #### Naziv: Sortiranje podataka
 Kao glavni računovođa/finansijski direktor želim sortirati podatke po datumu, nazivu i vrijednosti kako bih ih lakše organizovao
+
+**Sprint:** 8
 
 **Poslovna vrijednost:** Pomaže u analizi i organizaciji podataka
 
@@ -111,6 +121,8 @@ Kada korisnik promijeni način sortiranja, tada sistem mora ažurirati prikaz  <
 #### Naziv: Odabir podataka za poređenje
 Kao glavni računovođa/finansijski direktor želim odabrati više zapisa kako bih ih mogao uporediti
 
+**Sprint:** 9
+
 **Poslovna vrijednost:** Osnova za funkcionalnost poređenja  
 
 **Prioritet:** High  
@@ -131,6 +143,8 @@ Sistem mora jasno označiti odabrane zapise <br>
 #### Naziv: Vizuelno poređenje podataka
 Kao glavni računovođa/finansijski direktor, želim vidjeti podatke prikazane jedan pored drugog kako bih lakše uočio razlike
 
+**Sprint:** 10
+
 **Poslovna vrijednost:** Poboljšava donošenje odluke
 
 **Prioritet:** High  
@@ -149,6 +163,8 @@ Prikaz mora biti pregledan i razumljiv <br>
 #### ID: 8
 #### Naziv: Poređenje po kategorijama
 Kao glavni računovođa/finansijski direktor, želim porediti podatke po kategorijama (npr. sektor, vremenski period) kako bih dobio detaljniji uvid u razlike.
+
+**Sprint:** 9
 
 **Poslovna vrijednost:** Omogućava precizniju analizu podataka
 
@@ -169,6 +185,8 @@ Sistem mora omogućiti izbor više kategorija   <br>
 #### Naziv: Poređenje planiranih i stvarnih troškova
 Kao korisnik, želim porediti planirane i stvarne troškove kako bih identifikovao odstupanja.
 
+**Sprint:** 9
+
 **Poslovna vrijednost:** Omogućava bolju kontrolu troškova
 
 **Prioritet:** High  
@@ -187,6 +205,8 @@ Sistem mora jasno označiti razlike tj. odstupanja <br>
 #### ID: 10 
 #### Naziv: Grafički prikaz poređenja podataka
 Kao glavni računovođa/finansijski direktor, želim vidjeti grafički prikaz podataka kako bih lakše razumio razliike
+
+**Sprint:** 10
 
 **Poslovna vrijednost:** Poboljšava vizualizaciju i razumijevanje podataka
 
@@ -211,6 +231,8 @@ Sistem ne smije prikazati grešku prilikom učitavanja grafikona <br>
 #### Naziv: Dodjela uloga korisnicima
 Kao administrator, želim dodijeliti uloge korisnicima kako bih kontrolisao pristup sistemu
 
+**Sprint:** 5
+
 **Poslovna vrijednost:** Osigurava sigurnost sistema
 
 **Prioritet:** High  
@@ -229,6 +251,8 @@ Sistem ne smije dozvoliti nevažeće uloge <br>
 #### ID: 12
 #### Naziv: Ograničenje pristupa funkcijama
 Kao administrator, želim ograničiti pristup određenim funkcionalnostima na osnovu uloge kako bih zaštitio osjetljive podatke
+
+**Sprint:** 5
 
 **Poslovna vrijednost:** Sprječava neovlašten pristup
 
@@ -249,6 +273,8 @@ Pravila moraju važiti za sve korisnike <br>
 #### Naziv: Pregled korisničkih uloga
 Kao administrator, želim vidjeti sve korisnike i njihove uloge kako bih imao pregled sistema
 
+**Sprint:** 6
+
 **Poslovna vrijednost:** Olakšava upravljanje korisnicima
 
 **Prioritet:** Medium
@@ -268,6 +294,8 @@ Podaci moraju biti tačni i ažurni <br>
 #### ID: 14
 #### Naziv: Izmjena uloga
 Kao administrator, želim mijenjati uloge korisnicima kako bih prilagodio njihove privilegije
+
+**Sprint:** 6
 
 **Poslovna vrijednost:** Fleksibilnost sistema
 
@@ -291,6 +319,8 @@ romjena mora odmah stupiti na snagu <br>
 #### Naziv: Ručni unos troška
 Kao administrativni zaposlenik želim unijeti trošak putem forme kako bih mogao evidentirati sve relevantne finansijske podatke
 
+**Sprint:** 5
+
 **Poslovna vrijednost:** Omogućava centralizovanu evidenciju troškova
 
 **Prioritet:** High
@@ -311,6 +341,8 @@ Sistem ne smije prikazati grešku prilikom spremanja validnih podataka
 #### Naziv: Unos atributa troška
 Kao administrativni zaposlenik želim da prilikom unosa troška mogu odabrati kategoriju, projekat i odjel kako bi trošak bio pravilno organizovan
 
+**Sprint:** 5
+
 **Poslovna vrijednost:** Omogućava lakšu analizu i filtriranje troškova
 
 **Prioritet:** High
@@ -329,6 +361,8 @@ Kada neki atribut nije odabran, tada sistem mora upozoriti korisnika
 #### ID: 17
 #### Naziv: Validacija unosa troška
 Kao administrativni zaposlenik želim da sistem provjerava validnost unesenih podataka kako bih izbjegao greške
+
+**Sprint:** 5
 
 **Poslovna vrijednost:** Osigurava tačnost podataka
 
@@ -351,6 +385,8 @@ Sistem ne smije dozvoliti spremanje nevalidnih podataka
 #### Naziv: Kreiranje troška
 Kao korisnik sistema želim kreirati novi trošak kako bih mogao dodavati nove zapise
 
+**Sprint:** 6
+
 **Poslovna vrijednost:** Omogućava praćenje troškova
 
 **Prioritet:** High
@@ -369,6 +405,8 @@ Sistem ne smije prikazati grešku prilikom kreiranja
 #### ID: 19
 #### Naziv: Ažuriranje troška
 Kao administrativni zaposlenik želim izmijeniti postojeći trošak kako bih mogao ispraviti podatke
+
+**Sprint:** 6
 
 **Poslovna vrijednost:** Održava tačnost podataka
 
@@ -389,6 +427,8 @@ Sistem ne smije prikazati grešku prilikom ažuriranja
 #### Naziv: Brisanje troška
 Kao administrativni zaposlenik želim obrisati trošak kako bih uklonio netačne zapise
 
+**Sprint:** 6
+
 **Poslovna vrijednost:** Održava kvalitet baze
 
 **Prioritet:** Medium
@@ -407,6 +447,8 @@ Sistem ne smije prikazati grešku prilikom brisanja
 #### ID: 21
 #### Naziv: Kontrola pristupa CRUD operacijama
 Kao administrator želim ograničiti CRUD operacije prema ulozi korisnika
+
+**Sprint:** 6
 
 **Poslovna vrijednost:** Osigurava sigurnost sistema
 
@@ -429,6 +471,8 @@ Sistem mora prikazati poruku o zabrani pristupa
 #### Naziv: Uvoz podataka iz fajla
 Kao administrativni zaposlenik želim uvesti troškove iz CSV ili Excel fajla kako bih ubrzao unos
 
+**Sprint:** 7
+
 **Poslovna vrijednost:** Smanjuje manuelni rad
 
 **Prioritet:** High
@@ -448,6 +492,8 @@ Sistem ne smije prikazati grešku za validan fajl
 #### Naziv: Obrada uvezenih podataka
 Kao administrativni zaposlenik želim da sistem automatski obradi podatke kako bi bili spremni za spremanje
 
+**Sprint:** 7
+
 **Poslovna vrijednost:** Automatizuje proces unosa
 
 **Prioritet:** High
@@ -466,6 +512,8 @@ Sistem ne smije izgubiti podatke tokom obrade
 #### ID: 24
 #### Naziv: Validacija uvezenih podataka
 Kao administrativni zaposlenik želim provjeriti ispravnost podataka prije spremanja
+
+**Sprint:** 7
 
 **Poslovna vrijednost:** Održava kvalitet baze
 
@@ -488,6 +536,8 @@ Sistem ne smije spremiti nevalidne podatke
 #### Naziv: Generisanje izvještaja
 Kao finansijski direktor želim generisati izvještaj o troškovima kako bih imao pregled finansijskog stanja
 
+**Sprint:** 8
+
 **Poslovna vrijednost:** Podržava donošenje odluka
 
 **Prioritet:** High
@@ -506,6 +556,8 @@ Sistem ne smije prikazati grešku prilikom generisanja
 #### ID: 26
 #### Naziv: Izvještaj po periodu
 Kao finansijski direktor želim filtrirati izvještaj po vremenskom periodu
+
+**Sprint:** 8
 
 **Poslovna vrijednost:** Omogućava analizu trendova
 
@@ -526,6 +578,8 @@ Sistem ne smije prikazati podatke van odabranog perioda
 #### Naziv: Export izvještaja
 Kao korisnik želim izvesti izvještaj u različitim formatima
 
+**Sprint:** 8
+
 **Poslovna vrijednost:** Olakšava dijeljenje podataka
 
 **Prioritet:** Medium
@@ -544,6 +598,8 @@ Sistem ne smije prikazati grešku tokom izvoza
 #### ID: 28
 #### Naziv: Sažeti izvještaj
 Kao menadžer želim vidjeti sažeti prikaz ključnih informacija
+
+**Sprint:** 8
 
 **Poslovna vrijednost:** Omogućava brzu procjenu stanja
 
@@ -565,6 +621,8 @@ Sistem ne smije prikazati grešku prilikom učitavanja
 #### Naziv: Slanje notifikacije
 Kao glavni računovođa želim primiti automatsku notifikaciju kada sistem detektuje anomaliju uočenu nakon AI analize
 
+**Sprint:** 9
+
 **Poslovna vrijednost:** Sprečava da greške prođu neopažene
 
 **Prioritet:** High
@@ -584,6 +642,8 @@ Kao glavni računovođa želim primiti automatsku notifikaciju kada sistem detek
 #### ID: 30
 #### Naziv: Sažetak o uočenoj anomaliji
 Kao glavni računovođa želim dobiti tekstualni opis uz svaku notifikaciju kako bih razumio ozbiljnost situacije
+
+**Sprint:** 9
 
 **Poslovna vrijednost:** Omogućava da se odmah stvori početna slika kakav problem je u pitanju
 
@@ -607,6 +667,8 @@ Kao glavni računovođa želim dobiti tekstualni opis uz svaku notifikaciju kako
 #### Naziv: Automatska validacija i detekcija anomalija pri unosu
 Kao glavni računovođa želim da sistem odmah provjeri svaki uneseni trošak u odnosu na prosjek kategorije i prethodne obrasce kako bi spriječio unos nerealnih cifara ili duplih računa
 
+**Sprint:** 9
+
 **Poslovna vrijednost:** Osigurava čistu bazu podataka
 
 **Prioritet:** High
@@ -628,6 +690,8 @@ Kao glavni računovođa želim da sistem odmah provjeri svaki uneseni trošak u 
 #### ID: 32
 #### Naziv: Dubinska analiza trendova na zahtjev
 Kao glavni računovođa želim jednim klikom pokrenuti AI analizu cjelokupne baze kako bih dobio izvještaj o kretanju troškova i predviđanje budžeta za naredni period
+
+**Sprint:** 9
 
 **Poslovna vrijednost:** Pruža dubinski uvid u poslovanje i pomaže u planiranju
 
@@ -651,6 +715,8 @@ Kao glavni računovođa želim jednim klikom pokrenuti AI analizu cjelokupne baz
 #### Naziv: Identifikacija sumnjivih obrazaca potrošnje
 Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unosa ili odstupanja u ponašanju korisnika kako bi se osigurala maksimalna kontrola.
 
+**Sprint:** 10
+
 **Poslovna vrijednost:** Povećava sigurnost i služi kao interna revizija koja radi konstantno
 
 **Prioritet:** Medium
@@ -670,6 +736,8 @@ Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unos
 #### ID: 34
 #### Naziv: Predviđanje potrošnje do kraja perioda
 Kao glavni računovođa želim da sistem na osnovu trenutne brzine trošenja novca projektuje krajnje stanje budžeta za tekući mjesec.
+
+**Sprint:** 9
 
 **Poslovna vrijednost:** Omogućava planiranje i proaktivno djelovanje
 
@@ -692,6 +760,8 @@ Kao glavni računovođa želim da sistem na osnovu trenutne brzine trošenja nov
 #### Naziv: Pametno grupisanje troškova
 Kao administrativni zaposlenik želim da mi AI predloži kategoriju troška na osnovu naziva stavke prilikom ručnog unosa.
 
+**Sprint:** 9
+
 **Poslovna vrijednost:** Ubrzava rad administracije.
 
 **Prioritet:** Medium
@@ -713,6 +783,8 @@ Kao administrativni zaposlenik želim da mi AI predloži kategoriju troška na o
 #### Naziv: Detekcija periodičnih troškova
 Kao glavni računovođa želim da sistem identifikuje troškove koji se ponavljaju i upozori ako neki od njih izostane.
 
+**Sprint:** 10
+
 **Poslovna vrijednost:** Osigurava da se nijedna obaveza ne zaboravi
 
 **Prioritet:** Medium
@@ -732,9 +804,11 @@ Kao glavni računovođa želim da sistem identifikuje troškove koji se ponavlja
 ## Razvoj osnovnog UI Dashboarda
 
 ### User story 1
-#### ID: 36
+#### ID: 37
 #### Naziv: Centralni interaktivni Dashboard
 Kao glavni računovođa želim imati vizuelni prikaz ključnih metrika na jednom mjestu kako bih odmah razumio stanje budžeta.
+
+**Sprint:** 10
 
 **Poslovna vrijednost:** Štedi vrijeme jer se svi bitni podaci nalaze na jednom mjestu
 
@@ -753,9 +827,11 @@ Kao glavni računovođa želim imati vizuelni prikaz ključnih metrika na jednom
 - Sistem mora koristiti "semafor boje" kako bi dočarao stanje
 
 ### User story 2
-#### ID: 37
+#### ID: 38
 #### Naziv: Bliži prikaz stanja
 Kao glavni računovođa želim da klikom na npr. određeni grafikon dobijem listu svih pojedinačnih troškova koji čine sumu.
+
+**Sprint:** 10
 
 **Poslovna vrijednost:** Omogućava da "uvećamo" sliku, odnosno da umjesto na kompletan prikaz fokus prebacimo na specifičan dio
 
@@ -775,9 +851,11 @@ Kao glavni računovođa želim da klikom na npr. određeni grafikon dobijem list
 ## Planiranje budžeta
 
 ### User story 1
-#### ID: 38
+#### ID: 39
 #### Naziv: Kreiranje novog budžeta  
 Kao glavni računovođa želim kreirati novi budžet po kategorijama, odjelima i vremenskom periodu kako bih mogao planirati troškove firme  
+
+**Sprint:** 8
 
 **Poslovna vrijednost:** Kreiranje budžeta je temeljna funkcionalnost cijelog sistema, bez unesenog plana nije moguće pratiti odstupanja, generisati upozorenja niti provoditi AI analizu  
 **Prioritet:** High  
@@ -798,9 +876,11 @@ Otvoreno pitanje: Da li postoji gornji limit ukupnog iznosa budžeta?
 - Kada korisnik pokuša kreirati budžet sa praznim poljima, tada sistem mora vizualno označiti prazna obavezna polja.
 
 ### User story 2
-#### ID: 39
+#### ID: 40
 #### Naziv: Pregled postojećeg budžeta  
 Kao glavni računovođa ili finansijski direktor želim pregledati listu svih kreiranih budžeta i njihove detalje kako bih imao uvid u planirane iznose po kategorijama, odjelima i vremenskim periodima  
+
+**Sprint:** 8
 
 **Poslovna vrijednost:** Pregled budžeta omogućava svim odgovornim osobama da u svakom trenutku imaju jasnu sliku finansijskog plana firme  
 **Prioritet:** High  
@@ -820,9 +900,11 @@ Kao glavni računovođa ili finansijski direktor želim pregledati listu svih kr
 - Sistem ne smije prikazati opciju za uređivanje za neovlaštene korisnike.
 
 ### User story 3
-#### ID: 40
+#### ID: 41
 #### Naziv: Uređivanje postojećeg budžeta  
 Kao glavni računovođa želim urediti postojeći budžet kako bih mogao ispraviti greške ili prilagoditi finansijski plan novim zahtjevima  
+
+**Sprint:** 8
 
 **Poslovna vrijednost:** Projekti se proširuju i bez mogućnosti uređivanja računovođa bi morao ponovo kreirati budžete što može dovesti do čestih grešaka  
 **Prioritet:** High  
@@ -847,9 +929,11 @@ Otvoreno pitanje: Da li se budžet može obrisati?
 ## Sign In
 
 ### User story 1
-#### ID: 41 
+#### ID: 42
 #### Naziv: Prijava  
 Kao ovlašteni korisnik sistema želim unijeti svoje korisničko ime i lozinku kako bih koristio funkcionalnosti prilagođene mojoj korisničkoj ulozi  
+
+**Sprint:** 5
 
 **Poslovna vrijednost:** Prijava omogućava pristup svim funkcionalnostima  
 **Prioritet:** Low  
@@ -874,9 +958,11 @@ Kao ovlašteni korisnik sistema želim unijeti svoje korisničko ime i lozinku k
 ## Sign Out
 
 ### User story 1
-#### ID: 42  
+#### ID: 43
 #### Naziv: Odjava  
 Kao prijavljeni korisnik želim odjaviti se iz sistema kako bih zaštitio svoje podatke i spriječio neovlašteni pristup kada završim s radom  
+
+**Sprint:** 5
 
 **Poslovna vrijednost:** Odjava štiti osjetljive finansijske podatke firme  
 **Prioritet:** Low  
@@ -896,9 +982,11 @@ Otvoreno pitanje: Koliko dugo traje aktivna sesija prije automatske odjave?
 ## Evidencija komentara
 
 ### User story 1
-#### ID: 43
+#### ID: 44
 #### Naziv: Dodavanje komentara  
 Kao glavni računovođa želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku  
+
+**Sprint:** 10
 
 **Poslovna vrijednost:** Omogućava bolju interpretaciju troškova i komunikaciju između korisnika  
 **Prioritet:** Low  
@@ -917,9 +1005,11 @@ Otvoreno pitanje: Da li je potrebna mogućnost uređivanja ili brisanja komentar
 - Sistem ne smije dozvoliti unos praznog komentara.
 
 ### User story 2
-#### ID: 44 
+#### ID: 45 
 #### Naziv: Pregled komentara  
 Kao glavni računovođa ili finansijski direktor želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja  
+
+**Sprint:** 10
 
 **Poslovna vrijednost:** Povećava transparentnost i razumijevanje podataka  
 **Prioritet:** Low  
