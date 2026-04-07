@@ -688,7 +688,7 @@ Kao glavni računovođa želim da sistem na osnovu trenutne brzine trošenja nov
 - Kada projekcija pokazuje da će budžet biti premašen, tada sistem mora prikazati procenat prekoračenja
 
 ### User story 5
-#### ID: 5
+#### ID: 35
 #### Naziv: Pametno grupisanje troškova
 Kao administrativni zaposlenik želim da mi AI predloži kategoriju troška na osnovu naziva stavke prilikom ručnog unosa.
 
