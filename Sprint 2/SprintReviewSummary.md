@@ -21,7 +21,8 @@ Sve planirane stavke za Sprint 2 su uspješno završene.
 
 
 # 4. Demonstrirane funkcionalnosti ili artefakti
-
+- Pregled Product Backlog-a – Demonstracija strukture i hijerarhije zahtjeva.
+- Prezentacija ključnih User Story-ja – Objašnjenje logike iza odabranih scenarija i njihovih kriterija prihvatanja
 
 # 5. Glavni problemi i blokeri
 
@@ -34,7 +35,7 @@ Sve planirane stavke za Sprint 2 su uspješno završene.
 
 
 # 7. Povratna informacija Product Ownera
-
+Product Owner je zadovoljan sa predstavljenim Sprintom, te ga je ocijenio maksimalnim brojem bodova.
 
 # 8. Zaključak za naredni sprint
 Na osnovu uspješno završenog drugog sprinta, za naredni sprint (Sprint 3) planira se sljedeće:
