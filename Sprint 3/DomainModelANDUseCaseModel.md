@@ -18,11 +18,11 @@
 | Entitet | Atributi |
 | :--- | :--- |
 | **Korisnik** | ID, Ime, Prezime, Email, Lozinka, Uloga (RBAC) |
-| **Trošak** | ID, Naziv, Iznos, Datum, Opis, ID_Kategorije, ID_Odjela, Status (Validan/Sumnjiv |
+| **Trošak** | ID, Naziv, Iznos, Datum, Opis, ID_Kategorije, ID_Odjela, Unio_Korisnik_ID, Status (Validan/Sumnjiv) |
 | **Budžet** | ID, Naziv, Planirani_Iznos, Datum_Pocetka, Datum_Zavrsetka, ID_Odjela, Status |
 | **Kategorija** | ID, Naziv, Opis |
-| **Odjel** | ID, Naziv, Sifra_Odjela, Rukovodilac_ID |
-| **Anomalija** | ID, Opis, Nivo_Ozbiljnosti (Crvena/Narandžasta/Žuta), Tip, Status_Potvrde |
+| **Odjel** | ID, Naziv, Opis |
+| **Anomalija** | ID, Opis, Nivo_Ozbiljnosti (Crvena/Narandžasta/Žuta), Tip, Status_Potvrde, ID_Troska |
 | **Komentar** | ID, Tekst, Vrijeme, Autor_ID, ID_Troška |
 
 ---
