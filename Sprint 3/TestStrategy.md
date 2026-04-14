@@ -664,13 +664,13 @@ Prihvatno testiranje se izvodi sa stvarnim krajnjim korisnicima ili njihovim pre
 
 
 **US-29:**
-- AI anomalija pokreće notifikaciju sa naslovom i opisom unutar aplikacije.
+- Kada AI identifikuje anomaliju, tada sistem mora generisati notifikaciju unutar aplikacije
 
 **US-37:**
-- Dashboard prikazuje potrošnju u odnosu na budžet, troškove po odjelima i AI upozorenja.
+- Kada korisnik otvori Dashboard, tada sistem mora prikazati: odnos ukupna potrošnja-budžet, troškove po odjelima i listu posljednjih AI upozorenja
 
 **US-27:**
-- Izvoz generiše fajl koji se može preuzeti bez greške.
+- Kada korisnik izvrši export, tada sistem mora generisati i omogućiti preuzimanje fajla.
 
 ### Stavka testiranja: Performansno testiranje
 *(50 istovremenih korisnika; AI analiza kraća od 10 sekundi)*
