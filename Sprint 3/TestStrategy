@@ -1,1 +1,118 @@
+## Cilj Testiranja
+
+Cilj testiranja sistema za AI asistirano analiziranje troškova firme i otkrivanje odstupanja je osigurati da sve funkcionalnosti sistema rade ispravno, pouzdano i sigurno u skladu sa definisanim zahtjevima i acceptance kriterijima.
+
+**Konkretni ciljevi su:**
+
+- Verificirati da svi moduli sistema (unos troškova, uvoz podataka, AI analiza, generisanje upozorenja, upravljanje korisnicima, planiranje budžeta, izvještavanje i dashboard) rade ispravno i u skladu sa definisanim acceptance kriterijima.
+- Potvrditi da RBAC mehanizam ispravno ograničava pristup osjetljivim podacima i funkcionalnostima prema ulozi korisnika.
+- Provjeriti da AI komponenta tačno detektuje anomalije, prepoznaje obrasce potrošnje i generiše smislena upozorenja i sažetke.
+- Osigurati da uvoz podataka iz CSV/Excel fajlova radi bez gubitka ili kvarenja podataka.
+- Validirati usklađenost sistema sa GDPR regulativama, uključujući sigurno čuvanje, pristup i brisanje ličnih podataka.
+- Provjeriti performanse sistema, posebno da AI analiza ne traje duže od 10 sekundi za standardne količine podataka, te da sistem podržava min. 50 istovremenih korisnika.
+- Osigurati da korisnički interfejs pruža jasno, intuitivno i responzivno iskustvo na svim podržanim uređajima.
+
+---
+
+## Nivoi Testiranja
+
+### 1. Unit Testiranje
+
+Obuhvata testiranje:
+
+- **Validacione logike za unos troškova** – zabrana nule ili negativnih vrijednosti, obaveznost polja, ispravnost datuma.
+- **Logike za planiranje budžeta** – provjere kreiranja i ažuriranja budžeta, uključujući zabrane duplih budžeta za isti period i odjel, te zabranu datuma završetka koji prethodi datumu početka.
+- **AI analize** – logika detekcije anomalija i duplikata, validacija kategorije, detekcija periodičnih troškova, označavanje sumnjivih obrazaca.
+- **Logike izračunavanja odstupanja** – funkcije koje računaju razliku između planiranog i stvarnog troška po kategoriji, odjelu ili vremenskom periodu, uključujući rubne slučajeve (nula, prazna lista, negativno odstupanje).
+- **Obrade i validacije uvezenih podataka** – parsiranje CSV/Excel podataka, mapiranje kolona, označavanje neispravnih zapisa, detekcija duplikata.
+- **Kontrole pristupa po rolama** – RBAC provjere za svaku korisničku ulogu.
+- **Generisanja upozorenja** – testiranje logike koja odlučuje kada i sa kojim nivoom ozbiljnosti (crvena, narandžasta, žuta) treba generisati upozorenje.
+- **Logike za komentare** – provjera čuvanja, sortiranja (od najstarijeg) i zabrane praznog komentara.
+- **Logike filtriranja podataka** po kriterijima (kategorija, odjel, projekat, vremenski period).
+- **Logike pretrage** po ključnoj riječi.
+- **Logike sortiranja** po datumu, nazivu i vrijednosti.
+
+---
+
+### 2. Integraciono Testiranje
+
+Obuhvata testiranje:
+
+- **Frontend – Backend API** – provjeru da ključni API pozivi sa frontenda vraćaju ispravne HTTP statusne kodove, strukturu odgovora i podatke u skladu sa API ugovorom.
+- **Frontend/Backend – Baza podataka** – verifikaciju da CRUD operacije nad troškovima i budžetima ispravno mijenjaju stanje baze.
+- **Backend – AI modul** – testiranje da pozivi ka AI modulu vraćaju strukturirane rezultate u predviđenom formatu i roku.
+- **AI modul – Notifikacioni servis – Korisnik** – verifikacija da generisano upozorenje iz AI analize dostiže odgovarajuće korisnike putem internog notifikacionog mehanizma.
+- **Frontend – OCR – Backend – Baza** – integracija OCR biblioteke s backendom, provjera ispravnog parsiranja i uvoza podataka.
+- **Backend – Baza – Izvještajni modul** – provjera da generisani izvještaj (mjesečni, po odjelu, po projektu) koristi tačne i ažurne podatke direktno iz baze.
+- **Izvještajni modul – Export servis** – provjera da exportovani fajl sadrži identične podatke kao prikaz u aplikaciji u trenutku pokretanja exporta, uključujući primijenjene filtere i vremenski period.
+
+---
+
+### 3. Regresiono Testiranje
+
+Obuhvata testiranje:
+
+- Prijava i odjava korisnika za sve uloge.
+- Ručni unos troška s atributima i validacijom polja.
+- Uvoz CSV fajla s validnim podacima.
+- Kreiranje, pregled i uređivanje budžeta, uključujući validaciju duplikata, kao i poređenje.
+- Pokretanje AI analize i dobijanje upozorenja.
+- Provjera RBAC – da svaka rola vidi samo sebi namijenjene funkcionalnosti i rute.
+- Generisanje izvještaja i provjera da sadržaj odgovara podacima u aplikaciji.
+- Export izvještaja u PDF/Excel i provjera da fajl sadrži iste podatke kao prikaz – pokreće se nakon svake veće izmjene na modulima za troškove, budžet ili agregaciju podataka.
+- Prikaz dashboarda nakon AI analize – provjera da su svi elementi (potrošnja vs. budžet, troškovi po odjelima, lista upozorenja, boje) ispravno prikazani nakon svake izmjene na modulima za troškove, budžet ili AI servis.
+- Odjava i zabrana pristupa nakon logout-a – provjera da korisnik ne može pristupiti zaštićenom sadržaju ni putem back dugmeta ni direktnim URL-om nakon što se odjavio.
+
+---
+
+### 4. UI Testiranje
+
+Obuhvata:
+
+- Provjeru da svi elementi forme (polja, dugmad, padajući meniji) rade ispravno i prikazuju ispravne validacione poruke.
+- Verifikaciju da filteri, pretraga i sortiranje ažuriraju prikaz liste u realnom vremenu.
+- Testiranje da klik na grafikon na dashboardu otvara detaljan tabelarni prikaz troškova.
+- Provjeru da dashboard prikazuje: odnos ukupna potrošnja vs. budžet, troškove po odjelima i listu AI upozorenja.
+- Verifikaciju ispravnosti boja (zelena/narandžasta/crvena) u skladu s postotkom iskorištenosti budžeta.
+- Testiranje responzivnosti na desktop, tablet i mobilnom uređaju.
+- Provjeru da nijedan element ne prelazi granice ekrana i da su interaktivni elementi dovoljno veliki.
+- Verifikaciju da unos novog troška zahtijeva manje od 3 klika/koraka.
+- Provjeru jasnih vizuelnih indikatora za obavezna polja, greške i uspješne akcije.
+- Provjeru da notifikacije od AI analize sadrže naslov, opis i nivo ozbiljnosti.
+
+---
+
+### 5. Sistemsko Testiranje
+
+Obuhvata:
+
+- **End-to-end scenariji** – provjera cjelokupnog toka rada sistema od unosa troškova i budžetiranja do AI analize, generisanja upozorenja, pregleda dashboarda i izvještaja.
+- **Performansno testiranje** – provjera da sistem podržava rad sa 50 istovremenih korisnika i da AI analiza za standardne količine podataka traje ispod 10 sekundi.
+- **Testiranje sigurnosti** – provjera da neautorizovani korisnici ne mogu pristupiti zaštićenim resursima.
+- **GDPR usklađenost** – provjera funkcionalnosti pristupa, izmjene i brisanja ličnih podataka u skladu sa GDPR zahtjevima.
+- **Backup i oporavak** – provjera da sistem pravilno kreira sigurnosne kopije i omogućava uspješan oporavak podataka.
+- **Dostupnost sistema** – provjera da je sistem dostupan i stabilan tokom predviđenog radnog vremena.
+
+---
+
+## Prihvatno Testiranje (UAT)
+
+Prihvatno testiranje se izvodi sa stvarnim krajnjim korisnicima ili njihovim predstavnicima, s ciljem potvrde da sistem zadovoljava poslovne potrebe i da je spreman za produkciju.
+
+### Učesnici
+
+| Uloga | Fokus |
+|---|---|
+| Finansijski direktor | Verifikacija izvještaja, dashboarda i upozorenja |
+| Glavni računovođa | Unos troškova, planiranje budžeta, pregled i poređenje podataka |
+| Administrativni zaposlenici | Ručni unos troška |
+| Službenik za usklađenost | GDPR funkcionalnosti |
+| Administrator | Upravljanje korisnicima i RBAC |
+
+### Fokus UAT-a
+
+- Provjera da prikaz dashboarda odmah komunicira stanje budžeta (boje, grafici, upozorenja).
+- Verifikacija da AI sažeci upozorenja su razumljivi korisnicima bez tehničkog znanja.
+- Provjera da uvoz iz CSV/Excel radi sa stvarnim fajlovima koje korisnici koriste.
+- Validacija da su komentari uz troškove vidljivi i korisni u svakodnevnom radu.
 
