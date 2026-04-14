@@ -754,7 +754,7 @@ Za svaki test case evidentiramo sljedeće informacije:
 - napomena
 
 ## Glavni rizici kvaliteta
-ID | Rizik | Vjerovatnoća | Utjecaj | Strategija ublažavanja
+| ID | Rizik | Vjerovatnoća | Utjecaj | Strategija ublažavanja |
 |---|---|---|---|---|
 | R-01 | Netačni rezultati AI analize (lažno pozitivna ili lažno negativna upozorenja) | Srednja | Visok | Testiranje AI modela na reprezentativnim skupovima podataka; usporedba s ručnim izračunima; uključivanje domenskog eksperta (računovođe) u validaciju.
 | R-02 | Gubitak ili kvarenje podataka pri uvozu iz CSV/Excel (pogrešno mapiranje, encoding problemi) | Visoka | Visok | Opsežni unit i integracioni testovi za parser; testiranje s različitim formatima datoteka, encoding-ima i graničnim slučajevima (prazne ćelije, specijalni znakovi).
