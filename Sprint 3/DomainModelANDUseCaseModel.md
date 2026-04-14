@@ -1,3 +1,49 @@
+# Domain Model
+
+---
+
+## 1. Glavni entiteti
+* **Korisnik:** Osoba koja pristupa sistemu i koristi isti. Svaki korisnik ima definisanu Ulogu (Administrator, Glavni računovođa, Finansijski direktor, Administrativni zaposlenik) koja preko RBAC-a određuje i kontrolišve nivo pristupa
+* **Trošak:** Entitet koji predstavlja finansijski izdatak. Sadrži podatke o iznosu, datumu i opis
+* **Budžet:** Finansijski plan koji postavlja limite za određeni period, odjel ili kategoriju. Služi kao osnova za planiranje i praćenje troškova
+* **Kategorija:** Logički povezana grupa troškova (npr. oprema, režije)
+* **Odjel:** Organizaciona jedinica kojoj se dodjeljuje određeni budžet i kojoj pripadaju troškovi
+* **Anomalija:** Entitet koji generiše AI kada detektuje odstupanje, grešku, sumnjiv obrazac potrošnje
+* **Komentar:** Tekstualni zapis vezan za konkretan trošak, omogućava komunikaciju i pojašnjenja između korisnika
+
+---
+
+## 2. Ključni atributi
+
+| Entitet | Atributi |
+| :--- | :--- |
+| **Korisnik** | ID, Ime, Prezime, Email, Lozinka, Uloga (RBAC) |
+| **Trošak** | ID, Naziv, Iznos, Datum, Opis, ID_Kategorije, ID_Odjela, Status (Validan/Sumnjiv |
+| **Budžet** | ID, Naziv, Planirani_Iznos, Datum_Pocetka, Datum_Zavrsetka, ID_Odjela, Status |
+| **Anomalija** | ID, Opis, Nivo_Ozbiljnosti (Crvena/Narandžasta/Žuta), Tip, Status_Potvrde |
+| **Komentar** | ID, Tekst, Vrijeme, Autor_ID, ID_Troška |
+
+---
+
+## 3. Veze između entiteta (Kardinalnost)
+
+* **Odjel – Budžet (1:N):** Jedan odjel može imati više budžeta kroz različite vremenske periode (kvartalno/godišnje), ali jedan budžet pripada tačno jednom odjelu
+* **Kategorija – Trošak (1:N):** Svaki trošak mora pripadati jednoj specifičnoj kategoriji. Jedna kategorija može imati neograničen broj troškova.
+* **Trošak – Anomalija (1:0..1):** Trošak ne mora nužno imati anomaliju. Ako AI detektuje problem, trošak se veže za tačno jednu anomaliju
+* **Korisnik – Trošak (1:N):** Sistem prati koji je korisnik unio koji trošak
+* **Trošak – Komentar (1:N):** Uz jedan trošak može biti vezano više komentara različitih korisnika radi pojašnjenja
+* **Budžet – Kategorija (M:N):** Jedan budžet može pokrivati više kategorija, a ista kategorija se može pratiti kroz različite budžetske planove
+
+---
+
+## 4. Poslovna pravila (Business Rules)
+
+1.  **Pravilo integriteta budžeta:** Sistem ne dozvoljava kreiranje dva budžeta za isti odjel unutar istog vremenskog perioda kako bi se spriječilo preklapanje planova
+2.  **AI Validacija:** Prilikom unosa novog troška, AI automatski poredi iznos s historijskim prosjekom te kategorije. Ako odstupanje prelazi 50%, automatski se kreira entitet **Anomalija** s visokim nivoom ozbiljnosti.
+3.  **RBAC ograničenje:** Samo korisnici sa ulogom Glavni računovođa mogu vršiti izmjene i brisanje troškova, dok Finansijski direktor odobrava budžete i vrši pregled AI analize
+4.  **Pravilo validacije troška:** Trošak se ne može sačuvati u bazi ako nisu definisani iznos, datum, kategorija i pripadajući odjel
+5.  **Pravilo komentara:** Komentari se ne mogu brisati nakon unosa (radi transparentnosti), a prikazuju se hronološki (od najstarijeg)
+
 # Use Case Modeli
 
 ---
