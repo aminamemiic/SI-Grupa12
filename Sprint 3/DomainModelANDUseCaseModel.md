@@ -25,7 +25,7 @@
 
 ---
 
-## 3. Veze između entiteta (Kardinalnost)
+## 3. Veze između entiteta
 
 * **Odjel – Budžet (1:N):** Jedan odjel može imati više budžeta kroz različite vremenske periode (kvartalno/godišnje), ali jedan budžet pripada tačno jednom odjelu
 * **Kategorija – Trošak (1:N):** Svaki trošak mora pripadati jednoj specifičnoj kategoriji. Jedna kategorija može imati neograničen broj troškova.
@@ -36,7 +36,7 @@
 
 ---
 
-## 4. Poslovna pravila (Business Rules)
+## 4. Poslovna pravila važna za model
 
 1.  **Pravilo integriteta budžeta:** Sistem ne dozvoljava kreiranje dva budžeta za isti odjel unutar istog vremenskog perioda kako bi se spriječilo preklapanje planova
 2.  **AI Validacija:** Prilikom unosa novog troška, AI automatski poredi iznos s historijskim prosjekom te kategorije. Ako odstupanje prelazi 50%, automatski se kreira entitet **Anomalija** s visokim nivoom ozbiljnosti.
