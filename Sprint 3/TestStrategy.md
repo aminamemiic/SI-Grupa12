@@ -754,3 +754,15 @@ Za svaki test case evidentiramo sljedeće informacije:
 - napomena
 
 ## Glavni rizici kvaliteta
+ID | Rizik | Vjerovatnoća | Utjecaj | Strategija ublažavanja
+---|---|---|---|---
+R-01 | Netačni rezultati AI analize (lažno pozitivna ili lažno negativna upozorenja) | Srednja | Visok | Testiranje AI modela na reprezentativnim skupovima podataka; usporedba s ručnim izračunima; uključivanje domenskog eksperta (računovođe) u validaciju.
+R-02 | Gubitak ili kvarenje podataka pri uvozu iz CSV/Excel (pogrešno mapiranje, encoding problemi) | Visoka | Visok | Opsežni unit i integracioni testovi za parser; testiranje s različitim formatima datoteka, encoding-ima i graničnim slučajevima (prazne ćelije, specijalni znakovi).
+R-03 | Kršenje RBAC-a – neovlašteni korisnik pristupa podacima | Niska | Kritičan | Penetracijsko testiranje svih API ruta; unit testovi permission helpera; automatizovani sigurnosni testovi u CI/CD.
+R-04 | Performansno usko grlo AI analize (>10s za standardne podatke) | Srednja | Srednji | Load testiranje u ranoj fazi; profilisanje AI servisa; optimizacija upita ka bazi podataka.
+R-05 | Neusklađenost sa GDPR – podaci se ne brišu potpuno ili se neovlašteno dijele | Niska | Kritičan | Sistemsko testiranje GDPR toka; pregled od strane službenika za usklađenost; provjera baze podataka nakon brisanja.
+R-06 | OCR greške u prepoznavanju teksta sa slika/skeniranih računa | Visoka | Srednji | Testiranje s velikim skupom stvarnih dokumenata; prikaz confidence score-a korisniku; omogućiti manuelnu korekciju OCR rezultata.
+R-07 | Regresija u CRUD operacijama pri dodavanju novih funkcionalnosti | Srednja | Visok | Automatizovana regresiona test suite pokriva sve CRUD operacije; obavezno izvršavanje pri svakom buildu.
+R-08 | UI nekonzistentnost između browsera i uređaja (responzivnost) | Srednja | Srednji | Cross-browser testiranje (Chrome, Firefox, Safari, Edge); testiranje na fizičkim uređajima za tablet i mobitel.
+R-09 | Kvar sistema pri istovremenom pristupu 50+ korisnika | Niska | Visok | Load testiranje s alatima kao što je k6 ili JMeter; praćenje metrika tokom testa; optimizacija baze i caching.
+R-10 | Nedostupnost sistema van radnog vremena uzrokovana greškama u deployu | Niska | Srednji | Automatizovani health check monitoring; rollback procedura dokumentovana i testirana; praćenje dostupnosti 30 dana (NFR-7).
