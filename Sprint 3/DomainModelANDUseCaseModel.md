@@ -45,7 +45,7 @@
 3.  **RBAC ograničenje:** Samo korisnici sa ulogom Glavni računovođa mogu vršiti izmjene i brisanje troškova, dok Finansijski direktor odobrava budžete i vrši pregled AI analize
 4.  **Pravilo validacije troška:** Trošak se ne može sačuvati u bazi ako nisu definisani iznos, datum, kategorija i pripadajući odjel
 5.  **Pravilo komentara:** Komentari se ne mogu brisati nakon unosa (radi transparentnosti), a prikazuju se hronološki (od najstarijeg)
-6.  
+
 
 ![IMG001](https://github.com/user-attachments/assets/e95746d1-77f6-451a-aee4-6f4a4718d71c)
 
