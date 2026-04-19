@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Tim12App/Tim12App.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+</Solution>
