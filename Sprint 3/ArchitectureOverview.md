@@ -2,7 +2,8 @@
 
 ## 1. Kratak opis arhitektonskog pristupa
 
-Sistem je projektovan kao višeslojna web aplikacija, zasnovana na klijent-server modelu, sa razdvojenim frontend, backend i AI slojevima. Predložena arhitektura prati princip razdvajanja odgovornosti (Separation of Concerns) kako bi se osigurala nesmetana i nezavisna izmjena, testiranje i skaliranje svakog dijela sistema.
+Sistem je projektovan kao višeslojna web aplikacija, sa razdvojenim frontend, backend, AI i persistence slojevima. Predložena arhitektura prati princip razdvajanja odgovornosti (Separation of Concerns) kako bi se osigurala nesmetana i nezavisna izmjena, testiranje i skaliranje svakog dijela sistema. Persistence sloj (sloj podataka) predstavlja centralno skladište svih poslovnih podataka sistema — jedino backend ima direktan pristup ovom sloju, čime se osigurava integritet i sigurnost podataka.
+
 
 **Ključni arhitektonski stil:**  
 Layered monolitni backend, s RESTful API komunikacijom i izdvojenim AI servisom; ostavlja se mogućnost kasnijeg prelaska na mikroservise za AI komponentu.
