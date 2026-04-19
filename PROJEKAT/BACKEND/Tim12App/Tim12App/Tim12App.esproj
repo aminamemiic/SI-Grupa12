@@ -1,11 +1,1 @@
-<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.4902498">
-  <ItemGroup>
-    <Folder Include="BLL\Services\" />
-    <Folder Include="DAL\Entitites\" />
-    <Folder Include="DAL\ApDbContext\" />
-    <Folder Include="EXTERNAL\AI Microservice\" />
-    <Folder Include="EXTERNAL\OCR Service\" />
-    <Folder Include="PRESENTATION API\Endpoints\" />
-    <Folder Include="PRESENTATION API\Middleware\" />
-  </ItemGroup>
-</Project>
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.4902498" />
