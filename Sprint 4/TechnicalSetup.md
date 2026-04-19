@@ -8,8 +8,7 @@
 ### Odabir i obrazloženje
 
 Odabrali smo **GitHub Flow** kao branching strategiju. Razlog je jednostavnost i prilagođenost timovima koji rade kontinuirani razvoj bez kompleksnih release ciklusa.
-
-Gitflow uvodi `develop`, `release` i `hotfix` grane što stvara nepotreban overhead u ranoj fazi projekta. GitHub Flow je linearan, pregledan i svim članovima tima odmah razumljiv.
+GitHub Flow je linearan, pregledan i svim članovima tima odmah razumljiv.
 
 ### Pravila
 
@@ -37,7 +36,6 @@ chore:    build, konfiguracija, dependencies
 3. Otvoriti **Pull Request** prema `main`
 4. Minimalno jedan član tima radi code review
 5. Nakon odobrenja — merge u `main` i brisanje feature grane
-6. Automatski deploy putem GitHub Actions
 
 ---
 
@@ -45,7 +43,7 @@ chore:    build, konfiguracija, dependencies
 
 ### 2.1 Frontend — Angular + TypeScript
 
-**Odabir:** Angular 17+ s TypeScriptom
+**Odabir:** Angular 21 + TypeScript
 
 **Obrazloženje:**
 - TypeScript je ugrađen by default — nema dodatne konfiguracije
@@ -75,7 +73,7 @@ chore:    build, konfiguracija, dependencies
 - Isti jezik (TypeScript) kao frontend — tim ne mijenja kontekst između dijelova projekta
 - Odlična async podrška za duže operacije: OCR obrada, pozivi prema AI mikroservisu, uvoz velikih fajlova
 - Express je minimalistički i fleksibilan — dovoljan za naše potrebe bez nepotrebnog overheada
-- Velika npm ekosistema pokriva sve potrebe: JWT, validacija, CSV/Excel parsing, PostgreSQL klijent
+- Veliki npm ekosistem pokriva sve potrebe: JWT, validacija, CSV/Excel parsing, PostgreSQL klijent
 
 **Ključne npm biblioteke:**
 
@@ -100,7 +98,7 @@ chore:    build, konfiguracija, dependencies
 
 ### 2.3 AI mikroservis — Python
 
-**Odabir:** Python 3.11+ kao zaseban mikroservis
+**Odabir:** Python 3.11 kao zaseban mikroservis
 
 **Obrazloženje:**
 - Python je industrijski standard za ML/AI razvoj — ekosistema biblioteka nema premca
@@ -125,7 +123,7 @@ chore:    build, konfiguracija, dependencies
 | `ollama` | Lokalni LLM (Llama 3, Mistral) — GDPR siguran | `transformers` (HuggingFace) |
 | `langchain` | Orkestacija LLM poziva i promptova | `llama-index` |
 
-> **Preporuka:** Početi s `ollama` + lokalnim modelom zbog GDPR zahtjeva (podaci o platama i troškovima ne napuštaju server). OpenAI API kao alternativa ako tačnost lokalnog modela ne bude zadovoljavajuća.
+> **Napomena:** Počinjemo s `ollama` + lokalnim modelom zbog GDPR zahtjeva (podaci o platama i troškovima ne napuštaju server). OpenAI API kao alternativa ako tačnost lokalnog modela ne bude zadovoljavajuća.
 
 #### Python biblioteke — API i infrastruktura
 
@@ -204,7 +202,7 @@ Svaki servis radi u vlastitom kontejneru:
 
 **Web server:** Nginx — reverse proxy ispred Node.js i Angular aplikacije, SSL/TLS terminacija
 
-**Hosting:** VPS server (preporuka: Hetzner Cloud — EU datacentri, GDPR usklađenost, povoljno)
+**Hosting:** VPS server 
 
 **CI/CD:** GitHub Actions — automatski testovi i deploy pri svakom merge u `main`
 
@@ -227,5 +225,3 @@ Svaki servis radi u vlastitom kontejneru:
 | CI/CD | GitHub Actions |
 
 ---
-
-*Tim 12 — April 2025*
