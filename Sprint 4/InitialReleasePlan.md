@@ -110,3 +110,111 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 - Korisnici možda nisu upoznati s formatom fajla – potrebna je jasna dokumentacija/šablon
 
 ---
+## Inkrement 4: Analiza, izvještavanje i planiranje budžeta
+
+| | |
+|---|---|
+| **Naziv inkrementa** | Inkrement 4 – Analiza, izvještavanje i planiranje budžeta |
+| **Cilj inkrementa** | Pružiti napredne mogućnosti pretrage i filtriranja podataka, generisanja izvještaja za donošenje odluka te kreiranje i upravljanje budžetima. |
+| **Okvirni sprintovi** | Sprint 8 |
+
+### Glavne funkcionalnosti
+
+- Filtriranje podataka po kriterijima (US #19)
+- Pretraga podataka po ključnim riječima (US #20)
+- Sortiranje podataka (US #21)
+- Generisanje izvještaja o troškovima (US #22)
+- Izvještaj filtriran po vremenskom periodu (US #23)
+- Export izvještaja u PDF/Excel (US #24)
+- Sažeti izvještaj s ključnim informacijama (US #25)
+- Kreiranje novog budžeta po kategorijama/odjelima/periodu (US #26)
+- Pregled postojećih budžeta (US #27)
+- Uređivanje postojećeg budžeta (US #28)
+
+### Zavisnosti
+
+- Zavisi od Inkrementa 3 (podaci moraju biti dostupni za filtriranje i izvještaje)
+- Export funkcionalnost zahtijeva integraciju s bibliotekama za generisanje PDF/Excel fajlova
+- Planiranje budžeta zahtijeva prethodno definisane kategorije i odjele (Inkrement 2)
+
+### Glavni rizici
+
+- Kompleksni filteri mogu biti zahtjevni za implementaciju i testiranje
+- Export u više formata povećava scope – prioritizirati PDF pa Excel
+- Nejasni zahtjevi za budžet (koji periodi, koji nivoi granularnosti) mogu uzrokovati redizajn
+- Performanse pri generisanju izvještaja nad velikim skupovima podataka
+
+---
+
+## Inkrement 5: Poređenje podataka i AI analiza
+
+| | |
+|---|---|
+| **Naziv inkrementa** | Inkrement 5 – Poređenje podataka i AI analiza |
+| **Cilj inkrementa** | Implementirati funkcionalnosti poređenja planiranih i stvarnih troškova te integrirati AI modul za automatsku detekciju anomalija, analizu trendova i predviđanje potrošnje. |
+| **Okvirni sprintovi** | Sprint 9 |
+
+### Glavne funkcionalnosti
+
+- Odabir podataka za poređenje (US #29)
+- Poređenje po kategorijama (US #30)
+- Poređenje planiranih i stvarnih troškova (US #31)
+- Slanje automatskih notifikacija o anomalijama (US #32)
+- Tekstualni sažetak uz svaku notifikaciju (US #33)
+- AI automatska validacija i detekcija anomalija pri unosu (US #34)
+- AI dubinska analiza trendova na zahtjev (US #35)
+- Predviđanje potrošnje do kraja perioda (US #36)
+- Pametno AI grupisanje troškova – sugestija kategorije (US #37)
+
+### Zavisnosti
+
+- Zavisi od Inkrementa 4 (planiranje budžeta – potrebni planirani podaci za poređenje)
+- AI funkcionalnosti zahtijevaju dovoljnu količinu historijskih podataka za treniranje/infereciranje
+- Notifikacijski sistem zahtijeva definisanje kanala dostave (in-app, email?)
+- Potrebno dogovoriti: da li je AI sugestija kategorije automatska ili samo preporuka?
+
+### Glavni rizici
+
+- AI modeli mogu davati netačne preporuke na malom skupu podataka – potreban minimalni dataset
+- Integracija eksternog AI/ML servisa uvodi vanjsku zavisnost i moguće latencije
+- Notifikacije putem emaila zahtijevaju konfiguraciju SMTP/mail servisa
+- Korisnici mogu biti skeptični prema AI sugestijama – važno osigurati da korisnik ima zadnju riječ
+- Detekcija anomalija može generisati previše lažnih alarma (false positives)
+
+---
+
+## Inkrement 6: Vizualizacija, dashboard i napredne funkcionalnosti
+
+| | |
+|---|---|
+| **Naziv inkrementa** | Inkrement 6 – Vizualizacija, dashboard i napredne funkcionalnosti |
+| **Cilj inkrementa** | Razviti centralni interaktivni dashboard s ključnim metrikama, grafičkim prikazom poređenja podataka, naprednom detekcijom sumnjivih obrazaca te omogućiti evidenciju komentara uz troškove. |
+| **Okvirni sprintovi** | Sprint 10 |
+
+### Glavne funkcionalnosti
+
+- Vizuelno poređenje podataka – prikaz jedan pored drugog (US #38)
+- Grafički prikaz poređenja (bar, line, pie) (US #39)
+- Identifikacija sumnjivih obrazaca potrošnje – interna revizija (US #40)
+- Detekcija periodičnih troškova i upozorenje o izostanku (US #41)
+- Centralni interaktivni dashboard s ključnim metrikama (US #42)
+- Bliži prikaz stanja – drill-down u grafikon (US #43)
+- Dodavanje komentara uz trošak (US #44)
+- Pregled komentara uz trošak (US #45)
+
+### Zavisnosti
+
+- Zavisi od svih prethodnih inkremenata – dashboard agregira podatke iz cijelog sistema
+- Grafički prikazi zahtijevaju integraciju s charting bibliotekom (npr. Chart.js, Recharts)
+- Detekcija periodičnih troškova oslanja se na AI analizu iz Inkrementa 5
+- Drill-down funkcionalnost zahtijeva ispravno implementirane detaljne prikaze (Inkrement 3)
+
+### Glavni rizici
+
+- Dashboard kompleksnost može uzrokovati performansne probleme – razmotriti lazy loading i paginaciju
+- Real-time osvježavanje dashboarda povećava tehničku složenost
+- Izbor tipa grafikona (bar/line/pie) zahtijeva UX odluke – uključiti korisnike u testiranje
+- Komentari mogu otvoriti pitanje moderacije i vidljivosti između korisnika
+- Ovo je posljednji inkrement – kumulativni tehnički dug iz prethodnih inkremenata može usporiti razvoj
+
+---
