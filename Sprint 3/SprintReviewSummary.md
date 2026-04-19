@@ -34,7 +34,7 @@ Svi urađeni artefakti su uspješno predstavljeni Product Owneru. Pri tome je ur
 
 
 # 7. Povratna informacija Product Ownera
-
+Product Owner je zadovoljan sa predstavljenim Sprintom, te ga je ocijenio maksimalnim brojem bodova.
 
 # 8. Zaključak za naredni sprint
 Na osnovu završenog trećeg sprinta, za Sprint 4 (posljednji u "human-first" fazi) planira se sljedeće:
