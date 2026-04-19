@@ -212,7 +212,7 @@ Svaki servis radi u vlastitom kontejneru:
 
 | Sloj | Tehnologija |
 |---|---|
-| Frontend | Angular 17 + TypeScript + Angular Material |
+| Frontend | Angular 21 + TypeScript + Angular Material |
 | Backend | Node.js 20 + Express + TypeScript |
 | AI mikroservis | Python 3.11 + FastAPI |
 | OCR | EasyOCR |
