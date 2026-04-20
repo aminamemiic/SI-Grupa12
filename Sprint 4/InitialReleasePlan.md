@@ -39,7 +39,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 - Unos atributa troška – kategorija, projekat, odjel (US #4)
 - Validacija unosa troška (US #5)
 - Kreiranje, ažuriranje i brisanje troška – CRUD (US #10, #11, #12)
-- 
+  
 ### Zavisnosti
 
 - Potrebna je definirana baza korisnika za validaciju prijave
