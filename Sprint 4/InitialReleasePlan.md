@@ -7,7 +7,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 | Inkrement | Naziv | Sprintovi | Ključni cilj |
 |-----------|-------|-----------|--------------|
 | **I1** | Autentifikacija, osnova sistema i RBAC | Sprint 5 | Sigurna prijava, osnova sistema i RBAC |
-| **I2** | Osnovno upravljanje troškovima | Sprint 5–6 | CRUD operacije nad troškovima |
+| **I2** | Osnovno upravljanje troškovima | Sprint 6 | CRUD operacije nad troškovima |
 | **I3** | Pregled i uvoz podataka | Sprint 6–7 | Pregled liste, detalji i uvoz fajlova |
 | **I4** | Analiza i izvještavanje | Sprint 8 | Filtriranje, izvještaji i planiranje budžeta |
 | **I5** | Poređenje i AI analiza | Sprint 9 | Poređenje podataka i AI uvidi |
