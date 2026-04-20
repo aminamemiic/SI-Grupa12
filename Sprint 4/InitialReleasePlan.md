@@ -64,7 +64,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 
 | | |
 |---|---|
-| **Naziv inkrementa** | Inkrement 3 – Pregled podataka i uvoz |
+| **Naziv inkrementa** | Inkrement 2 – Pregled podataka i uvoz |
 | **Cilj inkrementa** | Omogućiti korisnicima pregled liste troškova, detaljni uvid u pojedinačne zapise te uvoz podataka iz eksternih fajlova. |
 | **Okvirni sprintovi** | Sprint 7 |
 
@@ -94,7 +94,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 
 | | |
 |---|---|
-| **Naziv inkrementa** | Inkrement 4 – Analiza, izvještavanje i planiranje budžeta |
+| **Naziv inkrementa** | Inkrement 3 – Analiza, izvještavanje i planiranje budžeta |
 | **Cilj inkrementa** | Pružiti napredne mogućnosti pretrage i filtriranja podataka, generisanja izvještaja za donošenje odluka te kreiranje i upravljanje budžetima. |
 | **Okvirni sprintovi** | Sprint 8 |
 
@@ -130,7 +130,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 
 | | |
 |---|---|
-| **Naziv inkrementa** | Inkrement 5 – Poređenje podataka i AI analiza |
+| **Naziv inkrementa** | Inkrement 4 – Poređenje podataka i AI analiza |
 | **Cilj inkrementa** | Implementirati funkcionalnosti poređenja planiranih i stvarnih troškova te integrirati AI modul za automatsku detekciju anomalija, analizu trendova i predviđanje potrošnje. |
 | **Okvirni sprintovi** | Sprint 9 |
 
@@ -167,7 +167,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 
 | | |
 |---|---|
-| **Naziv inkrementa** | Inkrement 6 – Vizualizacija, dashboard i napredne funkcionalnosti |
+| **Naziv inkrementa** | Inkrement 5 – Vizualizacija, dashboard i napredne funkcionalnosti |
 | **Cilj inkrementa** | Razviti centralni interaktivni dashboard s ključnim metrikama, grafičkim prikazom poređenja podataka, naprednom detekcijom sumnjivih obrazaca te omogućiti evidenciju komentara uz troškove. |
 | **Okvirni sprintovi** | Sprint 10 |
 
