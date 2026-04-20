@@ -86,7 +86,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 |---|---|
 | **Naziv inkrementa** | Inkrement 3 – Pregled podataka i uvoz |
 | **Cilj inkrementa** | Omogućiti korisnicima pregled liste troškova, detaljni uvid u pojedinačne zapise te uvoz podataka iz eksternih fajlova. |
-| **Okvirni sprintovi** | Sprint 6–7 |
+| **Okvirni sprintovi** | Sprint 7 |
 
 ### Glavne funkcionalnosti
 
