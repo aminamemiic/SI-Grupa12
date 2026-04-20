@@ -59,35 +59,8 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 
 ---
 
-## Inkrement 2: Osnovno upravljanje troškovima
 
-| | |
-|---|---|
-| **Naziv inkrementa** | Inkrement 2 – Osnovno upravljanje troškovima |
-| **Cilj inkrementa** | Omogućiti osnovne operacije unosa i upravljanja troškovima, uključujući ručni unos, validaciju i CRUD operacije nad troškovima. |
-| **Okvirni sprintovi** | Sprint 5–6 |
-
-### Glavne funkcionalnosti
-
-- Ručni unos troška putem forme (US #3)
-- Unos atributa troška – kategorija, projekat, odjel (US #4)
-- Validacija unosa troška (US #5)
-- Kreiranje, ažuriranje i brisanje troška – CRUD (US #10, #11, #12)
-
-### Zavisnosti
-
-- Zavisi od Inkrementa 1 (funkcionalna prijava, sesija korisnika i implementiran RBAC)
-- Kategorije, projekti i odjeli moraju biti prethodno definisani u sistemu
-- Validaciona pravila moraju biti dogovorena s poslovnim analitičarima
-
-### Glavni rizici
-
-- Loša UX forme za unos troška može usporiti adopciju sistema
-- Nedefinisane kategorije/odjeli blokiraju unos atributa troška
-
----
-
-## Inkrement 3: Pregled podataka i uvoz
+## Inkrement 2: Pregled podataka i uvoz
 
 | | |
 |---|---|
@@ -117,7 +90,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 - Korisnici možda nisu upoznati s formatom fajla – potrebna je jasna dokumentacija/šablon
 
 ---
-## Inkrement 4: Analiza, izvještavanje i planiranje budžeta
+## Inkrement 3: Analiza, izvještavanje i planiranje budžeta
 
 | | |
 |---|---|
@@ -153,7 +126,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 
 ---
 
-## Inkrement 5: Poređenje podataka i AI analiza
+## Inkrement 4: Poređenje podataka i AI analiza
 
 | | |
 |---|---|
@@ -190,7 +163,7 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 
 ---
 
-## Inkrement 6: Vizualizacija, dashboard i napredne funkcionalnosti
+## Inkrement 5: Vizualizacija, dashboard i napredne funkcionalnosti
 
 | | |
 |---|---|
