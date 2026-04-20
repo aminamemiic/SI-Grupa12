@@ -6,26 +6,26 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 
 | Inkrement | Naziv | Sprintovi | Ključni cilj |
 |-----------|-------|-----------|--------------|
-| **I1** | Autentifikacija, osnova sistema i RBAC | Sprint 5 | Sigurna prijava, osnova sistema i RBAC |
-| **I2** | Osnovno upravljanje troškovima | Sprint 6 | CRUD operacije nad troškovima |
-| **I3** | Pregled i uvoz podataka | Sprint 7 | Pregled liste, detalji i uvoz fajlova |
-| **I4** | Analiza i izvještavanje | Sprint 8 | Filtriranje, izvještaji i planiranje budžeta |
-| **I5** | Poređenje i AI analiza | Sprint 9 | Poređenje podataka i AI uvidi |
-| **I6** | Vizualizacija i dashboard | Sprint 10 | Dashboard, grafički prikazi i upozorenja |
+| **I1** | Autentifikacija, RBAC i osnovno upravljanje troškovima | Sprint 5 i 6 | Sigurna prijava, RBAC, te CRUD operacije nad troškovima |
+| **I2** | Pregled i uvoz podataka | Sprint 7 | Pregled liste, detalji i uvoz fajlova |
+| **I3** | Analiza i izvještavanje | Sprint 8 | Filtriranje, izvještaji i planiranje budžeta |
+| **I4** | Poređenje i AI analiza | Sprint 9 | Poređenje podataka i AI uvidi |
+| **I5** | Vizualizacija i dashboard | Sprint 10 | Dashboard, grafički prikazi i upozorenja |
 
 ---
 
 # Detalji po inkrementima
 
-## Inkrement 1: Autentifikacija, osnova sistema i RBAC
+## Inkrement 1:  Autentifikacija, RBAC i osnovno upravljanje troškovima
 
 | | |
 |---|---|
-| **Naziv inkrementa** | Inkrement 1 – Autentifikacija, osnova sistema i RBAC |
-| **Cilj inkrementa** | Uspostaviti sigurnu osnovu sistema kroz mehanizme prijave i odjave korisnika te implementirati sistem upravljanja korisnicima baziran na ulogama (RBAC), kao preduvjet za sve ostale funkcionalnosti. |
-| **Okvirni sprintovi** | Sprint 5 |
+| **Naziv inkrementa** | Inkrement 1 –  Autentifikacija, RBAC i osnovno upravljanje troškovima |
+| **Cilj inkrementa** | Uspostaviti sigurnu osnovu sistema kroz mehanizme autentifikacije i RBAC-a, te omogućiti primarne operacije unosa i upravljanja troškovima (CRUD). |
+| **Okvirni sprintovi** | Sprint 5 i 6 |
 
 ### Glavne funkcionalnosti
+
 
 - Prijava korisnika (Sign In) – unos korisničkog imena i lozinke (US #6)
 - Odjava korisnika (Sign Out) – sigurno zatvaranje sesije (US #7)
@@ -35,12 +35,17 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 - Ograničenje pristupa funkcijama prema ulozi (US #2)
 - Pregled korisničkih uloga (US #8)
 - Izmjena uloga korisnika (US #9)
-
+- Ručni unos troška putem forme (US #3)
+- Unos atributa troška – kategorija, projekat, odjel (US #4)
+- Validacija unosa troška (US #5)
+- Kreiranje, ažuriranje i brisanje troška – CRUD (US #10, #11, #12)
+- 
 ### Zavisnosti
 
-- Nema eksternih zavisnosti – ovo je polazišna tačka cijelog sistema
-- Potrebna je definirana baza korisnika (makar testni korisnici) za validaciju prijave
+- Potrebna je definirana baza korisnika za validaciju prijave
 - Definisane korisničke uloge moraju biti dogovorene prije implementacije RBAC matrice
+- Kategorije, projekti i odjeli moraju biti prethodno definisani u sistemu
+- Validaciona pravila moraju biti dogovorena s poslovnim analitičarima
 
 ### Glavni rizici
 
@@ -49,6 +54,8 @@ Ovaj dokument definira inicijalni plan isporuke sistema za upravljanje finansija
 - Kasno definiranje korisničkih podataka može blokirati razvoj
 - Složenost RBAC matrice može uzrokovati kašnjenje – preporučuje se rano definiranje svih uloga
 - Nekonzistentnost između uloga i dostupnih funkcija može stvoriti sigurnosne rupe
+- Loša UX forme za unos troška može usporiti korištenje sistema
+- Nedefinisane kategorije/odjeli blokiraju unos atributa troška
 
 ---
 
