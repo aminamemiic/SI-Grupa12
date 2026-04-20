@@ -42,38 +42,32 @@
 
 ## 3. Veze između entiteta
 
- * **Odjel – Budžet (1:N):** Jedan odjel može imati više budžeta kroz različite vremenske periode (kvartalno/godišnje), ali jedan budžet pripada tačno jednom odjelu
-
-* **Kategorija – Trošak (1:N):** Svaki trošak mora pripadati jednoj specifičnoj kategoriji. Jedna kategorija može imati neograničen broj troškova.
-
-* **Trošak – Anomalija (1:0..1):** Trošak ne mora nužno imati anomaliju. Ako AI detektuje problem, trošak se veže za tačno jednu anomaliju
-
-* **Korisnik – Trošak (1:N):** Sistem prati koji je korisnik unio koji trošak
-
-* **Trošak – Komentar (1:N):** Uz jedan trošak može biti vezano više komentara različitih korisnika radi pojašnjenja
-
-* **Budžet – Kategorija (M:N):** Jedan budžet može pokrivati više kategorija, a ista kategorija se može pratiti kroz različite budžetske planove 
-
+* **Vremensko planiranje (Odjel – Budžet):** Jedan odjel može imati više budžeta kroz različite periode, ali jedan budžet je uvijek vezan za tačno jedan odgovorni odjel
+* **Klasifikacija (Kategorija – Trošak):** Svaki trošak mora biti precizno kategorisan. Kategorija služi kao filter za AI analizu, a jedna kategorija može sadržavati neograničen broj pojedinačnih troškova.
+* **AI validacija (Trošak – Anomalija):** Veza koja se aktivira samo "po potrebi". Ako AI detektuje sumnjiv obrazac, trošak se veže za anomaliju
+* **Odgovornost unosa (Korisnik – Trošak):** Sistem garantuje integritet podataka tako što svaki trošak veže za korisnika koji ga je unio
+* **Pojašnjenje (Trošak – Komentar):** Više korisnika može diskutovati o istom trošku kako bi se otklonile sumnje prije odobrenja
+* **Budžetska pokrivenost (Budžet – Kategorija):** Veza koja omogućava da jedan budžet pokriva više kategorija troškova, dok se ista kategorija može pratiti i analizirati kroz različite budžetske planove i periode
+* **Vlasništvo nad troškom (Korisnik – Trošak):** Sistem tačno zna ko je unio koji račun
+* **Praćenje (Odjel – Projekat – Trošak):** Trošak istovremeno pripada jednom odjelu (organizaciono) i jednom projektu (operativno). Ovo je ključno za uvid u profitabilnost projekata
+* **Plan - Ostvareno (Budžet – Odjel/Projekat):** Sistem stalno poredi trenutne troškove sa budžetom odjela ili projekta kako bi spriječio anomalije
+* **AI Detekcija (Trošak – Anomalija):** Ako AI posumnja u račun, kreira se veza ka anomaliji. U suprotnom, trošak ostaje označen kao validan
+* **Digitalni dokaz (Trošak – Prilog):** Svaki trošak može imati više priloga (npr. slika računa, PDF ugovora) koji služe kao fizički dokaz pri reviziji
+* **Revizorski trag (Korisnik – AuditLog):** Svaka akcija korisnika se bilježi. To je evidencija koja garantuje da se nikakve malverzacije ne mogu sakriti
+* **Eksterna analiza (Dobavljač – Trošak):** Pratimo historiju plaćanja svakom dobavljaču. Ako dobavljač stalno generiše sumnjive račune, AI ga označava kao visokorizičnog
+  
 ---
 
 ## 4. Poslovna pravila važna za model
 
  1.  **Pravilo integriteta budžeta:** Sistem ne dozvoljava kreiranje dva budžeta za isti odjel unutar istog vremenskog perioda kako bi se spriječilo preklapanje planova
-
-2.  **AI Validacija:** Prilikom unosa novog troška, AI automatski poredi iznos s historijskim prosjekom te kategorije. Ako odstupanje prelazi 50%, automatski se kreira entitet **Anomalija** s visokim nivoom ozbiljnosti.
-
+2.  **AI Validacija:** Prilikom unosa novog troška, AI automatski poredi iznos s historijskim prosjekom te kategorije. Ako odstupanje prelazi 50%, automatski se kreira entitet Anomalija s visokim nivoom ozbiljnosti
 3.  **RBAC ograničenje:** Samo korisnici sa ulogom Glavni računovođa mogu vršiti izmjene i brisanje troškova, dok Finansijski direktor odobrava budžete i vrši pregled AI analize
-
 4.  **Pravilo validacije troška:** Trošak se ne može sačuvati u bazi ako nisu definisani iznos, datum, kategorija i pripadajući odjel
-
 5.  **Pravilo komentara:** Komentari se ne mogu brisati nakon unosa (radi transparentnosti), a prikazuju se hronološki (od najstarijeg) 
-
 6.  **Pravilo nepromjenjivosti revizije:** Zapisi u entitetu AuditLog su tehnički zaštićeni od bilo kakvih modifikacija ili brisanja, osiguravajući transparentnost
-   
-7.  **Pravilo rebalansa budžeta:** Svaka promjena odobrenog budžeta automatski povećava broj verzije i zahtijeva povezivanje sa korisnikom koji je autorizovao promjenu
-     
+7.  **Pravilo rebalansa budžeta:** Svaka promjena odobrenog budžeta automatski povećava broj verzije i zahtijeva povezivanje sa korisnikom koji je autorizovao promjenu  
 8.  **Pravilo zatvaranja perioda:** Nakon što se generiše finalni Izvještaj za tekući mjesec, svi troškovi povezani s tim periodom dobijaju status "Zaključano"
-   
 9.  **Pravilo validacije projekta:** Trošak se ne može alocirati na Projekat čiji je status "Završen" ili ako datum troška izlazi iz definisanog vremenskog okvira projekta
 
 # Domain Model
