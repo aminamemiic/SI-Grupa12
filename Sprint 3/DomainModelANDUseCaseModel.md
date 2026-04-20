@@ -3,13 +3,20 @@
 ---
 
 ## 1. Glavni entiteti
-* **Korisnik:** Osoba koja pristupa sistemu i koristi isti. Svaki korisnik ima definisanu Ulogu (Administrator, Glavni računovođa, Finansijski direktor, Administrativni zaposlenik) koja preko RBAC-a određuje i kontrolišve nivo pristupa
-* **Trošak:** Entitet koji predstavlja finansijski izdatak. Sadrži podatke o iznosu, datumu i opis
-* **Budžet:** Finansijski plan koji postavlja limite za određeni period, odjel ili kategoriju. Služi kao osnova za planiranje i praćenje troškova
-* **Kategorija:** Logički povezana grupa troškova (npr. oprema, režije)
-* **Odjel:** Organizaciona jedinica kojoj se dodjeljuje određeni budžet i kojoj pripadaju troškovi
-* **Anomalija:** Entitet koji generiše AI kada detektuje odstupanje, grešku, sumnjiv obrazac potrošnje
-* **Komentar:** Tekstualni zapis vezan za konkretan trošak, omogućava komunikaciju i pojašnjenja između korisnika
+
+* **Korisnik:** Osoba koja pristupa sistemu i koristi isti. Svaki korisnik ima definisanu Ulogu (Administrator, Glavni računovođa, Finansijski direktor, Administrativni zaposlenik) koja preko RBAC-a određuje i kontroliše nivo pristupa
+* **Trošak:** Temeljni dokaz o izdatku sredstava. Sadrži sve finansijske parametre i služi kao primarni ulaz za AI validaciju
+* **Budžet:** Kontrolni mehanizam koji definiše finansijske okvire. Služi za preventivno sprečavanje prekoračenja potrošnje na nivou odjela ili kategorija
+* **Kategorija:** Omogućava grupisanje troškova radi lakšeg praćenja trendova i preciznije AI analize
+* **Odjel:** Organizaciona jedinica koja snosi odgovornost za trošenje dodijeljenih sredstava i kojoj se alociraju budžeti
+* **Projekat:** Omogućava matrično praćenje troškova. Trošak se ne prati samo po odjelu, već i po specifičnom projektu, čime se dobija uvid u stvarnu profitabilnost poslova
+* **Dobavljač:** Pravno lice kojem se vrši plaćanje. Ključan za analizu rizika i prepoznavanje sumnjivih obrazaca fakturisanja od strane vanjskih partnera
+* **Anomalija):** Rezultat AI analize. Predstavlja entitet upozorenja koji štiti integritet firme detekcijom potencijalnih prevara, duplih unosa ili nelogičnih odstupanja
+* **AuditLog (Revizorski trag):** Nepromjenjiva arhiva svih akcija. Garantuje da se svaka promjena u sistemu (ko, šta, kada) može retroaktivno provjeriti, što je ključno za finansijsku reviziju
+* **Komentar:** Kolaborativni sloj koji omogućava komunikaciju između zaposlenih na spornoj stavci troška
+* **Notifikacija:** Most koji osigurava brzu reakciju korisnika na kritične događaje poput detekcije anomalija ili probijanja limita budžeta
+* **Izvještaj:** Prikaz podataka spremljen u sistemu. Služi kao zvanična istorija generisanih finansijskih dokumenata za menadžment
+* **Prilog:** Digitalni dokaz o trošku (skenirani račun, ugovor ili faktura). Osigurava da svaki digitalni zapis ima svoj validni prilog
 
 ---
 
@@ -17,35 +24,59 @@
 
 | Entitet | Atributi |
 | :--- | :--- |
-| **Korisnik** | ID, Ime, Prezime, Email, Lozinka, Uloga (RBAC) |
-| **Trošak** | ID, Naziv, Iznos, Datum, Opis, ID_Kategorije, ID_Odjela, Unio_Korisnik_ID, Status (Validan/Sumnjiv) |
-| **Budžet** | ID, Naziv, Planirani_Iznos, Datum_Pocetka, Datum_Zavrsetka, ID_Odjela, Status |
+| **Korisnik** | ID, Ime, Prezime, Email, Password, RoleID, Status_Naloga (Aktivan/Deaktiviran) |
+| **Trošak** | ID, Naziv, Iznos, Datum, Opis, ID_Kategorije, ID_Odjela, ID_Projekta, ID_Dobavljača, ID_Valute, Status_Validacije |
+| **Budžet** | ID, Naziv, Planirani_Iznos, Datum_Pocetka, Datum_Zavrsetka, ID_Odjela, Verzija_Budžeta, Status_Odobrenja |
+| **Projekat** | ID, Naziv_Projekta, Šifra_Projekta, Budžet_Projekta, Datum_Pocetak, Datum_Zavrsetak, Menadžer_ID |
+| **Dobavljač** | ID, Naziv_Firme, PIB/ID_Broj, Adresa, Rejting_Pouzdanosti (AI) |
+| **Anomalija** | ID, Tip_Anomalije, Opis_Detekcije, ID_Troška, Status_Potvrde |
+| **AuditLog** | ID, Naziv_Tabele, Tip_Promjene (C/U/D), Stara_Vrijednost, Nova_Vrijednost, Korisnik_ID, Timestamp |
+| **Izvještaj** | ID, Naziv, Tip (Mjesečni/Kvartalni), URL_Dokumenta, Datum_Generisanja, Autor_ID |
+| **Notifikacija** | ID, Naslov, Poruka, Prioritet (Low/Medium/High), Korisnik_ID |
 | **Kategorija** | ID, Naziv, Opis |
-| **Odjel** | ID, Naziv, Opis |
-| **Anomalija** | ID, Opis, Nivo_Ozbiljnosti (Crvena/Narandžasta/Žuta), Tip, Status_Potvrde, ID_Troska |
-| **Komentar** | ID, Tekst, Vrijeme, Autor_ID, ID_Troška |
+| **Odjel** | ID, Naziv, Šifra_Odjela, Rukovodilac_ID |
+| **Komentar** | ID, Tekst, Vrijeme_Unosa, Autor_ID, ID_Troška |
+| **Prilog** | ID, URL_Fajla, Tip_Fajla, ID_Troška |
 
 ---
 
 ## 3. Veze između entiteta
 
-* **Odjel – Budžet (1:N):** Jedan odjel može imati više budžeta kroz različite vremenske periode (kvartalno/godišnje), ali jedan budžet pripada tačno jednom odjelu
+ * **Odjel – Budžet (1:N):** Jedan odjel može imati više budžeta kroz različite vremenske periode (kvartalno/godišnje), ali jedan budžet pripada tačno jednom odjelu
+
 * **Kategorija – Trošak (1:N):** Svaki trošak mora pripadati jednoj specifičnoj kategoriji. Jedna kategorija može imati neograničen broj troškova.
+
 * **Trošak – Anomalija (1:0..1):** Trošak ne mora nužno imati anomaliju. Ako AI detektuje problem, trošak se veže za tačno jednu anomaliju
+
 * **Korisnik – Trošak (1:N):** Sistem prati koji je korisnik unio koji trošak
+
 * **Trošak – Komentar (1:N):** Uz jedan trošak može biti vezano više komentara različitih korisnika radi pojašnjenja
-* **Budžet – Kategorija (M:N):** Jedan budžet može pokrivati više kategorija, a ista kategorija se može pratiti kroz različite budžetske planove
+
+* **Budžet – Kategorija (M:N):** Jedan budžet može pokrivati više kategorija, a ista kategorija se može pratiti kroz različite budžetske planove 
 
 ---
 
 ## 4. Poslovna pravila važna za model
 
-1.  **Pravilo integriteta budžeta:** Sistem ne dozvoljava kreiranje dva budžeta za isti odjel unutar istog vremenskog perioda kako bi se spriječilo preklapanje planova
-2.  **AI Validacija:** Prilikom unosa novog troška, AI automatski poredi iznos s historijskim prosjekom te kategorije. Ako odstupanje prelazi 50%, automatski se kreira entitet **Anomalija** s visokim nivoom ozbiljnosti.
-3.  **RBAC ograničenje:** Samo korisnici sa ulogom Glavni računovođa mogu vršiti izmjene i brisanje troškova, dok Finansijski direktor odobrava budžete i vrši pregled AI analize
-4.  **Pravilo validacije troška:** Trošak se ne može sačuvati u bazi ako nisu definisani iznos, datum, kategorija i pripadajući odjel
-5.  **Pravilo komentara:** Komentari se ne mogu brisati nakon unosa (radi transparentnosti), a prikazuju se hronološki (od najstarijeg)
+ 1.  **Pravilo integriteta budžeta:** Sistem ne dozvoljava kreiranje dva budžeta za isti odjel unutar istog vremenskog perioda kako bi se spriječilo preklapanje planova
 
+2.  **AI Validacija:** Prilikom unosa novog troška, AI automatski poredi iznos s historijskim prosjekom te kategorije. Ako odstupanje prelazi 50%, automatski se kreira entitet **Anomalija** s visokim nivoom ozbiljnosti.
+
+3.  **RBAC ograničenje:** Samo korisnici sa ulogom Glavni računovođa mogu vršiti izmjene i brisanje troškova, dok Finansijski direktor odobrava budžete i vrši pregled AI analize
+
+4.  **Pravilo validacije troška:** Trošak se ne može sačuvati u bazi ako nisu definisani iznos, datum, kategorija i pripadajući odjel
+
+5.  **Pravilo komentara:** Komentari se ne mogu brisati nakon unosa (radi transparentnosti), a prikazuju se hronološki (od najstarijeg) 
+
+6.  **Pravilo nepromjenjivosti revizije:** Zapisi u entitetu AuditLog su tehnički zaštićeni od bilo kakvih modifikacija ili brisanja, osiguravajući transparentnost
+   
+7.  **Pravilo rebalansa budžeta:** Svaka promjena odobrenog budžeta automatski povećava broj verzije i zahtijeva povezivanje sa korisnikom koji je autorizovao promjenu
+     
+8.  **Pravilo zatvaranja perioda:** Nakon što se generiše finalni Izvještaj za tekući mjesec, svi troškovi povezani s tim periodom dobijaju status "Zaključano"
+   
+9.  **Pravilo validacije projekta:** Trošak se ne može alocirati na Projekat čiji je status "Završen" ili ako datum troška izlazi iz definisanog vremenskog okvira projekta
+
+# Domain Model
 
 ![IMG001](https://github.com/user-attachments/assets/e95746d1-77f6-451a-aee4-6f4a4718d71c)
 
