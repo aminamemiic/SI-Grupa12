@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: grupa12_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Adna123!
+      POSTGRES_DB: grupa12app
+    ports:
+      - "5433:5432"
+    volumes:
+       - postgres_data:/var/lib/postgresql/data
+       - ./migrations/001_initial_create.sql:/docker-entrypoint-initdb.d/001_initial_create.sql
+
+volumes:
+  postgres_data:
