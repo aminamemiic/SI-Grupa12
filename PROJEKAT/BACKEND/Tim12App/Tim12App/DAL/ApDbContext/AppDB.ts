@@ -1,10 +1,17 @@
-// This file allows you to configure ESLint according to your project's needs, so that you
-// can control the strictness of the linter, the plugins to use, and more.
+const { Pool } = require("pg");
+const dotenv = require("dotenv");
 
-// For more information about configuring ESLint, visit https://eslint.org/docs/user-guide/configuring/
+dotenv.config();
 
-module.exports = [
-    {
-        rules: {}
-    }
-];
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL nije definisan u .env fajlu.");
+}
+
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+module.exports = { db };
