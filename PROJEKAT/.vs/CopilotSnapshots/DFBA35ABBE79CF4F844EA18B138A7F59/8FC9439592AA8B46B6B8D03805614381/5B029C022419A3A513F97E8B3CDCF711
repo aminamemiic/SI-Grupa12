@@ -1,0 +1,33 @@
+﻿import type { Application, Request, Response } from "express";
+import type { IAuthService, AuthenticatedRequest } from "../../BLL/Interfaces/IAuthService";
+
+type Logger = (level: string, message: string, error?: unknown) => void;
+
+export function registerSessionEndpoints(
+  app: Application,
+  authService: IAuthService,
+  writeLog: Logger,
+  sessionCookieName: string
+) {
+  app.get("/auth/session", authService.verifyBearerToken, (req: AuthenticatedRequest, res: Response) => {
+    res.status(200).json({ message: "Session kreirana.", user: req.user });
+  });
+
+  app.post("/auth/logout", (req: Request & { session?: any }, res: Response) => {
+    if (!req.session) {
+      res.status(204).send();
+      return;
+    }
+
+    req.session.destroy((error: Error | null) => {
+      if (error) {
+        writeLog("ERROR", "Greška pri gašenju session-a", error);
+        res.status(500).json({ error: "Ne mogu ugasiti session." });
+        return;
+      }
+
+      res.clearCookie(sessionCookieName);
+      res.status(204).send();
+    });
+  });
+}

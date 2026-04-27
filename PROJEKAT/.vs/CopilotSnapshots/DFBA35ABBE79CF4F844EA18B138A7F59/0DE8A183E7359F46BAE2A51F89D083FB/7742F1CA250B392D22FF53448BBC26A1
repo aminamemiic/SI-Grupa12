@@ -1,0 +1,52 @@
+﻿services:
+  postgres:
+    image: postgres:16
+    container_name: grupa12_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Adna123!
+      POSTGRES_DB: grupa12app
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d grupa12app"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6.1
+    container_name: keycloak
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+    command: start-dev
+    ports:
+      - "8080:8080"
+
+  backend:
+    build:
+      context: ./Tim12App
+      dockerfile: Dockerfile
+    container_name: grupa12_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:Adna123!@postgres:5432/grupa12app
+      USE_DOCKER_DB: "false"
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    restart: "no"
+
+volumes:
+  postgres_data:
+
+
+    

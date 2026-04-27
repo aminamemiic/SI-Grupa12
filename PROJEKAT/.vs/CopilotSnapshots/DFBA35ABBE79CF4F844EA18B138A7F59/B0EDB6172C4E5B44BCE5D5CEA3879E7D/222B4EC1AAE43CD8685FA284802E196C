@@ -1,0 +1,56 @@
+﻿import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-homepage',
+  imports: [],
+  templateUrl: './homepage.html',
+  styleUrl: './homepage.css',
+})
+export class Homepage {
+  private readonly keycloakAuthorizeUrl =
+    'http://localhost:8080/realms/Grupa12SI/protocol/openid-connect/auth';
+  private readonly clientId = 'public';
+  private readonly pkceVerifierKey = 'kc_pkce_verifier';
+  private readonly authStateKey = 'kc_auth_state';
+
+  private generateRandomString(length: number): string {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+    const random = new Uint8Array(length);
+    crypto.getRandomValues(random);
+    return Array.from(random, (value) => charset[value % charset.length]).join('');
+  }
+
+  private base64UrlEncode(bytes: Uint8Array): string {
+    return btoa(String.fromCharCode(...bytes))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '');
+  }
+
+  private async createPkceChallenge(verifier: string): Promise<string> {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+    return this.base64UrlEncode(new Uint8Array(digest));
+  }
+
+  public async loginWithKeycloak(): Promise<void> {
+    const redirectUri = `${window.location.origin}/`;
+    const codeVerifier = this.generateRandomString(96);
+    const codeChallenge = await this.createPkceChallenge(codeVerifier);
+    const state = this.generateRandomString(32);
+
+    sessionStorage.setItem(this.pkceVerifierKey, codeVerifier);
+    sessionStorage.setItem(this.authStateKey, state);
+
+    const query = new URLSearchParams({
+      client_id: this.clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
+      scope: 'openid profile email',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+      state,
+    });
+
+    window.location.href = `${this.keycloakAuthorizeUrl}?${query.toString()}`;
+  }
+}
