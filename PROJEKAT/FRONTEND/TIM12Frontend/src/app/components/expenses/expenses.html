@@ -1,0 +1,131 @@
+<div class="expenses-page">
+  <section class="form-card">
+    <h2>Ručni unos troška</h2>
+    <p class="subtitle">Unesite osnovne podatke o trošku.</p>
+
+    <form [formGroup]="expenseForm" (ngSubmit)="saveExpense()">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Naziv troška *</label>
+          <input type="text" formControlName="naziv" placeholder="Npr. Laptop" />
+          <small *ngIf="isFieldInvalid('naziv')">Naziv je obavezan.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Iznos *</label>
+          <input type="number" formControlName="iznos" placeholder="Npr. 1200" />
+          <small *ngIf="isFieldInvalid('iznos')">Iznos mora biti veći od 0.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Datum *</label>
+          <input type="date" formControlName="datum" />
+          <small *ngIf="isFieldInvalid('datum')">Datum je obavezan.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Kategorija *</label>
+          <select formControlName="kategorijaId">
+            <option value="">Odaberite kategoriju</option>
+            <option *ngFor="let item of referenceData.kategorije" [value]="item.id">
+              {{ getItemLabel(item) }}
+            </option>
+          </select>
+          <small *ngIf="isFieldInvalid('kategorijaId')">Kategorija je obavezna.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Odjel *</label>
+          <select formControlName="odjelId">
+            <option value="">Odaberite odjel</option>
+            <option *ngFor="let item of referenceData.odjeli" [value]="item.id">
+              {{ getItemLabel(item) }}
+            </option>
+          </select>
+          <small *ngIf="isFieldInvalid('odjelId')">Odjel je obavezan.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Valuta *</label>
+          <select formControlName="valutaId">
+            <option value="">Odaberite valutu</option>
+            <option *ngFor="let item of referenceData.valute" [value]="item.id">
+              {{ getItemLabel(item) }}
+            </option>
+          </select>
+          <small *ngIf="isFieldInvalid('valutaId')">Valuta je obavezna.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Projekat</label>
+          <select formControlName="projekatId">
+            <option value="">Bez projekta</option>
+            <option *ngFor="let item of referenceData.projekti" [value]="item.id">
+              {{ getItemLabel(item) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Dobavljač</label>
+          <select formControlName="dobavljacId">
+            <option value="">Bez dobavljača</option>
+            <option *ngFor="let item of referenceData.dobavljaci" [value]="item.id">
+              {{ getItemLabel(item) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Opis</label>
+          <textarea formControlName="opis" rows="3" placeholder="Unesite opis troška"></textarea>
+        </div>
+      </div>
+
+      <div class="messages">
+        <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+        <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      </div>
+
+      <button type="submit" [disabled]="isSaving">
+        {{ isSaving ? 'Spremanje...' : 'Sačuvaj' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="list-card">
+    <h2>Lista troškova</h2>
+
+    <p *ngIf="isLoading">Učitavanje troškova...</p>
+
+    <table *ngIf="!isLoading && expenses.length > 0">
+      <thead>
+        <tr>
+          <th>Naziv</th>
+          <th>Iznos</th>
+          <th>Datum</th>
+          <th>Kategorija</th>
+          <th>Odjel</th>
+          <th>Valuta</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let expense of expenses">
+          <td>{{ expense.naziv }}</td>
+          <td>{{ expense.iznos }}</td>
+          <td>{{ expense.datum | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ expense.kategorija }}</td>
+          <td>{{ expense.odjel }}</td>
+          <td>{{ expense.valuta }}</td>
+          <td>{{ expense.statusValidacije }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="!isLoading && expenses.length === 0">
+      Trenutno nema evidentiranih troškova.
+    </p>
+  </section>
+</div>

@@ -47,3 +47,115 @@
 [2026-04-27T21:03:28.795Z] [INFO] Konekcija na bazu uspješna.
 [2026-04-27T21:03:28.837Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
 [2026-04-27T21:03:28.864Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T06:46:56.356Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T06:46:56.405Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T06:46:56.466Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T06:46:56.477Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T09:18:15.967Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T09:18:16.021Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T09:18:16.038Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T09:18:16.052Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T12:29:42.097Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T12:29:42.139Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T12:29:42.148Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T12:29:42.156Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T14:37:37.930Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2026-04-28T15:02:22.837Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:02:22.902Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:02:22.905Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:02:22.917Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:02:29.230Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:02:29.259Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:02:29.263Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:02:29.280Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:02:36.408Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:02:36.469Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:02:36.476Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:02:36.493Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:05:36.458Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:05:36.513Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:05:36.521Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:05:36.536Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:07:32.409Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:07:32.459Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:07:32.464Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:07:32.479Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:10:23.753Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:10:23.829Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:10:23.835Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:10:23.845Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:11:39.492Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:11:39.531Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:11:39.533Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:11:39.542Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:12:10.145Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:12:10.184Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:12:10.187Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:12:10.196Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:14:52.563Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:14:52.645Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:14:52.651Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:14:52.662Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:25:16.860Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:25:16.899Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:25:16.902Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:25:16.910Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:35:54.294Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:35:54.350Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:35:54.356Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:35:54.366Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T15:36:21.398Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T15:36:21.439Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T15:36:21.441Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T15:36:21.450Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T16:45:14.249Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T16:45:14.321Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T16:45:14.325Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T16:45:14.338Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T16:52:27.845Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2026-04-28T17:19:24.670Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T17:19:24.721Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T17:19:24.723Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T17:19:24.734Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T17:20:05.162Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2026-04-28T17:20:10.499Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2026-04-28T17:20:14.979Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2026-04-28T17:20:37.550Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2026-04-28T17:20:39.831Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2026-04-28T17:20:52.152Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\elved\source\repos\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[2026-04-28T17:24:45.326Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T17:24:45.396Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T17:24:45.404Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T17:24:45.422Z] [INFO] Backend aplikacija sluša na portu 3000.
