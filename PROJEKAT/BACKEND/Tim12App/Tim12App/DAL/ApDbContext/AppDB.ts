@@ -7,11 +7,11 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL nije definisan u .env fajlu.");
 }
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const db = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
 
 module.exports = { db };

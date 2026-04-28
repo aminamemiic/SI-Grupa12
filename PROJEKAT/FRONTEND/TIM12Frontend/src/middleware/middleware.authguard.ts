@@ -183,4 +183,29 @@ export class AuthGuardService {
     sessionStorage.removeItem(this.authStateKey);
     sessionStorage.removeItem(this.pkceVerifierKey);
   }
+  public getCurrentUserRoles(): string[] {
+  const idToken = sessionStorage.getItem(this.idTokenKey);
+  if (!idToken) return [];
+
+  try {
+    const payload = JSON.parse(atob(idToken.split('.')[1]));
+    const roles: string[] = [];
+
+    if (Array.isArray(payload.realm_access?.roles)) {
+      roles.push(...payload.realm_access.roles);
+    }
+
+    if (payload.resource_access) {
+      Object.values(payload.resource_access).forEach((resource: any) => {
+        if (Array.isArray(resource?.roles)) {
+          roles.push(...resource.roles);
+        }
+      });
+    }
+
+    return roles;
+  } catch {
+    return [];
+  }
+}
 }
