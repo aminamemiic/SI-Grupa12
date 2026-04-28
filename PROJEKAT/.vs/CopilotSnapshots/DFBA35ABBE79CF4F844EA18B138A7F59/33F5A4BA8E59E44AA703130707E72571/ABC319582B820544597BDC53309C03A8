@@ -1,0 +1,43 @@
+﻿import { Injectable } from '@angular/core';
+
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  private readonly backendSessionUrl = 'http://localhost:3000/auth/session';
+  private readonly backendLogoutUrl = 'http://localhost:3000/auth/logout';
+
+  private async fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs = 15000): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      return await fetch(input, { ...init, signal: controller.signal });
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
+  public async getValidSession(accessToken: string): Promise<void> {
+    const sessionResponse = await this.fetchWithTimeout(this.backendSessionUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      credentials: 'include',
+    });
+
+    if (!sessionResponse.ok) {
+      throw new Error('Backend nije kreirao session cookie.');
+    }
+  }
+
+  public async logout(): Promise<void> {
+    const response = await this.fetchWithTimeout(this.backendLogoutUrl, {
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Neuspješan logout.');
+    }
+  }
+}

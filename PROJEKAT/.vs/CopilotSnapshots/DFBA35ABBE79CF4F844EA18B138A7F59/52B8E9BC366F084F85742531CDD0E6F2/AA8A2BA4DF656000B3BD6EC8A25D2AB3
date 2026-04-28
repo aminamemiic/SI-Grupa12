@@ -1,0 +1,13 @@
+﻿<div class="homepage-wrapper">
+  <button type="button" class="login-button" (click)="loginWithKeycloak()" [disabled]="isLoading">
+    Log In
+  </button>
+
+  @if (isLoading) {
+    <p class="status-text">Login u toku...</p>
+  }
+
+  @if (errorMessage) {
+    <p class="error-text">{{ errorMessage }}</p>
+  }
+</div>

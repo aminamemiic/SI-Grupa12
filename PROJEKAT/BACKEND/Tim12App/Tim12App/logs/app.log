@@ -1,0 +1,49 @@
+[2026-04-27T08:04:16.578Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T08:04:16.633Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T08:04:16.639Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T08:04:16.650Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T08:56:21.872Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T08:56:21.950Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T08:56:21.981Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T08:56:21.992Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T08:59:08.759Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T08:59:08.797Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T08:59:08.801Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T08:59:08.809Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T09:09:38.389Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T09:09:38.637Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T09:09:38.659Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T09:09:38.704Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T09:09:57.458Z] [INFO] Primljen signal SIGINT. Pokrećem gašenje aplikacije...
+[2026-04-27T09:13:04.892Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T09:13:04.925Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T09:13:04.929Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T09:13:04.939Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T09:20:18.769Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T09:20:18.830Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T09:20:18.837Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T09:20:18.862Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T14:44:17.142Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T14:44:17.201Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T14:44:17.231Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T14:44:17.246Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T14:59:42.359Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T14:59:42.419Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T14:59:42.452Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T14:59:42.471Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T16:13:23.208Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T16:13:23.277Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T16:13:23.332Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T16:13:23.348Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T16:53:55.846Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T16:53:55.889Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T16:53:55.903Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T16:53:55.910Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T20:28:40.881Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T20:28:40.982Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T20:28:41.046Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T20:28:41.071Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-27T21:03:28.699Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-27T21:03:28.795Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-27T21:03:28.837Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-27T21:03:28.864Z] [INFO] Backend aplikacija sluša na portu 3000.

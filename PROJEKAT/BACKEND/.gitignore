@@ -3,6 +3,8 @@
 
 # Node modules
 node_modules/
+dist/
+
 
 # Visual Studio local files
 .vs/

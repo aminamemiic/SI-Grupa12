@@ -1,1 +1,7 @@
-<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.4902498" />
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.4902498">
+  <PropertyGroup>
+    <ShouldRunBuildScript>true</ShouldRunBuildScript>
+    <BuildCommand>npm run rebuild:all</BuildCommand>
+    <StartupCommand>npm run start</StartupCommand>
+  </PropertyGroup>
+</Project>

@@ -3,8 +3,11 @@
     "",
     "\\BACKEND",
     "\\BACKEND\\Tim12App",
-    "\\BACKEND\\Tim12App\\Tim12App"
+    "\\BACKEND\\Tim12App\\Tim12App",
+    "\\BACKEND\\Tim12App\\Tim12App\\PRESENTATION API",
+    "\\BACKEND\\Tim12App\\Tim12App\\PRESENTATION API\\Endpoints",
+    "\\FRONTEND",
+    "\\FRONTEND\\TIM12Frontend"
   ],
-  "SelectedNode": "\\BACKEND\\.gitignore",
   "PreviewInSolutionExplorer": false
 }

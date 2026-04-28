@@ -1,1 +1,23 @@
-<p>homepage works!</p>
+<div class="homepage-wrapper">
+  <div class="actions">
+    <button type="button" class="login-button" (click)="loginWithKeycloak()" [disabled]="isLoading">
+      Prijavi se
+    </button>
+
+    <button type="button" class="logout-button" (click)="logoutFromBackend()" [disabled]="isLoading">
+      Odjavi se
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <p class="status-text">{{ loadingMessage || 'U toku...' }}</p>
+  }
+
+  @if (errorMessage) {
+    <p class="error-text">{{ errorMessage }}</p>
+  }
+
+  @if (infoMessage) {
+    <p class="info-text">{{ infoMessage }}</p>
+  }
+</div>

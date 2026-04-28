@@ -1,0 +1,5 @@
+﻿<div class="homepage-wrapper">
+  <button type="button" class="login-button" (click)="loginWithKeycloak()">
+    Login with Keycloak
+  </button>
+</div>
