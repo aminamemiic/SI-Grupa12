@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthGuardService } from '../../../middleware/middleware.authguard';
 import { UserService } from '../../../services/user.service';
 
@@ -11,6 +12,7 @@ import { UserService } from '../../../services/user.service';
 export class Homepage implements OnInit {
   private readonly authGuardService = inject(AuthGuardService);
   private readonly userService = inject(UserService);
+  private readonly router = inject(Router);
 
   public errorMessage = '';
   public isLoading = false;
@@ -84,17 +86,16 @@ export class Homepage implements OnInit {
     this.loadingMessage = 'Login u toku...';
 
     try {
-      await this.userService.getValidSession(callbackResult.accessToken);
-      this.infoMessage = 'Session kreirana na backendu.';
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        this.errorMessage = 'Zahtjev je istekao. Provjeri da li su Keycloak i backend pokrenuti.';
-      } else {
-        this.errorMessage = error instanceof Error ? error.message : 'Greška pri loginu.';
-      }
-    } finally {
-      this.isLoading = false;
-      this.loadingMessage = '';
-    }
+  await this.userService.getValidSession(callbackResult.accessToken);
+  this.infoMessage = 'Session kreirana na backendu.';
+  console.log('✅ Session OK, navigiram na /home');
+  void this.router.navigate(['/home']);
+} catch (error) {
+  if (error instanceof DOMException && error.name === 'AbortError') {
+    this.errorMessage = 'Zahtjev je istekao. Provjeri da li su Keycloak i backend pokrenuti.';
+  } else {
+    this.errorMessage = error instanceof Error ? error.message : 'Greška pri loginu.';
+  }
+}
   }
 }

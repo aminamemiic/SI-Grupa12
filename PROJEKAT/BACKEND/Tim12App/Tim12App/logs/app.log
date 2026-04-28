@@ -159,3 +159,35 @@
 [2026-04-28T17:24:45.396Z] [INFO] Konekcija na bazu uspješna.
 [2026-04-28T17:24:45.404Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
 [2026-04-28T17:24:45.422Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T17:55:56.111Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T17:55:56.136Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T17:55:56.139Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T17:55:56.149Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T20:25:38.223Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T20:25:38.264Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T20:25:38.273Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T20:25:38.289Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T20:42:32.671Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T20:42:32.713Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T20:42:32.717Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T20:42:32.733Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T21:52:04.644Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T21:52:04.696Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T21:52:04.705Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T21:52:04.716Z] [ERROR] Ne mogu pokrenuti aplikaciju | TypeError: authService.requireRole is not a function
+    at registerExpenseEndpoints (C:\Users\nejla\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\PRESENTATION API\Endpoints\ExpenseEndpoints.ts:31:41)
+    at startServer (C:\Users\nejla\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\app.ts:171:3)
+    at main (C:\Users\nejla\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\app.ts:183:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[2026-04-28T21:53:59.654Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T21:53:59.694Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T21:53:59.699Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T21:53:59.716Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T22:05:34.329Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T22:05:34.369Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T22:05:34.373Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T22:05:34.390Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T22:07:33.898Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T22:07:33.939Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T22:07:33.943Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T22:07:33.960Z] [INFO] Backend aplikacija sluša na portu 3000.

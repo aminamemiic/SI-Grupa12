@@ -12,6 +12,7 @@ const { registerSessionEndpoints } = require("./PRESENTATION API/Endpoints/Sessi
 const { registerUserEndpoints } = require("./PRESENTATION API/Endpoints/UserEndpoints");
 const { registerExpenseEndpoints } = require("./PRESENTATION API/Endpoints/ExpenseEndpoints");
 
+
 const PORT = Number(process.env.PORT);
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL;
 const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM;
@@ -168,7 +169,7 @@ function startServer() {
   });
 
   registerSessionEndpoints(app, authService, writeLog, SESSION_COOKIE_NAME);
-  registerExpenseEndpoints(app, writeLog);
+  registerExpenseEndpoints(app, authService, writeLog);
   registerUserEndpoints(app, authService);
 
   app.listen(PORT, "0.0.0.0", () => {

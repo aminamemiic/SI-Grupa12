@@ -1,6 +1,7 @@
+import type { IAuthService } from "../../BLL/Interfaces/IAuthService";
 const { ExpenseService } = require("../../BLL/Services/ExpenseService");
 
-function registerExpenseEndpoints(app: any, _logger?: any) {
+function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?: any) {
   const expenseService = new ExpenseService();
 
   app.get("/api/troskovi", async (req: any, res: any) => {
@@ -14,7 +15,8 @@ function registerExpenseEndpoints(app: any, _logger?: any) {
       });
     }
   });
-app.get("/api/troskovi/reference-data", async (req: any, res: any) => {
+
+  app.get("/api/troskovi/reference-data", async (req: any, res: any) => {
     try {
       const referenceData = await expenseService.getReferenceData();
       return res.status(200).json(referenceData);
@@ -26,14 +28,12 @@ app.get("/api/troskovi/reference-data", async (req: any, res: any) => {
     }
   });
 
-  app.post("/api/troskovi", async (req: any, res: any) => {
+  app.post("/api/troskovi", authService.requireRole("admin", "administrativni_radnik"), async (req: any, res: any) => {
     try {
       const createdExpense = await expenseService.createExpense(req.body);
-
       return res.status(201).json(createdExpense);
     } catch (error: any) {
       console.error("Greška pri kreiranju troška:", error);
-
       return res.status(400).json({
         message: error.message || "Greška pri kreiranju troška.",
       });
