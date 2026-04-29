@@ -1,14 +1,70 @@
 .home-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  gap: 24px;
+  display: grid;
+  gap: 18px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 20px;
 }
 
-.troskovi-button {
-  padding: 12px 32px;
-  font-size: 16px;
+.intro-panel {
+  background: #ffffff;
+  border: 1px solid #dde2ea;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+.role-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.label {
+  font-weight: 700;
+}
+
+.role-pill {
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #e9eef8;
+  color: #1f3763;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.muted {
+  color: #627084;
+}
+
+.primary-button {
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 14px;
   cursor: pointer;
+  font-weight: 700;
+}
+
+.primary-button {
+  background: #2256a3;
+  color: #ffffff;
+}
+
+.notice {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 6px;
+}
+
+.notice {
+  color: #8a4b00;
+  background: #fff6df;
+  border: 1px solid #f2d48b;
 }

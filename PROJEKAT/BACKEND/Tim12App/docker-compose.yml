@@ -47,6 +47,19 @@ services:
       - "3000:3000"
     restart: "no"
 
+  frontend:
+    build:
+      context: ../../FRONTEND/TIM12Frontend
+      dockerfile: Dockerfile
+    container_name: grupa12_frontend
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: development
+    ports:
+      - "4200:4200"
+    restart: "no"
+
 volumes:
   postgres_data:
   keycloak_data:

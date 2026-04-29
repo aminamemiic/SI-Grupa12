@@ -1,5 +1,26 @@
 <nav class="main-nav">
-  <a routerLink="/troskovi"></a>
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    Pocetna
+  </a>
+  <a
+    routerLink="/troskovi"
+    routerLinkActive="active"
+    [class.disabled]="!canOpenExpenses"
+    (click)="openExpensesTab($event)"
+  >
+    Unos troskova
+  </a>
+
+  <div class="nav-actions">
+    <button type="button" class="secondary-button" (click)="signIn()" [disabled]="isLoading">
+      Prijavi se
+    </button>
+    <button type="button" class="danger-button" (click)="signOut()" [disabled]="isLoading">
+      Odjavi se
+    </button>
+  </div>
 </nav>
 
-<router-outlet></router-outlet>
+<main>
+  <router-outlet></router-outlet>
+</main>

@@ -12,15 +12,15 @@ export function registerUserEndpoints(app: Application, authService: IAuthServic
     res.status(200).json({ message: "Admin pristup odobren." });
   });
 
-  app.get("/api/finansijski_direktor", authService.requireRole("finansijski_direktor"), (_req: AuthenticatedRequest, res: Response) => {
+  app.get("/api/finansijski_direktor", authService.requireRole("admin", "finansijski_direktor"), (_req: AuthenticatedRequest, res: Response) => {
     res.status(200).json({ message: "Finansijski direktor pristup odobren." });
   });
 
-  app.get("/api/glavni_racunovodja", authService.requireRole("glavni_racunovodja"), (_req: AuthenticatedRequest, res: Response) => {
+  app.get("/api/glavni_racunovodja", authService.requireRole("admin", "glavni_racunovodja"), (_req: AuthenticatedRequest, res: Response) => {
     res.status(200).json({ message: "Glavni računovodja pristup odobren." });
   });
 
-  app.get("/api/administrativni_radnik", authService.requireRole("administrativni_radnik"), (_req: AuthenticatedRequest, res: Response) => {
+  app.get("/api/administrativni_radnik", authService.requireRole("admin", "administrativni_radnik"), (_req: AuthenticatedRequest, res: Response) => {
     res.status(200).json({ message: "Administrativni radnik pristup odobren." });
   });
   

@@ -191,3 +191,145 @@
 [2026-04-28T22:07:33.939Z] [INFO] Konekcija na bazu uspješna.
 [2026-04-28T22:07:33.943Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
 [2026-04-28T22:07:33.960Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-28T23:15:38.822Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-28T23:15:38.871Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-28T23:15:38.876Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-28T23:15:38.890Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-29T03:36:20.524Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-29T03:36:20.579Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-29T03:36:20.583Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-29T03:36:20.605Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-29T04:04:00.455Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:04:34.306Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:08:15.920Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:25:05.210Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:25:09.277Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:25:14.998Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:25:40.013Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:30:48.194Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:31:15.345Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:57:39.732Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T04:59:11.253Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T05:01:35.040Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T05:34:34.390Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T05:53:02.902Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T05:53:53.819Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T06:07:49.917Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T06:23:45.842Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T07:32:24.943Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T07:33:19.463Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T07:38:17.603Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T07:40:25.976Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T07:41:49.177Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T07:44:14.895Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T07:45:50.537Z] [INFO] Povezujem se na bazu podataka...
+[2026-04-29T07:45:50.581Z] [INFO] Konekcija na bazu uspješna.
+[2026-04-29T07:45:50.586Z] [INFO] Baza je već inicijalizovana. Skačem migracije.
+[2026-04-29T07:45:50.599Z] [INFO] Backend aplikacija sluša na portu 3000.
+[2026-04-29T07:47:15.358Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T07:59:56.226Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T08:09:16.803Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)

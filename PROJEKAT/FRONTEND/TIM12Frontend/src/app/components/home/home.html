@@ -1,6 +1,19 @@
 <div class="home-wrapper">
-  <h1>Dobrodošli!</h1>
-  <button type="button" class="troskovi-button" (click)="idiNaTroskove()">
-    Unesi trošak
-  </button>
+  <section class="intro-panel">
+    <h1>Pocetna</h1>
+
+    <div class="role-row">
+      <span class="label">Trenutne role:</span>
+      @if (currentRoles.length > 0) {
+        <span class="role-pill" *ngFor="let role of currentRoles">{{ role }}</span>
+      } @else {
+        <span class="muted">Nema ucitanih rola. Prijavite se preko Prijavi se.</span>
+      }
+    </div>
+
+  </section>
+
+  @if (accessNotice) {
+    <p class="notice">{{ accessNotice }}</p>
+  }
 </div>
