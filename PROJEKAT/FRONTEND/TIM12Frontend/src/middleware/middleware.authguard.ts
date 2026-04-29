@@ -189,49 +189,59 @@ export class AuthGuardService {
   }
 
   public isAuthenticated(): boolean {
-    return Boolean(sessionStorage.getItem(this.idTokenKey));
+    return Boolean(sessionStorage.getItem(this.accessTokenKey) || sessionStorage.getItem(this.idTokenKey));
   }
 
   public getCurrentUserRoles(): string[] {
-  const idToken = sessionStorage.getItem(this.idTokenKey);
-  if (!idToken) return [];
+    const accessToken = sessionStorage.getItem(this.accessTokenKey);
+    const idToken = sessionStorage.getItem(this.idTokenKey);
+    const token = accessToken || idToken;
 
-  try {
-    const payload = JSON.parse(this.decodeJwtPayload(idToken));
-    const roles: string[] = [];
+    if (!token) return [];
 
-    if (Array.isArray(payload.realm_access?.roles)) {
-      roles.push(...payload.realm_access.roles);
-    }
+    try {
+      const payload = JSON.parse(this.decodeJwtPayload(token));
+      const roles = new Set<string>();
 
-    if (payload.resource_access) {
-      Object.values(payload.resource_access).forEach((resource: any) => {
-        if (Array.isArray(resource?.roles)) {
-          roles.push(...resource.roles);
+      const addRoles = (roleList: unknown) => {
+        if (!Array.isArray(roleList)) {
+          return;
         }
-      });
+
+        roleList
+          .filter((role): role is string => typeof role === 'string' && role.trim().length > 0)
+          .forEach((role) => roles.add(role.trim()));
+      };
+
+      addRoles(payload.realm_access?.roles);
+      addRoles(payload.resource_access?.[this.clientId]?.roles);
+
+      if (payload.resource_access) {
+        Object.values(payload.resource_access).forEach((resource: any) => {
+          addRoles(resource?.roles);
+        });
+      }
+
+      return Array.from(roles);
+    } catch {
+      return [];
     }
-
-    return roles;
-  } catch {
-    return [];
   }
-}
 
-public hasAnyRole(allowedRoles: string[]): boolean {
-  const userRoles = this.getCurrentUserRoles().map((role) => role.toLowerCase());
-  const normalizedAllowedRoles = allowedRoles.map((role) => role.toLowerCase());
+  public hasAnyRole(allowedRoles: string[]): boolean {
+    const userRoles = this.getCurrentUserRoles().map((role) => role.toLowerCase());
+    const normalizedAllowedRoles = allowedRoles.map((role) => role.toLowerCase());
 
-  return userRoles.some((role) => normalizedAllowedRoles.includes(role));
-}
+    return userRoles.some((role) => normalizedAllowedRoles.includes(role));
+  }
 
-private decodeJwtPayload(token: string): string {
-  const payload = token.split('.')[1];
-  const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+  private decodeJwtPayload(token: string): string {
+    const payload = token.split('.')[1];
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
 
-  return decodeURIComponent(
-    Array.from(atob(padded), (character) => `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`).join('')
-  );
-}
+    return decodeURIComponent(
+      Array.from(atob(padded), (character) => `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`).join('')
+    );
+  }
 }

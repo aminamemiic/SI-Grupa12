@@ -34,21 +34,21 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: RoleAccessComponent,
-    data: { title: 'Admin', apiPath: '/admin' },
+    data: { title: 'Admin', apiPath: '/admin', allowedRoles: ['admin'] },
   },
   {
     path: 'finansijski_direktor',
     component: RoleAccessComponent,
-    data: { title: 'Finansijski direktor', apiPath: '/finansijski_direktor' },
+    data: { title: 'Finansijski direktor', apiPath: '/finansijski_direktor', allowedRoles: ['admin', 'finansijski_direktor'] },
   },
   {
     path: 'glavni_racunovodja',
     component: RoleAccessComponent,
-    data: { title: 'Glavni racunovodja', apiPath: '/glavni_racunovodja' },
+    data: { title: 'Glavni racunovodja', apiPath: '/glavni_racunovodja', allowedRoles: ['admin', 'glavni_racunovodja'] },
   },
   {
     path: 'administrativni_radnik',
     component: RoleAccessComponent,
-    data: { title: 'Administrativni radnik', apiPath: '/administrativni_radnik' },
+    data: { title: 'Administrativni radnik', apiPath: '/administrativni_radnik', allowedRoles: ['admin', 'administrativni_radnik'] },
   },
 ];
