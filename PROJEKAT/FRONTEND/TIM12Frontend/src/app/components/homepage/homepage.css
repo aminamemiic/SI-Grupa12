@@ -1,66 +1,37 @@
 .homepage-wrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  min-height: calc(100vh - 58px);
+  display: grid;
+  place-items: center;
   gap: 12px;
-  align-items: center;
-  justify-content: center;
+  padding: 24px;
 }
 
-.actions {
-  display: flex;
-  gap: 10px;
-}
-
-.login-button {
-  border: none;
+.welcome-panel {
+  width: min(680px, 100%);
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid #dde2ea;
   border-radius: 8px;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  background-color: #1f6feb;
-  color: #ffffff;
+  text-align: center;
 }
 
-.logout-button {
-  border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  background-color: #d32f2f;
-  color: #ffffff;
+.welcome-panel h1 {
+  margin: 0 0 10px;
 }
 
-.login-button:hover {
-  background-color: #1557b5;
-}
-
-.logout-button:hover {
-  background-color: #b71c1c;
-}
-
-.login-button:disabled,
-.logout-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.status-text {
+.welcome-panel p,
+.status-text,
+.error-text,
+.info-text {
   margin: 0;
-  color: #333;
 }
 
 .error-text {
-  margin: 0;
-  color: #c1121f;
+  color: #b42318;
   text-align: center;
 }
 
 .info-text {
-  margin: 0;
-  color: #0f766e;
+  color: #05603a;
   text-align: center;
 }

@@ -22,6 +22,7 @@ export class AuthGuardService {
   private readonly clientId = 'public';
   private readonly pkceVerifierKey = 'kc_pkce_verifier';
   private readonly authStateKey = 'kc_auth_state';
+  private readonly accessTokenKey = 'kc_access_token';
   private readonly refreshTokenKey = 'kc_refresh_token';
   private readonly idTokenKey = 'kc_id_token';
 
@@ -131,6 +132,8 @@ export class AuthGuardService {
         return { status: 'error', message: 'Keycloak nije vratio access token.' };
       }
 
+      sessionStorage.setItem(this.accessTokenKey, tokens.access_token);
+
       if (tokens.refresh_token) {
         sessionStorage.setItem(this.refreshTokenKey, tokens.refresh_token);
       }
@@ -178,17 +181,23 @@ export class AuthGuardService {
   }
 
   public clearStoredTokens(): void {
+    sessionStorage.removeItem(this.accessTokenKey);
     sessionStorage.removeItem(this.refreshTokenKey);
     sessionStorage.removeItem(this.idTokenKey);
     sessionStorage.removeItem(this.authStateKey);
     sessionStorage.removeItem(this.pkceVerifierKey);
   }
+
+  public isAuthenticated(): boolean {
+    return Boolean(sessionStorage.getItem(this.idTokenKey));
+  }
+
   public getCurrentUserRoles(): string[] {
   const idToken = sessionStorage.getItem(this.idTokenKey);
   if (!idToken) return [];
 
   try {
-    const payload = JSON.parse(atob(idToken.split('.')[1]));
+    const payload = JSON.parse(this.decodeJwtPayload(idToken));
     const roles: string[] = [];
 
     if (Array.isArray(payload.realm_access?.roles)) {
@@ -207,5 +216,22 @@ export class AuthGuardService {
   } catch {
     return [];
   }
+}
+
+public hasAnyRole(allowedRoles: string[]): boolean {
+  const userRoles = this.getCurrentUserRoles().map((role) => role.toLowerCase());
+  const normalizedAllowedRoles = allowedRoles.map((role) => role.toLowerCase());
+
+  return userRoles.some((role) => normalizedAllowedRoles.includes(role));
+}
+
+private decodeJwtPayload(token: string): string {
+  const payload = token.split('.')[1];
+  const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+
+  return decodeURIComponent(
+    Array.from(atob(padded), (character) => `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`).join('')
+  );
 }
 }

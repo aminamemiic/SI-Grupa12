@@ -1,13 +1,7 @@
 <div class="homepage-wrapper">
-  <div class="actions">
-    <button type="button" class="login-button" (click)="loginWithKeycloak()" [disabled]="isLoading">
-      Prijavi se
-    </button>
-
-    <button type="button" class="logout-button" (click)="logoutFromBackend()" [disabled]="isLoading">
-      Odjavi se
-    </button>
-  </div>
+  <section class="welcome-panel">
+    <h1>Tim12</h1>
+  </section>
 
   @if (isLoading) {
     <p class="status-text">{{ loadingMessage || 'U toku...' }}</p>

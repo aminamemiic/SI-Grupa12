@@ -1,0 +1,23 @@
+<section class="role-page">
+  <div class="access-panel">
+    <h1>{{ title }}</h1>
+
+    @if (isLoading) {
+      <p class="status">Provjera pristupa...</p>
+    }
+
+    @if (result) {
+      <div class="result" [class.success]="result.ok" [class.error]="!result.ok">
+        <strong>
+          @if (result.ok) {
+            Pristup odobren
+          } @else {
+            Pristup odbijen
+          }
+        </strong>
+        <span>Status {{ result.status }}</span>
+        <p>{{ result.message }}</p>
+      </div>
+    }
+  </div>
+</section>
