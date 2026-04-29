@@ -28,7 +28,7 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
     }
   });
 
-  app.post("/api/troskovi", authService.requireRole("admin", "administrativni_radnik"), async (req: any, res: any) => {
+  app.post("/api/troskovi", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik"), async (req: any, res: any) => {
     try {
       const createdExpense = await expenseService.createExpense(req.body);
       return res.status(201).json(createdExpense);
