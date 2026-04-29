@@ -19,4 +19,4 @@ Izvršiti "pripremne" radnje (Docker, baza podataka), implementirati funkcionaln
 ---
 
 ## Rizici i zavisnosti
-Glavni rizik je infrastrukturna blokada: ako Docker i baza podataka nisu stabilni od starta, implementacija planiranih funkcionalnosti će kasniti. Istovremeno, uspostava Decision i AI logova nosi rizik administrativnog zagušenja, što se ublažava preciznim definisanjem kriterija za upis.
+Glavni rizik je infrastrukturna blokada: ako Docker i baza podataka nisu stabilni od starta, implementacija planiranih funkcionalnosti će kasniti. Istovremeno, uspostava Decision i AI logova nosi rizik administrativnog zagušenja, što se ublažava preciznim definisanjem kriterija za upis. Cijeli sprint kritično zavisi od pravovremenog postavljanja tehničkog skeletona, bez kojeg su testiranje i deployment neizvodivi.
