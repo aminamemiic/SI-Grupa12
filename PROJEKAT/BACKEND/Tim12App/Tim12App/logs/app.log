@@ -333,3 +333,8 @@
     at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
     at callbackifyOnRejected (node:util:268:10)
     at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[2026-04-29T08:22:08.418Z] [WARN] Nevalidan Keycloak JWT token. | JsonWebTokenError: error in secret or public key callback: getaddrinfo ENOTFOUND keycloak
+    at C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\node_modules\jsonwebtoken\verify.js:103:19
+    at <anonymous> (C:\Users\Korisnik\Desktop\si\SI-Grupa12\PROJEKAT\BACKEND\Tim12App\Tim12App\BLL\Services\AuthService.ts:84:9)
+    at callbackifyOnRejected (node:util:268:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
