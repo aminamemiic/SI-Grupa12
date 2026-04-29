@@ -51,47 +51,16 @@ class ExpenseRepository {
   }
 
   async getReferenceData() {
-    const [
-      kategorijeResult,
-      odjeliResult,
-      valuteResult,
-      projektiResult,
-      dobavljaciResult,
-    ] = await Promise.all([
-      db.query(`
-        SELECT id, naziv
-        FROM kategorije
-        ORDER BY naziv ASC;
-      `),
-      db.query(`
-        SELECT id, naziv
-        FROM odjeli
-        ORDER BY naziv ASC;
-      `),
-      db.query(`
-        SELECT id, kod
-        FROM valute
-        ORDER BY kod ASC;
-      `),
-      db.query(`
-        SELECT id, naziv_projekta
-        FROM projekti
-        ORDER BY naziv_projekta ASC;
-      `),
-      db.query(`
-        SELECT id, naziv_firme
-        FROM dobavljaci
-        ORDER BY naziv_firme ASC;
-      `),
-    ]);
+    const result = await db.query(`
+      SELECT
+        COALESCE((SELECT json_agg(row_to_json(k)) FROM (SELECT id, naziv FROM kategorije ORDER BY naziv ASC) k), '[]'::json) AS kategorije,
+        COALESCE((SELECT json_agg(row_to_json(o)) FROM (SELECT id, naziv FROM odjeli ORDER BY naziv ASC) o), '[]'::json) AS odjeli,
+        COALESCE((SELECT json_agg(row_to_json(v)) FROM (SELECT id, kod FROM valute ORDER BY kod ASC) v), '[]'::json) AS valute,
+        COALESCE((SELECT json_agg(row_to_json(p)) FROM (SELECT id, naziv_projekta FROM projekti ORDER BY naziv_projekta ASC) p), '[]'::json) AS projekti,
+        COALESCE((SELECT json_agg(row_to_json(d)) FROM (SELECT id, naziv_firme FROM dobavljaci ORDER BY naziv_firme ASC) d), '[]'::json) AS dobavljaci;
+    `);
 
-    return {
-      kategorije: kategorijeResult.rows,
-      odjeli: odjeliResult.rows,
-      valute: valuteResult.rows,
-      projekti: projektiResult.rows,
-      dobavljaci: dobavljaciResult.rows,
-    };
+    return result.rows[0];
   }
 
   async create(expense: any) {

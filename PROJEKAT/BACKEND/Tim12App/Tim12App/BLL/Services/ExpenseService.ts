@@ -4,23 +4,49 @@ const { ExpenseRepository } = require("../../DAL/Repositories/ExpenseRepository"
 
 export class ExpenseService implements IExpenseService {
   private expenseRepository: any;
+  private expensesCache: { expiresAt: number; data: any[] } | null = null;
+  private referenceDataCache: { expiresAt: number; data: any } | null = null;
+  private readonly cacheTtlMs = 30 * 1000;
 
   constructor() {
     this.expenseRepository = new ExpenseRepository();
   }
 
   async getAllExpenses(): Promise<any[]> {
-    return await this.expenseRepository.getAll();
+    if (this.expensesCache && this.expensesCache.expiresAt > Date.now()) {
+      return this.expensesCache.data;
+    }
+
+    const expenses = await this.expenseRepository.getAll();
+    this.expensesCache = {
+      expiresAt: Date.now() + this.cacheTtlMs,
+      data: expenses,
+    };
+
+    return expenses;
   }
 
   async getReferenceData(): Promise<any> {
-    return await this.expenseRepository.getReferenceData();
+    if (this.referenceDataCache && this.referenceDataCache.expiresAt > Date.now()) {
+      return this.referenceDataCache.data;
+    }
+
+    const referenceData = await this.expenseRepository.getReferenceData();
+    this.referenceDataCache = {
+      expiresAt: Date.now() + this.cacheTtlMs,
+      data: referenceData,
+    };
+
+    return referenceData;
   }
 
   async createExpense(payload: CreateExpenseRequest): Promise<any> {
     this.validateCreateExpense(payload);
 
-    return await this.expenseRepository.create(payload);
+    const createdExpense = await this.expenseRepository.create(payload);
+    this.expensesCache = null;
+
+    return createdExpense;
   }
 
   private validateCreateExpense(payload: CreateExpenseRequest): void {

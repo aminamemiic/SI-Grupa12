@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -22,6 +22,7 @@ import { ExpenseService } from '../../../services/expense.service';
 export class ExpensesComponent implements OnInit {
   private fb = inject(FormBuilder);
   private expenseService = inject(ExpenseService);
+  private cdr = inject(ChangeDetectorRef);
 
   expenses: Expense[] = [];
 
@@ -65,11 +66,13 @@ export class ExpensesComponent implements OnInit {
       next: (data) => {
         this.expenses = data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
         this.errorMessage = 'Greška pri dohvatu troškova.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -78,11 +81,13 @@ export class ExpensesComponent implements OnInit {
     this.expenseService.getReferenceData().subscribe({
       next: (data) => {
         this.referenceData = data;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
         this.errorMessage =
           'Greška pri dohvatu podataka za formu. Provjeri da li postoji ruta /api/troskovi/reference-data.';
+        this.cdr.detectChanges();
       },
     });
   }
@@ -119,12 +124,14 @@ export class ExpensesComponent implements OnInit {
         this.expenseForm.reset();
         this.successMessage = 'Trošak je uspješno spremljen.';
         this.isSaving = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
         this.errorMessage =
           error?.error?.message || 'Greška pri spremanju troška.';
         this.isSaving = false;
+        this.cdr.detectChanges();
       },
     });
   }
