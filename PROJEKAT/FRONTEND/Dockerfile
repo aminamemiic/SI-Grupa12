@@ -12,8 +12,8 @@ RUN npm run build
 # Install http-server to serve the static files
 RUN npm install -g http-server
 
-# The port Railway uses
-EXPOSE 4200
+# Railway dynamically assigns PORT via env variable
+EXPOSE ${PORT:-4200}
 
-# Serve the 'browser' folder which contains the compiled Angular app
-CMD ["http-server", "dist/TIM12Frontend/browser", "-p", "4200", "--host", "0.0.0.0"]
+# Serve the 'browser' folder - use Railway's PORT env var, fallback to 4200
+CMD ["sh", "-c", "http-server dist/TIM12Frontend/browser -p ${PORT:-4200} --host 0.0.0.0"]
