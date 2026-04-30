@@ -201,28 +201,15 @@ export class AuthGuardService {
 
     try {
       const payload = JSON.parse(this.decodeJwtPayload(token));
-      const roles = new Set<string>();
+      const clientRoles = payload.resource_access?.[this.clientId]?.roles;
 
-      const addRoles = (roleList: unknown) => {
-        if (!Array.isArray(roleList)) {
-          return;
-        }
-
-        roleList
-          .filter((role): role is string => typeof role === 'string' && role.trim().length > 0)
-          .forEach((role) => roles.add(role.trim()));
-      };
-
-      addRoles(payload.realm_access?.roles);
-      addRoles(payload.resource_access?.[this.clientId]?.roles);
-
-      if (payload.resource_access) {
-        Object.values(payload.resource_access).forEach((resource: any) => {
-          addRoles(resource?.roles);
-        });
+      if (!Array.isArray(clientRoles)) {
+        return [];
       }
 
-      return Array.from(roles);
+      return clientRoles.filter(
+        (role: unknown): role is string => typeof role === 'string' && role.trim().length > 0
+      );
     } catch {
       return [];
     }
