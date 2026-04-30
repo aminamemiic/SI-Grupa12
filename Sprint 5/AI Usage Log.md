@@ -2,6 +2,10 @@
 
 | Datum | Sprint broj | Alat | Svrha korištenja | Opis zadatka/upita | Šta je AI predložio/generisao | Šta je tim prihvatio | Šta je tim izmijenio | Šta je tim odbacio | Rizici/problemi/greške | Korisnik alata |
 |---|---|---|---|---|---|---|---|---|---|---|
-|  | |  |  |  |  |  |  |  |  |  |
-|  | |  |  |  |  |  |  |  |  |  |
-|  | |  |  |  |  |  |  |  |  |  |
+| 25.04.2026 | Sprint 5 | Codex | Pomoć pri izradi početnog projekta | Kreiranje osnovne strukture aplikacije | Osnovnu strukturu projekta i početne komponente | Početni kostur projekta | Nazive foldera i fajlova prema dogovoru tima | Nepotrebne generičke fajlove | Moguća neusklađenost sa dogovorenom arhitekturom | Faris Aljić |
+| 25.04.2026 | Sprint 5 | ChatGPT | Prijedlozi za bazu podataka | Implementacija strukture baze podataka | Prijedlog tabela, veza i osnovnih atributa | Osnovni model baze | Nazive tabela i kolona prema projektu | Nepotrebne dodatne tabele | Moguća neusklađenost sa zahtjevima aplikacije | Adna Bajramović |
+| 28.04.2026 | Sprint 5 | ChatGPT | Pomoć pri unosu troškova | Implementacija forme za unos troška | Strukturu forme i validaciju polja | Osnovnu logiku unosa troška | Nazive polja prema projektu | Generičke poruke greške | Neispravna validacija; prazni dropdowni | Nejla Ćenanović |
+| 28.04.2026 | Sprint 5 | ChatGPT | Pomoć pri unosu troškova | Povezivanje forme za unos troška sa podacima | Dohvat kategorija, odjela i valuta | Prikaz referentnih podataka | Stil i raspored polja | Nepotrebne izmjene frontenda | Moguće neslaganje sa backend odgovorom | Elvedina Halilović |
+| 29.04.2026 | Sprint 5 | ChatGPT | Identifikacija problema učitavanja troškova | Sporo učitavanje forme za unos troška | Provjera backend endpointa, baze i referentnih podataka | Analizu backenda i baze | Nazive tabela i endpointa prema projektu | Izmjene frontenda | Prazni dropdowni; nepostojeći referentni podaci | Omer Valjevac |
+| 29.04.2026 | Sprint 5 | Codex | Implementacija fixa za učitavanje troškova | Optimizacija dohvaćanja podataka za formu troška | Backend fix i objedinjeni dohvat referentnih podataka | Implementaciju na backendu | SQL upite prema strukturi baze | Izmjene frontenda | Moguća neusklađenost strukture odgovora sa frontend očekivanjima | Omer Valjevac |
+| 29.04.2026 | Sprint 5 | GitHub Copilot | Pomoć pri frontend implementaciji | Prikaz i povezivanje forme za unos troška | Prijedloge za frontend logiku i prikaz podataka | Osnovnu frontend strukturu | Stilove i nazive polja prema projektu | Generičke UI prijedloge | Moguće neslaganje sa backend odgovorom | Amina Memić |
