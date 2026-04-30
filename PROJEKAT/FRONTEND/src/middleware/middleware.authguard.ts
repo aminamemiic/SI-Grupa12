@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../environments/environment';
 
 export type KeycloakCallbackResult =
   | { status: 'idle' }
@@ -13,11 +14,11 @@ export type KeycloakCallbackResult =
 @Injectable({ providedIn: 'root' })
 export class AuthGuardService {
   private readonly keycloakAuthorizeUrl =
-    'http://localhost:8080/realms/Grupa12SI/protocol/openid-connect/auth';
+    `${environment.keycloakUrl}/realms/Grupa12SI/protocol/openid-connect/auth`;
   private readonly keycloakTokenUrl =
-    'http://localhost:8080/realms/Grupa12SI/protocol/openid-connect/token';
+    `${environment.keycloakUrl}/realms/Grupa12SI/protocol/openid-connect/token`;
   private readonly keycloakLogoutUrl =
-    'http://localhost:8080/realms/Grupa12SI/protocol/openid-connect/logout';
+    `${environment.keycloakUrl}/realms/Grupa12SI/protocol/openid-connect/logout`;
 
   private readonly clientId = 'public';
   private readonly pkceVerifierKey = 'kc_pkce_verifier';
