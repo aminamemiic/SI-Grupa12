@@ -11,6 +11,7 @@ export class UserService {
   private readonly backendSessionUrl = 'http://localhost:3000/auth/session';
   private readonly backendLogoutUrl = 'http://localhost:3000/auth/logout';
   private readonly backendApiUrl = 'http://localhost:3000/api';
+  private readonly accessTokenKey = 'kc_access_token';
 
   private async fetchWithTimeout(input: RequestInfo | URL, init: RequestInit, timeoutMs = 15000): Promise<Response> {
     const controller = new AbortController();
@@ -57,8 +58,16 @@ export class UserService {
   }
 
   private async getApiMessage(path: string): Promise<ApiAccessResult> {
+    const headers: HeadersInit = {};
+    const accessToken = sessionStorage.getItem(this.accessTokenKey);
+
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
     const response = await this.fetchWithTimeout(`${this.backendApiUrl}${path}`, {
       method: 'GET',
+      headers,
       credentials: 'include',
     });
 

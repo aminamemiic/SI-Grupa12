@@ -38,33 +38,29 @@ export class AuthService implements IAuthService {
 
   private normalizeRoles(payload: JwtPayload): string[] {
     const roleSet = new Set<string>();
+    const addRole = (role: unknown) => {
+      if (typeof role === "string" && role.trim()) {
+        roleSet.add(role.trim());
+      }
+    };
+    const addRoles = (roles: unknown) => {
+      if (Array.isArray(roles)) {
+        roles.forEach(addRole);
+        return;
+      }
 
-    if (Array.isArray(payload.roles)) {
-      payload.roles.forEach((role) => roleSet.add(role));
-    }
+      addRole(roles);
+    };
 
-    if (typeof payload.roles === "string") {
-      roleSet.add(payload.roles);
-    }
-
-    if (Array.isArray(payload.role)) {
-      payload.role.forEach((role) => roleSet.add(role));
-    }
-
-    if (typeof payload.role === "string") {
-      roleSet.add(payload.role);
-    }
-
-    if (Array.isArray(payload.realm_access?.roles)) {
-      payload.realm_access.roles.forEach((role) => roleSet.add(role));
-    }
+    addRoles(payload.roles);
+    addRoles(payload.role);
+    addRoles(payload.realm_access?.roles);
 
     if (payload.resource_access) {
-      Object.values(payload.resource_access).forEach((resource) => {
-        if (Array.isArray(resource?.roles)) {
-          resource.roles.forEach((role) => roleSet.add(role));
-        }
-      });
+      const configuredClientRoles = payload.resource_access[this.config.keycloakClientId]?.roles;
+      addRoles(configuredClientRoles);
+
+      Object.values(payload.resource_access).forEach((resource) => addRoles(resource?.roles));
     }
 
     return Array.from(roleSet);
@@ -168,7 +164,7 @@ export class AuthService implements IAuthService {
   public requireRole(...allowedRoles: string[]) {
     const normalizedAllowedRoles = allowedRoles.map((role) => role.toLowerCase());
 
-    return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const checkRole = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
       if (!req.user) {
         res.status(401).json({ error: "Korisnik nije autentifikovan." });
         return;
@@ -183,6 +179,23 @@ export class AuthService implements IAuthService {
       }
 
       next();
+    };
+
+    return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+      if (req.user) {
+        checkRole(req, res, next);
+        return;
+      }
+
+      this.requireAuthentication(req, res, (error?: unknown) => {
+        if (error) {
+          next(error);
+          return;
+        }
+
+        checkRole(req, res, next);
+        return;
+      });
     };
   }
 

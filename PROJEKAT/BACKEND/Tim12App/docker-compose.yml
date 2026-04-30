@@ -43,6 +43,14 @@ services:
       USE_DOCKER_DB: "false"
       NODE_ENV: development
       PORT: 3000
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: Grupa12SI
+      KEYCLOAK_CLIENT_ID: public
+      JWT_ISSUER: http://localhost:8080/realms/Grupa12SI
+      JWT_AUDIENCE: account
+      JWKS_URI: http://keycloak:8080/realms/Grupa12SI/protocol/openid-connect/certs
+      SESSION_SECRET: stavi_ovdje_jaku_tajnu_za_session
+      FRONTEND_ORIGIN: http://localhost:4200
     ports:
       - "3000:3000"
     restart: "no"

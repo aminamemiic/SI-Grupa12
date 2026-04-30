@@ -129,24 +129,24 @@ function startServer() {
   );
   
   app.use(express.json());
+  // CORS middleware — set headers on every response
   app.use((req: any, res: any, next: any) => {
     const requestOrigin = req.headers.origin;
 
     if (requestOrigin === FRONTEND_ORIGIN) {
-      res.header("Access-Control-Allow-Origin", requestOrigin);
-      res.header("Access-Control-Allow-Credentials", "true");
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-      res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+      res.setHeader("Access-Control-Allow-Origin", requestOrigin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
     }
 
-    res.header("Vary", "Origin");
-
-    if (req.method === "OPTIONS") {
-      res.sendStatus(204);
-      return;
-    }
-
+    res.setHeader("Vary", "Origin");
     next();
+  });
+
+  // Explicit OPTIONS handler for preflight requests (required for Express 5)
+  app.options("{*path}", (req: any, res: any) => {
+    res.sendStatus(204);
   });
   app.use(cookieParser());
   app.use(

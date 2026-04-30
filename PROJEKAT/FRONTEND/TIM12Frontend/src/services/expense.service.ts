@@ -12,24 +12,29 @@ import {
 })
 export class ExpenseService {
   private readonly apiUrl = 'http://localhost:3000/api/troskovi';
+  private readonly accessTokenKey = 'kc_access_token';
 
   constructor(private http: HttpClient) {}
 
+  private getAuthOptions() {
+    const accessToken = sessionStorage.getItem(this.accessTokenKey);
+    const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
+
+    return {
+      withCredentials: true,
+      ...(headers ? { headers } : {}),
+    };
+  }
+
   getExpenses(): Observable<Expense[]> {
-    return this.http.get<Expense[]>(this.apiUrl, {
-      withCredentials: true
-    });
+    return this.http.get<Expense[]>(this.apiUrl, this.getAuthOptions());
   }
 
   createExpense(payload: CreateExpenseRequest): Observable<Expense> {
-    return this.http.post<Expense>(this.apiUrl, payload, {
-      withCredentials: true
-    });
+    return this.http.post<Expense>(this.apiUrl, payload, this.getAuthOptions());
   }
 
   getReferenceData(): Observable<ExpenseReferenceData> {
-    return this.http.get<ExpenseReferenceData>(`${this.apiUrl}/reference-data`, {
-      withCredentials: true
-    });
+    return this.http.get<ExpenseReferenceData>(`${this.apiUrl}/reference-data`, this.getAuthOptions());
   }
 }

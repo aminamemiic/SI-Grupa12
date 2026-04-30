@@ -6,11 +6,10 @@
     "\\PROJEKAT\\BACKEND\\Tim12App",
     "\\PROJEKAT\\BACKEND\\Tim12App\\Tim12App",
     "\\PROJEKAT\\FRONTEND",
-    "\\PROJEKAT\\FRONTEND\\ TIM12Frontend",
-    "\\PROJEKAT\\FRONTEND\\ TIM12Frontend\\src",
-    "\\PROJEKAT\\FRONTEND\\ TIM12Frontend\\src\\app",
-    "\\PROJEKAT\\FRONTEND\\TIM12Frontend\\dist"
+    "\\PROJEKAT\\FRONTEND\\TIM12Frontend",
+    "\\PROJEKAT\\FRONTEND\\TIM12Frontend\\src",
+    "\\PROJEKAT\\FRONTEND\\TIM12Frontend\\src\\app"
   ],
-  "SelectedNode": "\\PROJEKAT\\FRONTEND\\ TIM12Frontend\\src\\app\\app.ts",
+  "SelectedNode": "\\PROJEKAT\\FRONTEND\\TIM12Frontend\\src\\app",
   "PreviewInSolutionExplorer": false
 }
