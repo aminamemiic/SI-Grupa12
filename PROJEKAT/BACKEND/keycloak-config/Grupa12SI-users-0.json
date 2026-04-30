@@ -1,0 +1,108 @@
+{
+  "realm" : "Grupa12SI",
+  "users" : [ {
+    "id" : "a026e17f-3145-493e-a775-93aa8c2d6a04",
+    "username" : "test",
+    "firstName" : "Test",
+    "lastName" : "Test",
+    "email" : "test@test.com",
+    "emailVerified" : true,
+    "enabled" : true,
+    "createdTimestamp" : 1777512356814,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "ae926604-b9c6-4b63-8f1e-dfb67d0e6f26",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1777512361255,
+      "secretData" : "{\"value\":\"MSakKGoLxwJt2r0VSJsgnD0HRHq5Xofg+19dRSnLh24=\",\"salt\":\"ij+BPGyLztYy3YxqHTSXSQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-grupa12si" ],
+    "clientRoles" : {
+      "public" : [ "admin" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "e79f5318-ac9d-41f5-ac1a-65159d8ff64d",
+    "username" : "test1",
+    "firstName" : "Test1",
+    "lastName" : "Test1",
+    "email" : "test1@test.com",
+    "emailVerified" : true,
+    "enabled" : true,
+    "createdTimestamp" : 1777512389117,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "45d1a2fd-f45f-4086-b917-effaa7e3845c",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1777512395448,
+      "secretData" : "{\"value\":\"Vs7E4LOX7uDYvH6AOLKlZxfL+Xe7c11I0sl4u8nmemk=\",\"salt\":\"PN/YJZarkAgS7sx3JSTaPQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-grupa12si" ],
+    "clientRoles" : {
+      "public" : [ "administrativni_radnik" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "7d5f55c7-bcf1-447f-a247-4dbb4d9d9b53",
+    "username" : "test2",
+    "firstName" : "Test2",
+    "lastName" : "Test2",
+    "email" : "test2@test.com",
+    "emailVerified" : true,
+    "enabled" : true,
+    "createdTimestamp" : 1777512414965,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "1ead0e4e-83c2-402d-b9c1-175400975e36",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1777512421627,
+      "secretData" : "{\"value\":\"Mbr1w9M3r+PeTnj4p9JtkfPAioZNLxyGGdK+n1rqR9I=\",\"salt\":\"tEJ4bDuxeXEQo24DIYHuWg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ "UPDATE_PASSWORD" ],
+    "realmRoles" : [ "default-roles-grupa12si" ],
+    "clientRoles" : {
+      "public" : [ "finansijski_direktor" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "cfbd5f60-1074-4007-a39f-1a9364699260",
+    "username" : "test3",
+    "firstName" : "Test3",
+    "lastName" : "Test3",
+    "email" : "test3@test.com",
+    "emailVerified" : true,
+    "enabled" : true,
+    "createdTimestamp" : 1777512460442,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "fc323dde-b2a5-4842-8865-746c45aefd37",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1777512465152,
+      "secretData" : "{\"value\":\"Ivbchx/gOuoGpEFOUhDimy0c9Vl9GeqN/c2W0lFFR1c=\",\"salt\":\"5XsZ01tVMyivem2OymuLIQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-grupa12si" ],
+    "clientRoles" : {
+      "public" : [ "glavni_racunovodja" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

@@ -1,0 +1,77 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: grupa12_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Adna123!
+      POSTGRES_DB: grupa12app
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d grupa12app"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6.1
+    container_name: keycloak
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+    command: start-dev --import-realm
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak-config:/opt/keycloak/data/import
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: grupa12_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:Adna123!@postgres:5432/grupa12app
+      USE_DOCKER_DB: "false"
+      NODE_ENV: development
+      PORT: 3000
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: Grupa12SI
+      KEYCLOAK_CLIENT_ID: public
+      JWT_ISSUER: http://localhost:8080/realms/Grupa12SI
+      JWT_AUDIENCE: account
+      JWKS_URI: http://keycloak:8080/realms/Grupa12SI/protocol/openid-connect/certs
+      SESSION_SECRET: stavi_ovdje_jaku_tajnu_za_session
+      FRONTEND_ORIGIN: http://localhost:4200
+    ports:
+      - "3000:3000"
+    restart: "no"
+
+  frontend:
+    build:
+      context: ../FRONTEND
+      dockerfile: Dockerfile
+    container_name: grupa12_frontend
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: development
+    ports:
+      - "4200:4200"
+    restart: "no"
+
+volumes:
+  postgres_data:
+  keycloak_data:
+
+
+    
