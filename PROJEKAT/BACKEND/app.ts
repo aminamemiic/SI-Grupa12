@@ -13,7 +13,7 @@ const { registerUserEndpoints } = require("./PRESENTATION API/Endpoints/UserEndp
 const { registerExpenseEndpoints } = require("./PRESENTATION API/Endpoints/ExpenseEndpoints");
 
 
-const PORT = Number(process.env.PORT);
+const PORT = Number(process.env.PORT) || 3000;
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL;
 const KEYCLOAK_REALM = process.env.KEYCLOAK_REALM;
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID || "public";
