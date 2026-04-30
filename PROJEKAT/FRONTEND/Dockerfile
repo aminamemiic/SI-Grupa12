@@ -16,4 +16,5 @@ RUN npm install -g http-server
 EXPOSE ${PORT:-4200}
 
 # Serve the 'browser' folder - use Railway's PORT env var, fallback to 4200
-CMD ["sh", "-c", "http-server dist/TIM12Frontend/browser -p ${PORT:-4200} --host 0.0.0.0"]
+# -a 0.0.0.0 binds to all interfaces (Railway requires this)
+CMD ["sh", "-c", "http-server dist/TIM12Frontend/browser -p ${PORT:-4200} -a 0.0.0.0"]
