@@ -49,6 +49,38 @@ export class ExpenseService implements IExpenseService {
     return createdExpense;
   }
 
+  async updateExpense(id: string, payload: CreateExpenseRequest): Promise<any> {
+    this.validateCreateExpense(payload);
+
+    const existing = await this.expenseRepository.getById(id);
+    if (!existing) {
+      throw new Error("Trošak ne postoji.");
+    }
+
+    if (existing.statusValidacije === "ZAKLJUCAN") {
+      throw new Error("Zaključani troškovi se ne mogu mijenjati.");
+    }
+
+    const updatedExpense = await this.expenseRepository.update(id, payload);
+    this.expensesCache = null;
+
+    return updatedExpense;
+  }
+
+  async deleteExpense(id: string): Promise<void> {
+    const existing = await this.expenseRepository.getById(id);
+    if (!existing) {
+      return; 
+    }
+
+    if (existing.statusValidacije === "ZAKLJUCAN") {
+      throw new Error("Zaključani troškovi se ne mogu brisati.");
+    }
+
+    await this.expenseRepository.delete(id);
+    this.expensesCache = null;
+  }
+
   private validateCreateExpense(payload: CreateExpenseRequest): void {
     if (!payload) {
       throw new Error("Podaci za trošak nisu poslani.");
