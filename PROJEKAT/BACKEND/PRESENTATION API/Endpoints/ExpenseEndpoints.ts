@@ -39,6 +39,30 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
       });
     }
   });
+
+  app.put("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik"), async (req: any, res: any) => {
+    try {
+      const updatedExpense = await expenseService.updateExpense(req.params.id, req.body);
+      return res.status(200).json(updatedExpense);
+    } catch (error: any) {
+      console.error("Greška pri ažuriranju troška:", error);
+      return res.status(400).json({
+        message: error.message || "Greška pri ažuriranju troška.",
+      });
+    }
+  });
+
+  app.delete("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik"), async (req: any, res: any) => {
+    try {
+      await expenseService.deleteExpense(req.params.id);
+      return res.status(204).send();
+    } catch (error: any) {
+      console.error("Greška pri brisanju troška:", error);
+      return res.status(400).json({
+        message: error.message || "Greška pri brisanju troška.",
+      });
+    }
+  });
 }
 
 module.exports = { registerExpenseEndpoints };

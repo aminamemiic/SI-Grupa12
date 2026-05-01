@@ -116,6 +116,43 @@ class ExpenseRepository {
     return result.rows[0]?.id || null;
   }
 
+  async update(id: string, expense: any) {
+    await db.query(
+      `
+      UPDATE troskovi
+      SET 
+        naziv = $1,
+        iznos = $2,
+        datum = $3,
+        opis = $4,
+        kategorija_id = $5,
+        odjel_id = $6,
+        projekat_id = $7,
+        dobavljac_id = $8,
+        valuta_id = $9
+      WHERE id = $10;
+      `,
+      [
+        expense.naziv,
+        expense.iznos,
+        expense.datum,
+        expense.opis || null,
+        expense.kategorijaId,
+        expense.odjelId,
+        expense.projekatId || null,
+        expense.dobavljacId || null,
+        expense.valutaId,
+        id,
+      ]
+    );
+
+    return this.getById(id);
+  }
+
+  async delete(id: string) {
+    await db.query("DELETE FROM troskovi WHERE id = $1;", [id]);
+  }
+
   async getById(id: string) {
     const result = await db.query(
       `
