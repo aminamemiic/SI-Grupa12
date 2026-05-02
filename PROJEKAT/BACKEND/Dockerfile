@@ -7,6 +7,6 @@ RUN npm ci
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE ${PORT:-3000}
 
 CMD ["npx", "tsx", "app.ts"]
