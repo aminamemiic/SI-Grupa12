@@ -1,26 +1,79 @@
-<nav class="main-nav">
-  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-    Pocetna
-  </a>
-  <a
-    routerLink="/troskovi"
-    routerLinkActive="active"
-    [class.disabled]="!canOpenExpenses"
-    (click)="openExpensesTab($event)"
-  >
-    Unos troskova
-  </a>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="brand-mark">T12</span>
+      <span>
+        <strong>Tim12</strong>
+        <small>Finansije</small>
+      </span>
+    </a>
 
-  <div class="nav-actions">
-    <button type="button" class="secondary-button" (click)="signIn()" [disabled]="isLoading">
-      Prijavi se
-    </button>
-    <button type="button" class="danger-button" (click)="signOut()" [disabled]="isLoading">
-      Odjavi se
-    </button>
-  </div>
-</nav>
+    @if (isAuthenticated) {
+      <button type="button" class="company-switch" disabled>
+        <span class="company-icon">D</span>
+        <span>Kompanija</span>
+        <span class="chevron">v</span>
+      </button>
 
-<main>
-  <router-outlet></router-outlet>
-</main>
+      <nav class="side-nav" aria-label="Glavna navigacija">
+        <a routerLink="/home" routerLinkActive="active">
+          <span class="nav-icon">NP</span>
+          <span>Nadzorna ploca</span>
+        </a>
+        <a
+          routerLink="/troskovi"
+          routerLinkActive="active"
+          [class.disabled]="!canOpenExpenses"
+          (click)="openExpensesTab($event)"
+        >
+          <span class="nav-icon">TR</span>
+          <span>Unos troskova</span>
+        </a>
+      </nav>
+    }
+
+    @if (isAdmin) {
+      <a class="sidebar-admin-link" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
+        <span class="nav-icon">AD</span>
+        <span>Admin panel</span>
+      </a>
+    }
+  </aside>
+
+  <section class="workspace">
+    <header class="topbar">
+      @if (isAuthenticated) {
+        <label class="search-box">
+          <span>S</span>
+          <input type="search" placeholder="Pretrazite troskove, dobavljace, kategorije..." />
+        </label>
+      }
+
+      <div class="topbar-actions">
+        @if (isAuthenticated) {
+          <button type="button" class="filter-button" disabled>Period</button>
+          <button type="button" class="filter-button" disabled>Kompanije</button>
+          <button type="button" class="icon-button" disabled aria-label="Obavjestenja">!</button>
+          @if (primaryRole) {
+            <span class="role-badge">{{ primaryRole }}</span>
+          }
+          <button type="button" class="danger-button" (click)="signOut()" [disabled]="isLoading">
+            Odjavi se
+          </button>
+        } @else {
+          <button type="button" class="secondary-button" (click)="signIn()" [disabled]="isLoading">
+            Prijavi se
+          </button>
+        }
+      </div>
+    </header>
+
+    @if (navMessage) {
+      <p class="nav-message">{{ navMessage }}</p>
+    }
+
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </section>
+</div>

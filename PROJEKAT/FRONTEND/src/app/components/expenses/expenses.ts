@@ -38,6 +38,9 @@ export class ExpensesComponent implements OnInit {
   isSaving = false;
   successMessage = '';
   errorMessage = '';
+  editingExpenseId: string | null = null;
+  showDeleteModal = false;
+  expenseToDeleteId: string | null = null;
 
   expenseForm = this.fb.group({
     naziv: ['', [Validators.required, Validators.maxLength(200)]],
@@ -70,7 +73,7 @@ export class ExpensesComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = 'Greška pri dohvatu troškova.';
+        this.errorMessage = 'Greska pri dohvatu troskova. Provjerite prijavu i konekciju prema backendu.';
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -86,7 +89,7 @@ export class ExpensesComponent implements OnInit {
       error: (error) => {
         console.error(error);
         this.errorMessage =
-          'Greška pri dohvatu podataka za formu. Provjeri da li postoji ruta /api/troskovi/reference-data.';
+          'Greska pri dohvatu podataka za formu. Provjerite prijavu i konekciju prema backendu.';
         this.cdr.detectChanges();
       },
     });
@@ -118,22 +121,104 @@ export class ExpensesComponent implements OnInit {
 
     this.isSaving = true;
 
-    this.expenseService.createExpense(payload).subscribe({
-      next: (createdExpense) => {
-        this.expenses = [createdExpense, ...this.expenses];
-        this.expenseForm.reset();
-        this.successMessage = 'Trošak je uspješno spremljen.';
+    if (this.editingExpenseId) {
+      this.expenseService.updateExpense(this.editingExpenseId, payload).subscribe({
+        next: (updatedExpense) => {
+          this.expenses = this.expenses.map((e) =>
+            e.id === updatedExpense.id ? updatedExpense : e
+          );
+          this.cancelEdit();
+          this.successMessage = 'Trosak je uspjesno azuriran.';
+          this.isSaving = false;
+          this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage =
+            this.getErrorMessage(error, 'Greska pri azuriranju troska.');
         this.isSaving = false;
+        this.cdr.detectChanges();
+      },
+      });
+    } else {
+      this.expenseService.createExpense(payload).subscribe({
+        next: (createdExpense) => {
+          this.expenses = [createdExpense, ...this.expenses];
+          this.expenseForm.reset();
+          this.successMessage = 'Trosak je uspjesno spremljen.';
+          this.isSaving = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error(error);
+          this.errorMessage =
+            this.getErrorMessage(error, 'Greska pri spremanju troska.');
+          this.isSaving = false;
+          this.cdr.detectChanges();
+        },
+      });
+    }
+  }
+
+  editExpense(expense: Expense): void {
+    this.editingExpenseId = expense.id.toString();
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.expenseForm.patchValue({
+      naziv: expense.naziv,
+      iznos: expense.iznos,
+      datum: expense.datum.split('T')[0], 
+      opis: expense.opis,
+      kategorijaId: expense.kategorijaId?.toString() || '',
+      odjelId: expense.odjelId?.toString() || '',
+      valutaId: expense.valutaId?.toString() || '',
+      projekatId: expense.projekatId?.toString() || '',
+      dobavljacId: expense.dobavljacId?.toString() || '',
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  openDeleteModal(id: string): void {
+    this.expenseToDeleteId = id;
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.expenseToDeleteId = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.expenseToDeleteId) return;
+
+    this.expenseService.deleteExpense(this.expenseToDeleteId).subscribe({
+      next: () => {
+        this.expenses = this.expenses.filter((e) => e.id !== this.expenseToDeleteId);
+        this.successMessage = 'Trosak je uspjesno obrisan.';
+        this.closeDeleteModal();
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
         this.errorMessage =
-          error?.error?.message || 'Greška pri spremanju troška.';
-        this.isSaving = false;
+          this.getErrorMessage(error, 'Greska pri brisanju troska.');
+        this.closeDeleteModal();
         this.cdr.detectChanges();
       },
     });
+  }
+
+  deleteExpense(id: string): void {
+    this.openDeleteModal(id);
+  }
+
+  cancelEdit(): void {
+    this.editingExpenseId = null;
+    this.expenseForm.reset();
+    this.successMessage = '';
+    this.errorMessage = '';
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -151,5 +236,19 @@ export class ExpensesComponent implements OnInit {
       item.kod ||
       item.id
     );
+  }
+
+  private getErrorMessage(error: any, fallback: string): string {
+    const backendMessage = error?.error?.message || error?.error?.error;
+
+    if (backendMessage) {
+      return backendMessage;
+    }
+
+    if (error?.status) {
+      return `${fallback} Status: ${error.status}.`;
+    }
+
+    return fallback;
   }
 }

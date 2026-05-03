@@ -36,11 +36,20 @@ export class AuthService implements IAuthService {
     });
   }
 
+  private normalizeRole(role: string): string {
+    return role
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[\s-]+/g, "_");
+  }
+
   private normalizeRoles(payload: JwtPayload): string[] {
     const roleSet = new Set<string>();
     const addRole = (role: unknown) => {
       if (typeof role === "string" && role.trim()) {
-        roleSet.add(role.trim());
+        roleSet.add(this.normalizeRole(role));
       }
     };
     const addRoles = (roles: unknown) => {
@@ -162,7 +171,7 @@ export class AuthService implements IAuthService {
   };
 
   public requireRole(...allowedRoles: string[]) {
-    const normalizedAllowedRoles = allowedRoles.map((role) => role.toLowerCase());
+    const normalizedAllowedRoles = allowedRoles.map((role) => this.normalizeRole(role));
 
     const checkRole = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
       if (!req.user) {
@@ -170,7 +179,7 @@ export class AuthService implements IAuthService {
         return;
       }
 
-      const userRoles = this.normalizeRoles(req.user).map((role) => role.toLowerCase());
+      const userRoles = this.normalizeRoles(req.user);
       const hasRole = userRoles.some((role) => normalizedAllowedRoles.includes(role));
 
       if (!hasRole) {
