@@ -1,12 +1,26 @@
 <div class="expenses-page">
+  <section class="expenses-header">
+    <div>
+      <p class="eyebrow">Unos troskova</p>
+      <h1>{{ editingExpenseId ? 'Uredjivanje troska' : 'Novi trosak' }}</h1>
+      <p>Unesite trosak kroz strukturisanu formu. Lista ispod prikazuje trenutno dostupne zapise.</p>
+    </div>
+  </section>
+
   <section class="form-card">
-    <h2>Ručni unos troška</h2>
-    <p class="subtitle">Unesite osnovne podatke o trošku.</p>
+    <div class="section-heading">
+      <div>
+        <h2>{{ editingExpenseId ? 'Uredi trosak' : 'Rucni unos troska' }}</h2>
+        <p class="subtitle">
+          {{ editingExpenseId ? 'Izmijenite podatke o trosku.' : 'Popunite obavezna polja i sacuvajte zapis.' }}
+        </p>
+      </div>
+    </div>
 
     <form [formGroup]="expenseForm" (ngSubmit)="saveExpense()">
       <div class="form-grid">
         <div class="form-group">
-          <label>Naziv troška *</label>
+          <label>Naziv troska *</label>
           <input type="text" formControlName="naziv" placeholder="Npr. Laptop" />
           <small *ngIf="isFieldInvalid('naziv')">Naziv je obavezan.</small>
         </div>
@@ -14,7 +28,7 @@
         <div class="form-group">
           <label>Iznos *</label>
           <input type="number" formControlName="iznos" placeholder="Npr. 1200" />
-          <small *ngIf="isFieldInvalid('iznos')">Iznos mora biti veći od 0.</small>
+          <small *ngIf="isFieldInvalid('iznos')">Iznos mora biti veci od 0.</small>
         </div>
 
         <div class="form-group">
@@ -67,9 +81,9 @@
         </div>
 
         <div class="form-group">
-          <label>Dobavljač</label>
+          <label>Dobavljac</label>
           <select formControlName="dobavljacId">
-            <option value="">Bez dobavljača</option>
+            <option value="">Bez dobavljaca</option>
             <option *ngFor="let item of referenceData.dobavljaci" [value]="item.id">
               {{ getItemLabel(item) }}
             </option>
@@ -78,7 +92,7 @@
 
         <div class="form-group full-width">
           <label>Opis</label>
-          <textarea formControlName="opis" rows="3" placeholder="Unesite opis troška"></textarea>
+          <textarea formControlName="opis" rows="3" placeholder="Unesite opis troska"></textarea>
         </div>
       </div>
 
@@ -87,16 +101,30 @@
         <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
       </div>
 
-      <button type="submit" [disabled]="isSaving">
-        {{ isSaving ? 'Spremanje...' : 'Sačuvaj' }}
-      </button>
+      <div class="form-actions">
+        <button type="submit" [disabled]="isSaving">
+          {{ isSaving ? 'Spremanje...' : (editingExpenseId ? 'Sacuvaj izmjene' : 'Sacuvaj') }}
+        </button>
+
+        <button type="button" class="btn-cancel" *ngIf="editingExpenseId" (click)="cancelEdit()">
+          Odustani
+        </button>
+      </div>
     </form>
   </section>
 
   <section class="list-card">
-    <h2>Lista troškova</h2>
+    <div class="section-heading">
+      <div>
+        <h2>Lista troskova</h2>
+        <p class="subtitle">Evidentirani troskovi iz baze.</p>
+      </div>
+      <button type="button" class="btn-refresh" (click)="loadExpenses()" [disabled]="isLoading">
+        Osvjezi
+      </button>
+    </div>
 
-    <p *ngIf="isLoading">Učitavanje troškova...</p>
+    <p *ngIf="isLoading">Ucitavanje troskova...</p>
 
     <table *ngIf="!isLoading && expenses.length > 0">
       <thead>
@@ -108,6 +136,7 @@
           <th>Odjel</th>
           <th>Valuta</th>
           <th>Status</th>
+          <th>Akcije</th>
         </tr>
       </thead>
 
@@ -120,12 +149,32 @@
           <td>{{ expense.odjel }}</td>
           <td>{{ expense.valuta }}</td>
           <td>{{ expense.statusValidacije }}</td>
+          <td class="actions-cell">
+            <button class="btn-edit-table" title="Uredi" (click)="editExpense(expense)">
+              Uredi
+            </button>
+            <button class="btn-delete-table" title="Izbrisi" (click)="openDeleteModal(expense.id.toString())">
+              Izbrisi
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
 
     <p *ngIf="!isLoading && expenses.length === 0">
-      Trenutno nema evidentiranih troškova.
+      Trenutno nema evidentiranih troskova.
     </p>
   </section>
+
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-card">
+      <h3>Brisanje troska</h3>
+      <p>Jeste li sigurni da zelite izbrisati ovaj trosak? Ova radnja se ne moze ponistiti.</p>
+
+      <div class="modal-actions">
+        <button class="btn-cancel-modal" (click)="closeDeleteModal()">Odustani</button>
+        <button class="btn-confirm-delete" (click)="confirmDelete()">Izbrisi</button>
+      </div>
+    </div>
+  </div>
 </div>

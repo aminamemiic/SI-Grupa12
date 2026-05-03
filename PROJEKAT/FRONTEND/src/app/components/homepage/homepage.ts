@@ -1,5 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
 import { AuthGuardService } from '../../../middleware/middleware.authguard';
 import { UserService } from '../../../services/user.service';
 
@@ -9,18 +8,18 @@ import { UserService } from '../../../services/user.service';
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
 })
-export class Homepage implements OnInit {
+export class Homepage {
   private readonly authGuardService = inject(AuthGuardService);
   private readonly userService = inject(UserService);
-  private readonly router = inject(Router);
 
+  public readonly adminConsoleUrl = 'https://keycloak-production-4c61.up.railway.app/';
   public errorMessage = '';
   public isLoading = false;
   public infoMessage = '';
   public loadingMessage = '';
 
-  public ngOnInit(): void {
-    void this.handleKeycloakCallback();
+  public get isAdmin(): boolean {
+    return this.authGuardService.hasAnyRole(['admin']);
   }
 
   public async loginWithKeycloak(): Promise<void> {
@@ -40,62 +39,15 @@ export class Homepage implements OnInit {
     try {
       await this.userService.logout();
       this.authGuardService.logoutFromKeycloak();
-      return;
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         this.errorMessage = 'Logout timeout. Provjeri da li je backend pokrenut.';
       } else {
-        this.errorMessage = error instanceof Error ? error.message : 'Greška pri logoutu.';
+        this.errorMessage = error instanceof Error ? error.message : 'Greska pri logoutu.';
       }
     } finally {
       this.isLoading = false;
       this.loadingMessage = '';
     }
-  }
-
-  private async handleKeycloakCallback(): Promise<void> {
-    this.errorMessage = '';
-    this.infoMessage = '';
-    this.loadingMessage = '';
-    this.isLoading = false;
-
-    let callbackResult;
-    try {
-      callbackResult = await this.authGuardService.handleKeycloakCallback();
-    } catch {
-      this.errorMessage = 'Greška pri obradi Keycloak callback-a.';
-      this.isLoading = false;
-      this.loadingMessage = '';
-      return;
-    }
-
-    if (callbackResult.status === 'idle') {
-      this.isLoading = false;
-      this.loadingMessage = '';
-      return;
-    }
-
-    if (callbackResult.status === 'error') {
-      this.errorMessage = callbackResult.message;
-      this.isLoading = false;
-      this.loadingMessage = '';
-      return;
-    }
-
-    this.isLoading = true;
-    this.loadingMessage = 'Login u toku...';
-
-    try {
-  await this.userService.getValidSession(callbackResult.accessToken);
-  this.infoMessage = 'Session kreirana na backendu.';
-  console.log('✅ Session OK, navigiram na /home');
-  void this.router.navigate(['/home']);
-} catch (error) {
-  if (error instanceof DOMException && error.name === 'AbortError') {
-    this.errorMessage = 'Zahtjev je istekao. Provjeri da li su Keycloak i backend pokrenuti.';
-  } else {
-    this.errorMessage = error instanceof Error ? error.message : 'Greška pri loginu.';
-  }
-}
   }
 }
