@@ -13,6 +13,6 @@ export interface CreateExpenseRequest {
 
 export interface IExpenseService {
   getAllExpenses(): Promise<any[]>;
-  createExpense(payload: CreateExpenseRequest): Promise<any>;
+  createExpense(payload: CreateExpenseRequest, authUser?: unknown): Promise<any>;
   getReferenceData(): Promise<any>;
 }

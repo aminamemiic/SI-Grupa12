@@ -40,10 +40,10 @@ export class ExpenseService implements IExpenseService {
     return referenceData;
   }
 
-  async createExpense(payload: CreateExpenseRequest): Promise<any> {
+  async createExpense(payload: CreateExpenseRequest, authUser?: unknown): Promise<any> {
     this.validateCreateExpense(payload);
 
-    const createdExpense = await this.expenseRepository.create(payload);
+    const createdExpense = await this.expenseRepository.create(payload, authUser);
     this.expensesCache = null;
 
     return createdExpense;

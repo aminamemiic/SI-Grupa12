@@ -6,8 +6,9 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-# Build the application
-RUN npm run build
+# Railway should use production endpoints; local docker-compose overrides this to development.
+ARG BUILD_CONFIGURATION=production
+RUN npm run build -- --configuration ${BUILD_CONFIGURATION}
 
 # Install http-server to serve the static files
 RUN npm install -g http-server

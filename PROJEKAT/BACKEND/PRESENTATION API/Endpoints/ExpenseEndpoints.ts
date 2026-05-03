@@ -28,9 +28,9 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
     }
   });
 
-  app.post("/api/troskovi", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik"), async (req: any, res: any) => {
+  app.post("/api/troskovi", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
     try {
-      const createdExpense = await expenseService.createExpense(req.body);
+      const createdExpense = await expenseService.createExpense(req.body, req.user);
       return res.status(201).json(createdExpense);
     } catch (error: any) {
       console.error("Greška pri kreiranju troška:", error);
@@ -40,7 +40,7 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
     }
   });
 
-  app.put("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik"), async (req: any, res: any) => {
+  app.put("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
     try {
       const updatedExpense = await expenseService.updateExpense(req.params.id, req.body);
       return res.status(200).json(updatedExpense);
@@ -52,7 +52,7 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
     }
   });
 
-  app.delete("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik"), async (req: any, res: any) => {
+  app.delete("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
     try {
       await expenseService.deleteExpense(req.params.id);
       return res.status(204).send();
