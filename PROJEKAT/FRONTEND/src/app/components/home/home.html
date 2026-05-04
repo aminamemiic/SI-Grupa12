@@ -1,13 +1,304 @@
-<div class="home-wrapper">
-  <section class="intro-panel">
-    <h1>Pocetna</h1>
-    @for (role of currentRoles; track role) {
-      <span class="role-pill">{{ role }}</span>
-    }
+<div class="dashboard-page">
+  <section class="dashboard-header">
+    <div>
+      <p class="eyebrow">Nadzorna ploca</p>
+      <h1>Pregled troskova</h1>
+      <p class="lead">Trenutni troskovi iz baze prikazani su ispod i mogu se urediti ili obrisati.</p>
+    </div>
 
+    <div class="header-actions">
+      <button type="button" class="secondary-action" disabled>Izvezi izvjestaj</button>
+      @if (isAdmin) {
+        <a class="primary-action" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
+          Admin Panel
+        </a>
+      }
+    </div>
   </section>
 
   @if (accessNotice) {
     <p class="notice">{{ accessNotice }}</p>
+  }
+
+  @if (dashboardMessage) {
+    <p class="notice success-notice">{{ dashboardMessage }}</p>
+  }
+
+  @if (dashboardError) {
+    <p class="notice error-notice">{{ dashboardError }}</p>
+  }
+
+  <section class="metric-grid" aria-label="Kljucni indikatori">
+    <article class="metric-card blue">
+      <span>Ukupno troskova</span>
+      <strong>{{ totalExpenses }}</strong>
+      <small>Ucitano iz baze.</small>
+    </article>
+    <article class="metric-card red">
+      <span>Ukupni iznos</span>
+      <strong>{{ totalAmount | number: '1.2-2' }} KM</strong>
+      <small>Zbir evidentiranih troskova.</small>
+    </article>
+    <article class="metric-card green">
+      <span>Prosjecan trosak</span>
+      <strong>{{ averageAmount | number: '1.2-2' }} KM</strong>
+      <small>Prosjek po zapisu.</small>
+    </article>
+    <article class="metric-card orange">
+      <span>Top kategorija</span>
+      <strong>{{ topCategoryLabel }}</strong>
+      <small>Najveci zbir troskova.</small>
+    </article>
+    <article class="metric-card purple">
+      <span>Top odjel</span>
+      <strong>{{ topDepartmentLabel }}</strong>
+      <small>Najveci zbir troskova.</small>
+    </article>
+  </section>
+
+  <section class="dashboard-grid">
+    <article class="panel chart-panel">
+      <div class="panel-heading">
+        <h2>Troskovi po kategorijama</h2>
+        <span>{{ categoryBreakdown.length }} kategorija</span>
+      </div>
+      @if (categoryBreakdown.length === 0) {
+        <div class="empty-state compact">
+          <strong>Nema podataka za grafikon.</strong>
+        </div>
+      } @else {
+        <div class="bar-list">
+          @for (item of categoryBreakdown; track item.label) {
+            <div class="bar-row">
+              <div class="bar-label">
+                <strong>{{ item.label }}</strong>
+                <small>{{ item.count }} troskova</small>
+              </div>
+              <div class="bar-track">
+                <span [style.width.%]="item.percentage"></span>
+              </div>
+              <b>{{ item.total | number: '1.2-2' }} KM</b>
+            </div>
+          }
+        </div>
+      }
+    </article>
+
+    <article class="panel bar-panel">
+      <div class="panel-heading">
+        <h2>Troskovi po odjelima</h2>
+        <span>{{ departmentBreakdown.length }} odjela</span>
+      </div>
+      @if (departmentBreakdown.length === 0) {
+        <div class="empty-state compact">
+          <strong>Nema podataka za grafikon.</strong>
+        </div>
+      } @else {
+        <div class="bar-list">
+          @for (item of departmentBreakdown; track item.label) {
+            <div class="bar-row">
+              <div class="bar-label">
+                <strong>{{ item.label }}</strong>
+                <small>{{ item.count }} troskova</small>
+              </div>
+              <div class="bar-track purple-track">
+                <span [style.width.%]="item.percentage"></span>
+              </div>
+              <b>{{ item.total | number: '1.2-2' }} KM</b>
+            </div>
+          }
+        </div>
+      }
+    </article>
+
+    <article class="panel transactions-panel">
+      <div class="panel-heading">
+        <h2>Trenutni troskovi</h2>
+        <button type="button" (click)="loadDashboardExpenses()" [disabled]="isLoadingExpenses">
+          Osvjezi
+        </button>
+      </div>
+
+      @if (isLoadingExpenses) {
+        <div class="empty-state compact">
+          <strong>Ucitavanje troskova...</strong>
+        </div>
+      } @else if (expenses.length === 0) {
+        <div class="empty-state compact">
+          <strong>Nema evidentiranih troskova.</strong>
+          <p>Kada unesete troskove, prikazat ce se ovdje.</p>
+        </div>
+      } @else {
+        <div class="dashboard-table-wrap">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Naziv</th>
+                <th>Iznos</th>
+                <th>Datum</th>
+                <th>Kategorija</th>
+                <th>Odjel</th>
+                <th>Valuta</th>
+                <th>Akcije</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (expense of expenses; track expense.id) {
+                <tr>
+                  <td>{{ expense.naziv }}</td>
+                  <td>{{ expense.iznos | number: '1.2-2' }}</td>
+                  <td>{{ expense.datum | date: 'yyyy-MM-dd' }}</td>
+                  <td>{{ expense.kategorija || '-' }}</td>
+                  <td>{{ expense.odjel || '-' }}</td>
+                  <td>{{ expense.valuta || '-' }}</td>
+                  <td class="row-actions">
+                    <button type="button" class="table-action" (click)="openEditExpense(expense)">Uredi</button>
+                    <button type="button" class="table-action danger" (click)="openDeleteExpense(expense)">Izbrisi</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </article>
+
+    <aside class="assistant-column">
+      <article class="panel assistant-panel">
+        <div class="panel-heading">
+          <h2>AI asistent</h2>
+          <span>Beta</span>
+        </div>
+        <div class="empty-state compact">
+          <strong>Asistent nije povezan.</strong>
+          <p>Preporuke ce se prikazati nakon implementacije AI asistenta.</p>
+        </div>
+        <div class="assistant-input">Postavi pitanje AI asistentu...</div>
+      </article>
+
+      <article class="panel suppliers-panel">
+        <div class="panel-heading">
+          <h2>Dobavljaci sa najvecim rastom</h2>
+        </div>
+        <div class="empty-state compact">
+          <strong>Nema dobavljaca za prikaz.</strong>
+          <p>Podaci o dobavljacima jos nisu dostupni na nadzornoj ploci.</p>
+        </div>
+      </article>
+    </aside>
+  </section>
+
+  @if (editingExpense) {
+    <div class="modal-overlay">
+      <section class="modal-card edit-modal">
+        <div class="panel-heading">
+          <h2>Uredi trosak</h2>
+          <button type="button" (click)="closeEditExpense()">Zatvori</button>
+        </div>
+
+        <form [formGroup]="editForm" (ngSubmit)="saveDashboardExpense()">
+          <div class="edit-grid">
+            <label>
+              Naziv troska *
+              <input type="text" formControlName="naziv" />
+              @if (isEditFieldInvalid('naziv')) {
+                <small>Naziv je obavezan.</small>
+              }
+            </label>
+
+            <label>
+              Iznos *
+              <input type="number" formControlName="iznos" />
+              @if (isEditFieldInvalid('iznos')) {
+                <small>Iznos mora biti veci od 0.</small>
+              }
+            </label>
+
+            <label>
+              Datum *
+              <input type="date" formControlName="datum" />
+              @if (isEditFieldInvalid('datum')) {
+                <small>Datum je obavezan.</small>
+              }
+            </label>
+
+            <label>
+              Kategorija *
+              <select formControlName="kategorijaId">
+                <option value="">Odaberite kategoriju</option>
+                @for (item of referenceData.kategorije; track item.id) {
+                  <option [value]="item.id">{{ getItemLabel(item) }}</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              Odjel *
+              <select formControlName="odjelId">
+                <option value="">Odaberite odjel</option>
+                @for (item of referenceData.odjeli; track item.id) {
+                  <option [value]="item.id">{{ getItemLabel(item) }}</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              Valuta *
+              <select formControlName="valutaId">
+                <option value="">Odaberite valutu</option>
+                @for (item of referenceData.valute; track item.id) {
+                  <option [value]="item.id">{{ getItemLabel(item) }}</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              Projekat
+              <select formControlName="projekatId">
+                <option value="">Bez projekta</option>
+                @for (item of referenceData.projekti; track item.id) {
+                  <option [value]="item.id">{{ getItemLabel(item) }}</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              Dobavljac
+              <select formControlName="dobavljacId">
+                <option value="">Bez dobavljaca</option>
+                @for (item of referenceData.dobavljaci; track item.id) {
+                  <option [value]="item.id">{{ getItemLabel(item) }}</option>
+                }
+              </select>
+            </label>
+
+            <label class="wide-field">
+              Opis
+              <textarea formControlName="opis" rows="3"></textarea>
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="secondary-action" (click)="closeEditExpense()">Odustani</button>
+            <button type="submit" class="primary-action" [disabled]="isSavingExpense">
+              {{ isSavingExpense ? 'Spremanje...' : 'Sacuvaj izmjene' }}
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
+
+  @if (expenseToDelete) {
+    <div class="modal-overlay">
+      <section class="modal-card">
+        <h2>Brisanje troska</h2>
+        <p>Jeste li sigurni da zelite izbrisati trosak "{{ expenseToDelete.naziv }}"?</p>
+        <div class="modal-actions">
+          <button type="button" class="secondary-action" (click)="closeDeleteExpense()">Odustani</button>
+          <button type="button" class="primary-action danger-action" (click)="confirmDeleteExpense()">Izbrisi</button>
+        </div>
+      </section>
+    </div>
   }
 </div>

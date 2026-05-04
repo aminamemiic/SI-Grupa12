@@ -1,6 +1,6 @@
-// Railway deployment config - keycloakUrl used by AuthGuardService
+// Local Docker Compose config - backend runs locally, auth uses public Keycloak.
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000/api',
-  keycloakUrl: 'http://localhost:8080'
+  keycloakUrl: 'https://keycloak-production-4c61.up.railway.app'
 };
