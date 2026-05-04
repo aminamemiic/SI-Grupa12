@@ -1,6 +1,25 @@
 <div class="homepage-wrapper">
   <section class="welcome-panel">
-    <h1>Tim12</h1>
+    <div class="hero-copy">
+      <p class="eyebrow">Interni finansijski sistem</p>
+      <h1>Tim12</h1>
+      <p class="lead">
+        Centralno mjesto za unos, pregled i validaciju troskova po odjelima, projektima i dobavljacima.
+      </p>
+
+      <div class="hero-actions">
+        @if (isAdmin) {
+          <a class="primary-button" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
+            Admin Panel
+          </a>
+        } @else {
+          <button type="button" class="primary-button" (click)="loginWithKeycloak()" [disabled]="isLoading">
+            Prijavi se
+          </button>
+        }
+      </div>
+    </div>
+
   </section>
 
   @if (isLoading) {

@@ -1,4 +1,4 @@
-## Sprint 4
+## Sprint 5
 
 # 1. Planirani sprint goal
 Izvršiti "pripremne" radnje (Docker, baza podataka), implementirati funkcionalnosti planirane za Sprint 5, testiranje, deployment, uspostavti Decision i AI Usage Log.
@@ -47,6 +47,7 @@ Sve planirane stavke za Sprint 5 su uspješno završene.
 - Ograničavanje CORS pristupa: Dozvoljen samo definisani FRONTEND_ORIGIN
 
 # 7. Povratna informacija Product Ownera
+Product Owner je zadovoljan sa predstavljenim Sprintom, te ga je ocijenio maksimalnim brojem bodova.
 
 # 8. Zaključak za naredni sprint
 Za Sprint 6 planiran je nastavak implementacije funkcionalnosti:

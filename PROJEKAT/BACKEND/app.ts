@@ -25,6 +25,10 @@ const SESSION_SECRET = process.env.SESSION_SECRET;
 const SESSION_COOKIE_NAME = "tim12.sid";
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:4200";
 const IS_PROD = process.env.NODE_ENV === "production";
+const dbClientConfig = () => ({
+  connectionString: process.env.DATABASE_URL,
+  ssl: IS_PROD ? { rejectUnauthorized: false } : false,
+});
 
 
 const logsDir = path.resolve(__dirname, "logs");
@@ -83,7 +87,7 @@ async function runMigrations() {
     throw new Error("DATABASE_URL nije definisan.");
   }
 
-  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  const client = new Client(dbClientConfig());
   
   try {
     writeLog("INFO", "Povezujem se na bazu podataka...");
@@ -109,6 +113,63 @@ async function runMigrations() {
 
   } catch (error) {
     writeLog("ERROR", "Greška pri migracijama", error);
+    throw error;
+  } finally {
+    await client.end();
+  }
+}
+
+async function ensureBaseData() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL nije definisan.");
+  }
+
+  const client = new Client(dbClientConfig());
+
+  try {
+    writeLog("INFO", "Provjeravam osnovne podatke za sifarnike...");
+    await connectWithRetry(client);
+
+    await client.query(`
+      INSERT INTO uloge (naziv, opis) VALUES
+      ('ADMINISTRATOR', 'Administrator sistema'),
+      ('GLAVNI_RACUNOVODJA', 'Glavni racunovodja'),
+      ('FINANSIJSKI_DIREKTOR', 'Finansijski direktor'),
+      ('ADMINISTRATIVNI_ZAPOSLENIK', 'Administrativni zaposlenik')
+      ON CONFLICT (naziv) DO NOTHING;
+
+      INSERT INTO valute (kod, naziv) VALUES
+      ('BAM', 'Konvertibilna marka'),
+      ('EUR', 'Euro'),
+      ('USD', 'Americki dolar')
+      ON CONFLICT (kod) DO NOTHING;
+
+      INSERT INTO kategorije (naziv, opis)
+      SELECT naziv, opis
+      FROM (
+        VALUES
+        ('Plate', 'Troskovi plata zaposlenih'),
+        ('Oprema', 'Kupovina opreme'),
+        ('Marketing', 'Marketing troskovi'),
+        ('Putni troskovi', 'Troskovi sluzbenih putovanja'),
+        ('Zakup', 'Troskovi zakupa prostora')
+      ) AS seed(naziv, opis)
+      WHERE NOT EXISTS (SELECT 1 FROM kategorije);
+
+      INSERT INTO odjeli (naziv, sifra_odjela) VALUES
+      ('Administracija', 'ADM'),
+      ('Finansije', 'FIN'),
+      ('IT', 'IT'),
+      ('Marketing', 'MKT'),
+      ('Nabavka', 'NAB'),
+      ('Prodaja', 'PRO')
+      ON CONFLICT (sifra_odjela) DO UPDATE
+      SET naziv = EXCLUDED.naziv;
+    `);
+
+    writeLog("INFO", "Osnovni sifarnici su spremni.");
+  } catch (error) {
+    writeLog("ERROR", "Greska pri provjeri osnovnih podataka", error);
     throw error;
   } finally {
     await client.end();
@@ -183,6 +244,7 @@ async function main() {
   try {
     await ensureDockerServices();
     await runMigrations();
+    await ensureBaseData();
     startServer();
   } catch (error) {
     writeLog("ERROR", "Ne mogu pokrenuti aplikaciju", error);

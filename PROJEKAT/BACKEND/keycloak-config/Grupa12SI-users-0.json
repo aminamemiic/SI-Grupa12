@@ -2,21 +2,18 @@
   "realm" : "Grupa12SI",
   "users" : [ {
     "id" : "a026e17f-3145-493e-a775-93aa8c2d6a04",
-    "username" : "test",
-    "firstName" : "Test",
-    "lastName" : "Test",
-    "email" : "test@test.com",
+    "username" : "admin",
+    "firstName" : "Admin",
+    "lastName" : "Admin",
+    "email" : "admin@test.com",
     "emailVerified" : true,
     "enabled" : true,
     "createdTimestamp" : 1777512356814,
     "totp" : false,
     "credentials" : [ {
-      "id" : "ae926604-b9c6-4b63-8f1e-dfb67d0e6f26",
       "type" : "password",
-      "userLabel" : "My password",
-      "createdDate" : 1777512361255,
-      "secretData" : "{\"value\":\"MSakKGoLxwJt2r0VSJsgnD0HRHq5Xofg+19dRSnLh24=\",\"salt\":\"ij+BPGyLztYy3YxqHTSXSQ==\",\"additionalParameters\":{}}",
-      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+      "value" : "admin",
+      "temporary" : false
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
