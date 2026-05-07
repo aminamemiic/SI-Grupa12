@@ -195,10 +195,10 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
   });
 
   // ─────────────────────────────────────────────────────────────
-  // PUT /api/troskovi/:id
+  // PUT /api/troskovi
   // ─────────────────────────────────────────────────────────────
 
-  describe("PUT /api/troskovi/:id", () => {
+  describe("PUT /api/troskovi", () => {
     const validPayload = {
       naziv: "Ažurirani trošak",
       iznos: 200,
@@ -213,21 +213,21 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
       mockExpenseService.updateExpense.mockResolvedValue(updated);
 
       const response = await request(app)
-        .put("/api/troskovi/1")
-        .send(validPayload);
+        .put("/api/troskovi")
+        .send({ ...validPayload, id: "1" });
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(updated);
       expect(mockExpenseService.updateExpense).toHaveBeenCalledWith(
         "1",
-        validPayload
+        expect.objectContaining(validPayload)
       );
     });
 
     test("treba pozivati requireAuthentication middleware (RBAC)", async () => {
       mockExpenseService.updateExpense.mockResolvedValue({ id: "1", ...validPayload });
 
-      await request(app).put("/api/troskovi/1").send(validPayload);
+      await request(app).put("/api/troskovi").send({ ...validPayload, id: "1" });
 
       expect(authService.requireAuthentication).toHaveBeenCalled();
     });
@@ -235,7 +235,7 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
     test("treba pozivati requireRole middleware s ispravnim rolama (RBAC)", async () => {
       mockExpenseService.updateExpense.mockResolvedValue({ id: "1", ...validPayload });
 
-      await request(app).put("/api/troskovi/1").send(validPayload);
+      await request(app).put("/api/troskovi").send({ ...validPayload, id: "1" });
 
       expect(authService.requireRole).toHaveBeenCalledWith(
         "admin",
@@ -250,8 +250,8 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
       );
 
       const response = await request(app)
-        .put("/api/troskovi/99")
-        .send(validPayload);
+        .put("/api/troskovi")
+        .send({ ...validPayload, id: "99" });
 
       expect(response.status).toBe(400);
       expect(response.body).toEqual({ message: "Trošak ne postoji." });
@@ -263,8 +263,8 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
       );
 
       const response = await request(app)
-        .put("/api/troskovi/1")
-        .send(validPayload);
+        .put("/api/troskovi")
+        .send({ ...validPayload, id: "1" });
 
       expect(response.status).toBe(400);
       expect(response.body).toEqual({
@@ -274,14 +274,14 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
   });
 
   // ─────────────────────────────────────────────────────────────
-  // DELETE /api/troskovi/:id
+  // DELETE /api/troskovi
   // ─────────────────────────────────────────────────────────────
 
-  describe("DELETE /api/troskovi/:id", () => {
+  describe("DELETE /api/troskovi", () => {
     test("treba obrisati trošak i vratiti HTTP 204 bez tijela", async () => {
       mockExpenseService.deleteExpense.mockResolvedValue(undefined);
 
-      const response = await request(app).delete("/api/troskovi/1");
+      const response = await request(app).delete("/api/troskovi?id=1");
 
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});
@@ -291,7 +291,7 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
     test("treba pozivati requireAuthentication middleware (RBAC)", async () => {
       mockExpenseService.deleteExpense.mockResolvedValue(undefined);
 
-      await request(app).delete("/api/troskovi/1");
+      await request(app).delete("/api/troskovi?id=1");
 
       expect(authService.requireAuthentication).toHaveBeenCalled();
     });
@@ -299,7 +299,7 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
     test("treba pozivati requireRole middleware s ispravnim rolama (RBAC)", async () => {
       mockExpenseService.deleteExpense.mockResolvedValue(undefined);
 
-      await request(app).delete("/api/troskovi/1");
+      await request(app).delete("/api/troskovi?id=1");
 
       expect(authService.requireRole).toHaveBeenCalledWith(
         "admin",
@@ -313,7 +313,7 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
         new Error("Zaključani troškovi se ne mogu brisati.")
       );
 
-      const response = await request(app).delete("/api/troskovi/1");
+      const response = await request(app).delete("/api/troskovi?id=1");
 
       expect(response.status).toBe(400);
       expect(response.body).toEqual({
@@ -324,7 +324,7 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
     test("treba vratiti generičku poruku ako greška nema message", async () => {
       mockExpenseService.deleteExpense.mockRejectedValue({});
 
-      const response = await request(app).delete("/api/troskovi/1");
+      const response = await request(app).delete("/api/troskovi?id=1");
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe("Greška pri brisanju troška.");

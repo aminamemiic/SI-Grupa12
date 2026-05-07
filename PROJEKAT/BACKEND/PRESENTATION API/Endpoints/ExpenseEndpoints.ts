@@ -40,9 +40,13 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
     }
   });
 
-  app.put("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
+  app.put("/api/troskovi", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
     try {
-      const updatedExpense = await expenseService.updateExpense(req.params.id, req.body);
+      const id = req.body.id || req.query.id;
+      if (!id) {
+        return res.status(400).json({ message: "ID troška je obavezan." });
+      }
+      const updatedExpense = await expenseService.updateExpense(id, req.body);
       return res.status(200).json(updatedExpense);
     } catch (error: any) {
       console.error("Greška pri ažuriranju troška:", error);
@@ -52,9 +56,13 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
     }
   });
 
-  app.delete("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
+  app.delete("/api/troskovi", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
     try {
-      await expenseService.deleteExpense(req.params.id);
+      const id = req.query.id || req.body.id;
+      if (!id) {
+        return res.status(400).json({ message: "ID troška je obavezan." });
+      }
+      await expenseService.deleteExpense(id);
       return res.status(204).send();
     } catch (error: any) {
       console.error("Greška pri brisanju troška:", error);

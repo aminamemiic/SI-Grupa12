@@ -37,11 +37,11 @@ export class ExpenseService {
   }
 
   updateExpense(id: string, payload: CreateExpenseRequest): Observable<Expense> {
-    return this.http.put<Expense>(`${this.apiUrl}/${id}`, payload, this.getAuthOptions());
+    return this.http.put<Expense>(this.apiUrl, { ...payload, id }, this.getAuthOptions());
   }
 
   deleteExpense(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, this.getAuthOptions());
+    return this.http.delete<void>(`${this.apiUrl}?id=${id}`, this.getAuthOptions());
   }
 
   getReferenceData(): Observable<ExpenseReferenceData> {
