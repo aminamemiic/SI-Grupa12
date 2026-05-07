@@ -40,9 +40,9 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
     }
   });
 
-  app.put("/api/troskovi", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
+  app.put("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
     try {
-      const id = req.body.id || req.query.id;
+      const id = req.params.id || req.body.id || req.query.id;
       if (!id) {
         return res.status(400).json({ message: "ID troška je obavezan." });
       }
@@ -56,9 +56,9 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
     }
   });
 
-  app.delete("/api/troskovi", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
+  app.delete("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
     try {
-      const id = req.query.id || req.body.id;
+      const id = req.params.id || req.query.id || req.body.id;
       if (!id) {
         return res.status(400).json({ message: "ID troška je obavezan." });
       }
