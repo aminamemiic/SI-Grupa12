@@ -204,11 +204,15 @@ function startServer() {
     }
 
     res.setHeader("Vary", "Origin");
+
+    if (req.method === "OPTIONS") {
+      return res.sendStatus(204);
+    }
+
     next();
   });
 
-  // Explicit OPTIONS handler for preflight requests (required for Express 5)
-  app.options("{*path}", (req: any, res: any) => {
+  app.options("/:splat(*)", (req: any, res: any) => {
     res.sendStatus(204);
   });
   app.use(cookieParser());
