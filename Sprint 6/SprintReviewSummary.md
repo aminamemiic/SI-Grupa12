@@ -55,7 +55,7 @@ Sve planirane stavke za Sprint 6 su uspješno završene.
 
 
 # 7. Povratna informacija Product Ownera
-
+Product Owner je imao primjedbu na malu količinu urađenih User story-ja u ovome sprintu, ali s obzirom da su dobro urađeni, sprint je ocijenjen maksimalnim brojem bodova. Za sljedeći sprint nastojati bolje rasporediti poslove, tako da tim ima značajan broj novih funkcionalnosti za demonstraciju. 
 
 # 8. Zaključak za naredni sprint
 Za Sprint 7 planiran je nastavak implementacije funkcionalnosti:
