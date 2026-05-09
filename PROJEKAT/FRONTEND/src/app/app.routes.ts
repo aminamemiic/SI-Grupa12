@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Homepage } from './components/homepage/homepage';
 import { ExpensesComponent } from './components/expenses/expenses';
+import { ExpenseImportComponent } from './components/expense-import/expense-import.component';
 import { HomeComponent } from './components/home/home';
 import { RoleAccessComponent } from './components/role-access/role-access';
 import { AuthGuardService } from '../middleware/middleware.authguard';
@@ -41,6 +42,7 @@ export const routes: Routes = [
   { path: '', component: Homepage },
   { path: 'home', component: HomeComponent, canActivate: [requireAuth] },
   { path: 'troskovi', component: ExpensesComponent, canActivate: [canOpenExpenses] },
+  { path: 'troskovi/import', component: ExpenseImportComponent, canActivate: [canOpenExpenses] },
   {
     path: 'profile',
     component: RoleAccessComponent,

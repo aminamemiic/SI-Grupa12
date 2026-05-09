@@ -1,18 +1,18 @@
 <div class="expenses-page">
   <section class="expenses-header">
     <div>
-      <p class="eyebrow">Unos troskova</p>
-      <h1>{{ editingExpenseId ? 'Uredjivanje troska' : 'Novi trosak' }}</h1>
-      <p>Unesite trosak kroz strukturisanu formu. Lista ispod prikazuje trenutno dostupne zapise.</p>
+      <p class="eyebrow">Unos troškova</p>
+      <h1>{{ editingExpenseId ? 'Uređivanje troška' : 'Novi trošak' }}</h1>
+      <p>Unesite trošak kroz strukturisanu formu. Lista ispod prikazuje trenutno dostupne zapise.</p>
     </div>
   </section>
 
   <section class="form-card">
     <div class="section-heading">
       <div>
-        <h2>{{ editingExpenseId ? 'Uredi trosak' : 'Rucni unos troska' }}</h2>
+        <h2>{{ editingExpenseId ? 'Uredi trošak' : 'Ručni unos troška' }}</h2>
         <p class="subtitle">
-          {{ editingExpenseId ? 'Izmijenite podatke o trosku.' : 'Popunite obavezna polja i sacuvajte zapis.' }}
+          {{ editingExpenseId ? 'Izmijenjite podatke o trošku.' : 'Popunite obavezna polja i sačuvajte zapis.' }}
         </p>
       </div>
     </div>
@@ -20,7 +20,7 @@
     <form [formGroup]="expenseForm" (ngSubmit)="saveExpense()">
       <div class="form-grid">
         <div class="form-group">
-          <label>Naziv troska *</label>
+          <label>Naziv troška *</label>
           <input type="text" formControlName="naziv" placeholder="Npr. Laptop" />
           <small *ngIf="isFieldInvalid('naziv')">Naziv je obavezan.</small>
         </div>
@@ -28,7 +28,7 @@
         <div class="form-group">
           <label>Iznos *</label>
           <input type="number" formControlName="iznos" placeholder="Npr. 1200" />
-          <small *ngIf="isFieldInvalid('iznos')">Iznos mora biti veci od 0.</small>
+          <small *ngIf="isFieldInvalid('iznos')">Iznos mora biti veći od 0.</small>
         </div>
 
         <div class="form-group">
@@ -92,7 +92,7 @@
 
         <div class="form-group full-width">
           <label>Opis</label>
-          <textarea formControlName="opis" rows="3" placeholder="Unesite opis troska"></textarea>
+          <textarea formControlName="opis" rows="3" placeholder="Unesite opis troška"></textarea>
         </div>
       </div>
 
@@ -103,7 +103,7 @@
 
       <div class="form-actions">
         <button type="submit" [disabled]="isSaving">
-          {{ isSaving ? 'Spremanje...' : (editingExpenseId ? 'Sacuvaj izmjene' : 'Sacuvaj') }}
+          {{ isSaving ? 'Spremanje...' : (editingExpenseId ? 'Sačuvaj izmjene' : 'Sačuvaj') }}
         </button>
 
         <button type="button" class="btn-cancel" *ngIf="editingExpenseId" (click)="cancelEdit()">
@@ -116,15 +116,15 @@
   <section class="list-card">
     <div class="section-heading">
       <div>
-        <h2>Lista troskova</h2>
-        <p class="subtitle">Evidentirani troskovi iz baze.</p>
+        <h2>Lista troškova</h2>
+        <p class="subtitle">Evidentirani troškovi iz baze.</p>
       </div>
       <button type="button" class="btn-refresh" (click)="loadExpenses()" [disabled]="isLoading">
-        Osvjezi
+        Osvježi
       </button>
     </div>
 
-    <p *ngIf="isLoading">Ucitavanje troskova...</p>
+    <p *ngIf="isLoading">Učitavanje troškova...</p>
 
     <table *ngIf="!isLoading && expenses.length > 0">
       <thead>
@@ -153,8 +153,8 @@
             <button class="btn-edit-table" title="Uredi" (click)="editExpense(expense)">
               Uredi
             </button>
-            <button class="btn-delete-table" title="Izbrisi" (click)="openDeleteModal(expense.id.toString())">
-              Izbrisi
+            <button class="btn-delete-table" title="Izbriši" (click)="openDeleteModal(expense.id.toString())">
+              Izbriši
             </button>
           </td>
         </tr>
@@ -162,18 +162,18 @@
     </table>
 
     <p *ngIf="!isLoading && expenses.length === 0">
-      Trenutno nema evidentiranih troskova.
+      Trenutno nema evidentiranih troškova.
     </p>
   </section>
 
   <div class="modal-overlay" *ngIf="showDeleteModal">
     <div class="modal-card">
-      <h3>Brisanje troska</h3>
-      <p>Jeste li sigurni da zelite izbrisati ovaj trosak? Ova radnja se ne moze ponistiti.</p>
+      <h3>Brisanje troška</h3>
+      <p>Jeste li sigurni da želite izbrisati ovaj trošak? Ova radnja se ne može poništiti.</p>
 
       <div class="modal-actions">
         <button class="btn-cancel-modal" (click)="closeDeleteModal()">Odustani</button>
-        <button class="btn-confirm-delete" (click)="confirmDelete()">Izbrisi</button>
+        <button class="btn-confirm-delete" (click)="confirmDelete()">Izbriši</button>
       </div>
     </div>
   </div>
