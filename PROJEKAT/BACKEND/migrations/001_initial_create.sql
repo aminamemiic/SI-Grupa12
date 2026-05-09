@@ -218,6 +218,25 @@ CREATE TABLE troskovi (
 );
 
 -- =========================
+-- HISTORIJA UVOZA TROSKOVA
+-- =========================
+CREATE TABLE uvoz_troskova (
+    id                UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    naziv_fajla       VARCHAR(255),
+    status            VARCHAR(30)  NOT NULL,
+    ukupno_redova     INTEGER      NOT NULL DEFAULT 0,
+    validnih_redova   INTEGER      NOT NULL DEFAULT 0,
+    nevalidnih_redova INTEGER      NOT NULL DEFAULT 0,
+    upisanih_redova   INTEGER      NOT NULL DEFAULT 0,
+    greske            JSONB        NOT NULL DEFAULT '[]'::jsonb,
+    kreirao_email     VARCHAR(255),
+    vrijeme_uvoza     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_uvoz_troskova_status
+        CHECK (status IN ('USPJESAN', 'DJELIMICAN', 'NEUSPJESAN'))
+);
+
+-- =========================
 -- ANOMALIJE
 -- =========================
 CREATE TABLE anomalije (

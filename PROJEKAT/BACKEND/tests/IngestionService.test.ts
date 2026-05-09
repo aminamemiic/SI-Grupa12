@@ -1,0 +1,134 @@
+export {};
+
+const mockExpenseService = {
+  getReferenceData: jest.fn(),
+  createExpense: jest.fn(),
+};
+
+const mockIngestionRepository = {
+  createHistoryEntry: jest.fn(),
+  getHistory: jest.fn(),
+};
+
+jest.mock("../BLL/Services/ExpenseService", () => ({
+  ExpenseService: jest.fn().mockImplementation(() => mockExpenseService),
+}));
+
+jest.mock("../DAL/Repositories/IngestionRepository", () => ({
+  IngestionRepository: jest.fn().mockImplementation(() => mockIngestionRepository),
+}));
+
+const { IngestionService } = require("../BLL/Services/IngestionService");
+
+describe("IngestionService", () => {
+  let service: any;
+
+  const referenceData = {
+    kategorije: [{ id: "kat-1", naziv: "Oprema" }],
+    odjeli: [{ id: "odj-1", naziv: "Finansije" }],
+    valute: [{ id: "val-1", kod: "BAM" }],
+    projekti: [{ id: "proj-1", naziv_projekta: "ERP" }],
+    dobavljaci: [{ id: "dob-1", naziv_firme: "Dobavljac d.o.o." }],
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    service = new IngestionService();
+    mockExpenseService.getReferenceData.mockResolvedValue(referenceData);
+  });
+
+  test("treba parsirati CSV, mapirati sifarnike i vratiti validan preview", async () => {
+    const csv = [
+      "naziv,iznos,datum,kategorija,odjel,valuta,projekat,dobavljac,opis",
+      "Laptop,1200.50,2026-05-01,Oprema,Finansije,BAM,ERP,Dobavljac d.o.o.,Nabavka laptopa",
+    ].join("\n");
+
+    const result = await service.previewImport({
+      originalName: "troskovi.csv",
+      mimetype: "text/csv",
+      buffer: Buffer.from(csv),
+    });
+
+    expect(result.totalRows).toBe(1);
+    expect(result.validRows).toBe(1);
+    expect(result.invalidRows).toBe(0);
+    expect(result.rows[0].expense).toEqual({
+      naziv: "Laptop",
+      iznos: 1200.5,
+      datum: "2026-05-01",
+      opis: "Nabavka laptopa",
+      kategorijaId: "kat-1",
+      odjelId: "odj-1",
+      valutaId: "val-1",
+      projekatId: "proj-1",
+      dobavljacId: "dob-1",
+    });
+  });
+
+  test("treba oznaciti red kao nevalidan ako obavezni podaci nedostaju", async () => {
+    const csv = ["naziv,iznos,datum,kategorija,odjel,valuta", ",0,nije-datum,Oprema,,BAM"].join("\n");
+
+    const result = await service.previewImport({
+      originalName: "nevalidno.csv",
+      mimetype: "text/csv",
+      buffer: Buffer.from(csv),
+    });
+
+    expect(result.validRows).toBe(0);
+    expect(result.invalidRows).toBe(1);
+    expect(result.rows[0].isValid).toBe(false);
+    expect(result.rows[0].errors.map((error: any) => error.field)).toEqual(
+      expect.arrayContaining(["odjel", "naziv", "iznos", "datum"])
+    );
+  });
+
+  test("treba podrzati lokalni format iznosa sa decimalnim zarezom", async () => {
+    const csv = ["naziv,iznos,datum,kategorija,odjel,valuta", "Laptop,\"1.200,50\",01.05.2026,Oprema,Finansije,BAM"].join("\n");
+
+    const result = await service.previewImport({
+      originalName: "lokalni-format.csv",
+      mimetype: "text/csv",
+      buffer: Buffer.from(csv),
+    });
+
+    expect(result.rows[0].isValid).toBe(true);
+    expect(result.rows[0].expense.iznos).toBe(1200.5);
+    expect(result.rows[0].expense.datum).toBe("2026-05-01");
+  });
+
+  test("treba potvrditi uvoz i upisati historiju", async () => {
+    const expense = {
+      naziv: "Laptop",
+      iznos: 1200,
+      datum: "2026-05-01",
+      kategorijaId: "kat-1",
+      odjelId: "odj-1",
+      valutaId: "val-1",
+    };
+    mockExpenseService.createExpense.mockResolvedValue({ id: "t-1", ...expense });
+    mockIngestionRepository.createHistoryEntry.mockResolvedValue("uvoz-1");
+
+    const result = await service.confirmImport(
+      {
+        fileName: "troskovi.csv",
+        rows: [{ rowNumber: 2, expense }],
+      },
+      { email: "admin@test.ba" }
+    );
+
+    expect(result.importId).toBe("uvoz-1");
+    expect(result.insertedCount).toBe(1);
+    expect(result.skippedCount).toBe(0);
+    expect(mockExpenseService.createExpense).toHaveBeenCalledWith(expense, {
+      email: "admin@test.ba",
+    });
+    expect(mockIngestionRepository.createHistoryEntry).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fileName: "troskovi.csv",
+        status: "USPJESAN",
+        insertedCount: 1,
+        createdByEmail: "admin@test.ba",
+      })
+    );
+  });
+});

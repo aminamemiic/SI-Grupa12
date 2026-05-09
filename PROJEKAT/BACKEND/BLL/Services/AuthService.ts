@@ -148,10 +148,11 @@ export class AuthService implements IAuthService {
         next();
       })
       .catch((error: unknown) => {
+        const authError = error instanceof Error ? error : new Error(String(error));
         this.logger(
           "WARN",
-          "Nevalidan Keycloak JWT token.",
-          error || new Error("Token payload nije ispravan.")
+          `Nevalidan Keycloak JWT token: ${authError.name} - ${authError.message}`,
+          authError
         );
         res.status(401).json({ error: "Token nije validan ili je istekao." });
       });
