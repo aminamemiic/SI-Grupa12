@@ -226,4 +226,15 @@ export class ExpenseImportComponent implements OnInit {
   isRowSelected(rowNumber: number): boolean {
     return this.selectedRows.has(rowNumber);
   }
+
+  // Gramatički ispravna forma za broj redova
+  getRowCountLabel(count: number): string {
+    if (count === 1) {
+      return '1 reda';
+    } else if (count >= 2 && count <= 4) {
+      return `${count} reda`;
+    } else {
+      return `${count} redova`;
+    }
+  }
 }

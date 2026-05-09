@@ -1,7 +1,7 @@
 <div class="expense-import-container">
   <!-- Zaglavlje -->
   <div class="import-header">
-    <h1>Import Troškaka</h1>
+    <h1>Import Troškova</h1>
     <p class="step-indicator">Korak {{ currentStep }} od 3</p>
   </div>
 
@@ -167,7 +167,7 @@
         [disabled]="selectedRows.size === 0 || isConfirming"
       >
         <span *ngIf="!isConfirming"
-          >Potvrdi import ({{ selectedRows.size }} redova)</span
+          >Potvrdi import ({{ getRowCountLabel(selectedRows.size) }})</span
         >
         <span *ngIf="isConfirming">Potvrđujem...</span>
       </button>

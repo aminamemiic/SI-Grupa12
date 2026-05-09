@@ -87,6 +87,8 @@
 .summary-item {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .summary-label {
@@ -101,6 +103,11 @@
   font-weight: bold;
   color: #333;
   margin-top: 5px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+  hyphens: auto;
 }
 
 .summary-value.valid {
@@ -117,6 +124,10 @@
   margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .preview-table,
@@ -124,6 +135,19 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.preview-table input[type="checkbox"],
+.results-table input[type="checkbox"] {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: pointer !important;
 }
 
 .preview-table thead,
@@ -152,10 +176,33 @@
 
 .preview-table tbody tr:hover {
   background: #f8f9fa;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }
 
-.preview-table tr.status-invalid td {
-  background: #fff5f5;
+.preview-table tbody tr {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+.preview-table tbody td,
+.preview-table tbody th {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+.preview-table tbody td.col-check input[type="checkbox"] {
+  user-select: auto;
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  cursor: pointer;
 }
 
 .col-check {
