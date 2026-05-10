@@ -13,36 +13,34 @@ class BudgetRepository {
     };
   }
 
-  async getAll() {
-    const result = await db.query(`
-      SELECT
-        b.id,
-        b.naziv,
-        b.planirani_iznos AS "planiraniIznos",
-        b.datum_pocetka AS "datumPocetka",
-        b.datum_zavrsetka AS "datumZavrsetka",
-        b.odjel_id AS "odjelId",
-        o.naziv AS odjel,
-        b.projekat_id AS "projekatId",
-        p.naziv_projekta AS projekat,
-        b.verzija_budzeta AS "verzijaBudzeta",
-        b.status_odobrenja AS "statusOdobrenja",
-        b.odobrio_korisnik_id AS "odobrioKorisnikId",
-        CONCAT(kor.ime, ' ', kor.prezime) AS "odobrioKorisnik",
-        COALESCE(json_agg(k.naziv ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS kategorije,
-        COALESCE(json_agg(k.id ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS "kategorijaIds"
-      FROM budzeti b
-      JOIN odjeli o ON o.id = b.odjel_id
-      LEFT JOIN projekti p ON p.id = b.projekat_id
-      LEFT JOIN budzet_kategorije bk ON bk.budzet_id = b.id
-      LEFT JOIN kategorije k ON k.id = bk.kategorija_id
-      LEFT JOIN korisnici kor ON kor.id = b.odobrio_korisnik_id
-     GROUP BY b.id, o.naziv, p.naziv_projekta, kor.id, kor.ime, kor.prezime
-      ORDER BY b.datum_pocetka DESC, b.naziv ASC;
-    `);
+async getAll() {
+  const result = await db.query(`
+    SELECT
+      b.id,
+      b.naziv,
+      b.planirani_iznos AS "planiraniIznos",
+      b.datum_pocetka AS "datumPocetka",
+      b.datum_zavrsetka AS "datumZavrsetka",
+      b.odjel_id AS "odjelId",
+      o.naziv AS odjel,
+      b.projekat_id AS "projekatId",
+      p.naziv_projekta AS projekat,
+      b.verzija_budzeta AS "verzijaBudzeta",
+      b.status_odobrenja AS "statusOdobrenja",
+      b.odobrio_korisnik_id AS "odobrioKorisnikId",
+      COALESCE(json_agg(k.naziv ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS kategorije,
+      COALESCE(json_agg(k.id ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS "kategorijaIds"
+    FROM budzeti b
+    JOIN odjeli o ON o.id = b.odjel_id
+    LEFT JOIN projekti p ON p.id = b.projekat_id
+    LEFT JOIN budzet_kategorije bk ON bk.budzet_id = b.id
+    LEFT JOIN kategorije k ON k.id = bk.kategorija_id
+    GROUP BY b.id, o.naziv, p.naziv_projekta
+    ORDER BY b.datum_pocetka DESC, b.naziv ASC;
+  `);
 
-    return result.rows.map((row: any) => this.mapBudget(row));
-  }
+  return result.rows.map((row: any) => this.mapBudget(row));
+}
 
   async getById(id: string) {
     const result = await db.query(
@@ -60,7 +58,6 @@ class BudgetRepository {
         b.verzija_budzeta AS "verzijaBudzeta",
         b.status_odobrenja AS "statusOdobrenja",
         b.odobrio_korisnik_id AS "odobrioKorisnikId",
-        CONCAT(kor.ime, ' ', kor.prezime) AS "odobrioKorisnik",
         COALESCE(json_agg(k.naziv ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS kategorije,
         COALESCE(json_agg(k.id ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS "kategorijaIds"
       FROM budzeti b
@@ -68,9 +65,8 @@ class BudgetRepository {
       LEFT JOIN projekti p ON p.id = b.projekat_id
       LEFT JOIN budzet_kategorije bk ON bk.budzet_id = b.id
       LEFT JOIN kategorije k ON k.id = bk.kategorija_id
-      LEFT JOIN korisnici kor ON kor.id = b.odobrio_korisnik_id
       WHERE b.id = $1
-      GROUP BY b.id, o.naziv, p.naziv_projekta, kor.id, kor.ime, kor.prezime;
+      GROUP BY b.id, o.naziv, p.naziv_projekta;
       `,
       [id]
     );
