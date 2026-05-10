@@ -18,16 +18,27 @@
       <nav class="side-nav" aria-label="Glavna navigacija">
         <a routerLink="/home" routerLinkActive="active">
           <span class="nav-icon">NP</span>
-          <span>Nadzorna ploca</span>
+          <span>Nadzorna ploča</span>
         </a>
         <a
           routerLink="/troskovi"
           routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
           [class.disabled]="!canOpenExpenses"
           (click)="openExpensesTab($event)"
         >
           <span class="nav-icon">TR</span>
-          <span>Unos troskova</span>
+          <span>Unos troškova</span>
+        </a>
+        <a
+          routerLink="/troskovi/import"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [class.disabled]="!canOpenExpenses"
+          (click)="openExpensesTab($event)"
+        >
+          <span class="nav-icon">IM</span>
+          <span>Import troškova</span>
         </a>
       </nav>
     }

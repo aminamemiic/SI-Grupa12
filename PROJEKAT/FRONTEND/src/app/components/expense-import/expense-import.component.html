@@ -1,0 +1,244 @@
+<div class="expense-import-container">
+  <!-- Zaglavlje -->
+  <div class="import-header">
+    <h1>Import Troškova</h1>
+    <p class="step-indicator">Korak {{ currentStep }} od 3</p>
+  </div>
+
+  <!-- KORAK 1: UPLOAD -->
+  <div class="import-step" *ngIf="currentStep === 1">
+    <h2>Korak 1: Učitavanje fajla</h2>
+
+    <div class="upload-box">
+      <div class="upload-content">
+        <div class="upload-icon">📁</div>
+        <h3>Odaberite CSV ili XLSX fajl</h3>
+        <p>Fajl ne može biti veći od 10 MB</p>
+
+        <input
+          #fileInput
+          type="file"
+          accept=".csv,.xlsx,.xls"
+          (change)="onFileSelected($event)"
+          class="file-input"
+          hidden
+        />
+
+        <button
+          class="btn btn-primary"
+          (click)="fileInput.click()"
+          [disabled]="isUploading"
+        >
+          Odaberite fajl
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="uploadSuccessMessage" class="alert alert-success">
+      {{ uploadSuccessMessage }}
+    </div>
+
+    <div *ngIf="uploadErrorMessage" class="alert alert-danger">
+      {{ uploadErrorMessage }}
+    </div>
+
+    <div class="button-group">
+      <button
+        class="btn btn-success"
+        (click)="previewImport()"
+        [disabled]="!selectedFile || isUploading"
+      >
+        <span *ngIf="!isUploading">Učitaj i prikaži preview</span>
+        <span *ngIf="isUploading">Učitavam...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- KORAK 2: VALIDACIJA -->
+  <div class="import-step" *ngIf="currentStep === 2">
+    <h2>Korak 2: Validacija i potvrda</h2>
+
+    <div class="preview-summary">
+      <div class="summary-item">
+        <span class="summary-label">Fajl:</span>
+        <span class="summary-value">{{ previewData?.fileName }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Ukupno redova:</span>
+        <span class="summary-value">{{ previewData?.totalRows }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Validnih:</span>
+        <span class="summary-value valid">{{ previewData?.validRows }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Nevalidnih:</span>
+        <span class="summary-value invalid">{{ previewData?.invalidRows }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="validationErrorMessage" class="alert alert-danger">
+      {{ validationErrorMessage }}
+    </div>
+
+    <!-- Tabela sa redovima -->
+    <div class="table-wrapper">
+      <table class="preview-table">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <input
+                type="checkbox"
+                (change)="selectAllValid()"
+                title="Označi sve validne redove"
+              />
+            </th>
+            <th class="col-number">Red</th>
+            <th class="col-status">Status</th>
+            <th class="col-naziv">Naziv</th>
+            <th class="col-iznos">Iznos</th>
+            <th class="col-datum">Datum</th>
+            <th class="col-kategorija">Kategorija</th>
+            <th class="col-odjel">Odjel</th>
+            <th class="col-valuta">Valuta</th>
+            <th class="col-errors">Greške/Upozorenja</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let row of previewData?.rows"
+            [ngClass]="getRowStatusClass(row)"
+          >
+            <td class="col-check">
+              <input
+                type="checkbox"
+                [checked]="isRowSelected(row.rowNumber)"
+                (change)="toggleRowSelection(row.rowNumber)"
+                [disabled]="!row.isValid"
+              />
+            </td>
+            <td class="col-number">{{ row.rowNumber }}</td>
+            <td class="col-status">
+              <span
+                [ngClass]="'badge-' + (row.isValid ? 'success' : 'danger')"
+                class="badge"
+              >
+                {{ getRowStatusText(row) }}
+              </span>
+            </td>
+            <td class="col-naziv">{{ row.expense?.naziv || '-' }}</td>
+            <td class="col-iznos">{{ row.expense?.iznos || '-' }}</td>
+            <td class="col-datum">{{ row.expense?.datum || '-' }}</td>
+            <td class="col-kategorija">{{ row.raw?.kategorija || '-' }}</td>
+            <td class="col-odjel">{{ row.raw?.odjel || '-' }}</td>
+            <td class="col-valuta">{{ row.raw?.valuta || '-' }}</td>
+            <td class="col-errors">
+              <div class="error-list">
+                <div
+                  *ngFor="let error of getErrorMessages(row)"
+                  class="error-item"
+                >
+                  ❌ {{ error }}
+                </div>
+                <div
+                  *ngFor="let warning of getWarningMessages(row)"
+                  class="warning-item"
+                >
+                  ⚠️ {{ warning }}
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="button-group">
+      <button
+        class="btn btn-secondary"
+        (click)="currentStep = 1"
+        [disabled]="isConfirming"
+      >
+        Nazad
+      </button>
+      <button
+        class="btn btn-success"
+        (click)="confirmImport()"
+        [disabled]="selectedRows.size === 0 || isConfirming"
+      >
+        <span *ngIf="!isConfirming"
+          >Potvrdi import ({{ getRowCountLabel(selectedRows.size) }})</span
+        >
+        <span *ngIf="isConfirming">Potvrđujem...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- KORAK 3: PREGLED REZULTATA -->
+  <div class="import-step" *ngIf="currentStep === 3">
+    <h2>Korak 3: Pregled rezultata</h2>
+
+    <div class="result-summary">
+      <div class="result-item success">
+        <span class="result-icon">✅</span>
+        <div class="result-details">
+          <span class="result-label">Uspješno ubačeno:</span>
+          <span class="result-value">{{ confirmResult?.insertedCount }}</span>
+        </div>
+      </div>
+      <div class="result-item error" *ngIf="confirmResult?.skippedCount! > 0">
+        <span class="result-icon">❌</span>
+        <div class="result-details">
+          <span class="result-label">Greške:</span>
+          <span class="result-value">{{ confirmResult?.skippedCount }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="(confirmResult?.errors?.length ?? 0) > 0">
+      <h3 class="errors-title">Greške pri importu:</h3>
+      <div class="errors-list">
+        <div *ngFor="let error of confirmResult?.errors" class="error-item">
+          <span class="error-row-number" *ngIf="error.rowNumber">
+            Red {{ error.rowNumber }}:
+          </span>
+          {{ error.message }}
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="(confirmResult?.createdExpenses?.length ?? 0) > 0">
+      <h3 class="success-title">Ubačeni troškovi:</h3>
+      <div class="table-wrapper">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Naziv</th>
+              <th>Iznos</th>
+              <th>Datum</th>
+              <th>Kategorija</th>
+              <th>Odjel</th>
+              <th>Valuta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let expense of confirmResult?.createdExpenses">
+              <td>{{ expense?.naziv }}</td>
+              <td>{{ expense?.iznos }}</td>
+              <td>{{ expense?.datum }}</td>
+              <td>{{ expense?.kategorija }}</td>
+              <td>{{ expense?.odjel }}</td>
+              <td>{{ expense?.valuta }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="btn btn-primary" (click)="goBackToUpload()">
+        Novi import
+      </button>
+    </div>
+  </div>
+</div>
