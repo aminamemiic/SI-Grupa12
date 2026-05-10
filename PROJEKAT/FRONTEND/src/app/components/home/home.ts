@@ -271,6 +271,15 @@ export class HomeComponent implements OnInit {
     void this.router.navigate(['/troskovi']);
   }
 
+  public idiNaImportTroskova(): void {
+    if (!this.canOpenExpenses) {
+      this.accessNotice = 'Pristup importu troskova je dozvoljen samo ulogama admin i administrativni_radnik.';
+      return;
+    }
+
+    void this.router.navigate(['/troskovi/import']);
+  }
+
   private buildBreakdown(fieldName: 'kategorija' | 'odjel'): ExpenseBreakdown[] {
     const totals = new Map<string, { total: number; count: number }>();
 

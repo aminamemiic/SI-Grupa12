@@ -11,6 +11,7 @@ const { AuthService } = require("./BLL/Services/AuthService");
 const { registerSessionEndpoints } = require("./PRESENTATION API/Endpoints/SessionEndpoints");
 const { registerUserEndpoints } = require("./PRESENTATION API/Endpoints/UserEndpoints");
 const { registerExpenseEndpoints } = require("./PRESENTATION API/Endpoints/ExpenseEndpoints");
+const { registerIngestionEndpoints } = require("./PRESENTATION API/Endpoints/IngestionEndpoints");
 
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -131,6 +132,22 @@ async function ensureBaseData() {
     await connectWithRetry(client);
 
     await client.query(`
+      CREATE TABLE IF NOT EXISTS uvoz_troskova (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        naziv_fajla VARCHAR(255),
+        status VARCHAR(30) NOT NULL,
+        ukupno_redova INTEGER NOT NULL DEFAULT 0,
+        validnih_redova INTEGER NOT NULL DEFAULT 0,
+        nevalidnih_redova INTEGER NOT NULL DEFAULT 0,
+        upisanih_redova INTEGER NOT NULL DEFAULT 0,
+        greske JSONB NOT NULL DEFAULT '[]'::jsonb,
+        kreirao_email VARCHAR(255),
+        vrijeme_uvoza TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+        CONSTRAINT chk_uvoz_troskova_status
+          CHECK (status IN ('USPJESAN', 'DJELIMICAN', 'NEUSPJESAN'))
+      );
+
       INSERT INTO uloge (naziv, opis) VALUES
       ('ADMINISTRATOR', 'Administrator sistema'),
       ('GLAVNI_RACUNOVODJA', 'Glavni racunovodja'),
@@ -212,7 +229,7 @@ function startServer() {
     next();
   });
 
-  app.options("/:splat(*)", (req: any, res: any) => {
+  app.options(/.*/, (req: any, res: any) => {
     res.sendStatus(204);
   });
   app.use(cookieParser());
@@ -231,12 +248,23 @@ function startServer() {
     })
   );
 
+  app.use((req: any, res: any, next: any) => {
+    const startedAt = Date.now();
+
+    res.on("finish", () => {
+      writeLog("INFO", `${req.method} ${req.originalUrl} -> ${res.statusCode} (${Date.now() - startedAt}ms)`);
+    });
+
+    next();
+  });
+
   app.get("/health", (_req: any, res: any) => {
     res.status(200).json({ status: "ok" });
   });
 
   registerSessionEndpoints(app, authService, writeLog, SESSION_COOKIE_NAME);
   registerExpenseEndpoints(app, authService, writeLog);
+  registerIngestionEndpoints(app, authService, writeLog);
   registerUserEndpoints(app, authService);
 
   app.listen(PORT, "0.0.0.0", () => {

@@ -80,6 +80,7 @@ export class App implements OnInit {
     }
 
     if (this.canOpenExpenses) {
+      this.navMessage = '';
       return;
     }
 
