@@ -131,4 +131,122 @@ describe("IngestionService", () => {
       })
     );
   });
+  test("treba baciti gresku ako fajl nije poslan", async () => {
+  await expect(service.previewImport({ originalName: "", buffer: null })).rejects.toThrow(
+    "Fajl za uvoz je obavezan."
+  );
+});
+
+test("treba odbiti nepodrzan format fajla", async () => {
+  await expect(
+    service.previewImport({
+      originalName: "troskovi.txt",
+      mimetype: "text/plain",
+      buffer: Buffer.from("test"),
+    })
+  ).rejects.toThrow("Podržani formati su CSV, XLS i XLSX.");
+});
+
+test("treba podrzati ID kolone i prazne opcionalne reference", async () => {
+  const csv = [
+    "naziv,iznos,datum,kategorijaId,odjelId,valutaId,opis",
+    "Monitor,300,2026-05-02,kat-1,odj-1,val-1,"
+  ].join("\n");
+
+  const result = await service.previewImport({
+    originalName: "ids.csv",
+    mimetype: "text/csv",
+    buffer: Buffer.from(csv),
+  });
+
+  expect(result.validRows).toBe(1);
+  expect(result.rows[0].expense).toEqual(
+    expect.objectContaining({
+      kategorijaId: "kat-1",
+      odjelId: "odj-1",
+      valutaId: "val-1",
+      projekatId: null,
+      dobavljacId: null,
+      opis: null,
+    })
+  );
+});
+
+test("treba vratiti warning kada opcionalni projekat ili dobavljac ne postoje", async () => {
+  const csv = [
+    "naziv,iznos,datum,kategorija,odjel,valuta,projekat,dobavljac",
+    "Monitor,300,2026-05-02,Oprema,Finansije,BAM,Nepostojeci projekat,Nepostojeci dobavljac"
+  ].join("\n");
+
+  const result = await service.previewImport({
+    originalName: "warnings.csv",
+    mimetype: "text/csv",
+    buffer: Buffer.from(csv),
+  });
+
+  expect(result.rows[0].isValid).toBe(false);
+  expect(result.rows[0].warnings.length).toBeGreaterThan(0);
+});
+
+test("treba vratiti djelimican status ako se neki redovi ne upisu", async () => {
+  mockExpenseService.createExpense
+    .mockResolvedValueOnce({ id: "t-1" })
+    .mockRejectedValueOnce(new Error("Nevalidan red"));
+  mockIngestionRepository.createHistoryEntry.mockResolvedValue("uvoz-2");
+
+  const result = await service.confirmImport(
+    {
+      fileName: "mixed.csv",
+      rows: [
+        { rowNumber: 2, expense: { naziv: "OK" } },
+        { rowNumber: 3, expense: { naziv: "BAD" } },
+      ],
+    },
+    { preferred_username: "admin@test.ba" }
+  );
+
+  expect(result.insertedCount).toBe(1);
+  expect(result.skippedCount).toBe(1);
+  expect(result.errors[0].message).toBe("Nevalidan red");
+  expect(mockIngestionRepository.createHistoryEntry).toHaveBeenCalledWith(
+    expect.objectContaining({
+      status: "DJELIMICAN",
+      createdByEmail: "admin@test.ba",
+    })
+  );
+});
+
+test("treba vratiti neuspjesan status ako nijedan red nije upisan", async () => {
+  mockExpenseService.createExpense.mockRejectedValue({});
+  mockIngestionRepository.createHistoryEntry.mockResolvedValue("uvoz-3");
+
+  const result = await service.confirmImport({
+    fileName: "failed.csv",
+    rows: [{ rowNumber: 2, expense: { naziv: "BAD" } }],
+  });
+
+  expect(result.insertedCount).toBe(0);
+  expect(result.skippedCount).toBe(1);
+  expect(result.errors[0].message).toBe("Red nije moguće upisati.");
+  expect(mockIngestionRepository.createHistoryEntry).toHaveBeenCalledWith(
+    expect.objectContaining({
+      status: "NEUSPJESAN",
+      createdByEmail: null,
+    })
+  );
+});
+
+test("treba baciti gresku ako nema redova za potvrdu", async () => {
+  await expect(service.confirmImport({ fileName: "empty.csv", rows: [] })).rejects.toThrow(
+    "Nema redova za potvrdu uvoza."
+  );
+});
+
+test("treba vratiti historiju uvoza", async () => {
+  const history = [{ id: "uvoz-1", fileName: "troskovi.csv" }];
+  mockIngestionRepository.getHistory.mockResolvedValue(history);
+
+  await expect(service.getImportHistory()).resolves.toEqual(history);
+});
+
 });
