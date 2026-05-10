@@ -41,29 +41,53 @@ export class BudgetService implements IBudgetService {
 
     if (await this.budgetRepository.existsDuplicate(normalized)) {
       throw new Error("Budzet za odabrani odjel, kategoriju i period vec postoji.");
+      
     }
 
+     try {
     const createdBudget = await this.budgetRepository.create(normalized);
     this.budgetsCache = null;
     return createdBudget;
+  } catch (error: any) {
+    if (this.isBudgetPeriodOverlapError(error)) {
+      throw new Error(
+        "Nije moguce kreirati budzet jer za odabrani odjel vec postoji budzet u periodu koji se preklapa sa unesenim datumima."
+      );
+    }
+
+    throw error;
+  }
   }
 
-  async updateBudget(id: string, payload: CreateBudgetRequest): Promise<any> {
-    const existing = await this.budgetRepository.getById(id);
-    if (!existing) {
-      throw new Error("Budzet ne postoji.");
-    }
+ async updateBudget(id: string, payload: CreateBudgetRequest): Promise<any> {
+  const existing = await this.budgetRepository.getById(id);
+  if (!existing) {
+    throw new Error("Budzet ne postoji.");
+  }
 
-    const normalized = this.validateBudget(payload);
+  const normalized = this.validateBudget(payload);
 
-    if (await this.budgetRepository.existsDuplicate(normalized, id)) {
-      throw new Error("Budzet za odabrani odjel, kategoriju i period vec postoji.");
-    }
+  if (await this.budgetRepository.existsDuplicate(normalized, id)) {
+    throw new Error(
+      "Nije moguce azurirati budzet jer za odabrani odjel i kategoriju vec postoji budzet u periodu koji se preklapa sa unesenim datumima."
+    );
+  }
 
+  try {
     const updatedBudget = await this.budgetRepository.update(id, normalized);
     this.budgetsCache = null;
     return updatedBudget;
+  } catch (error: any) {
+    if (this.isBudgetPeriodOverlapError(error)) {
+      throw new Error(
+        "Nije moguce azurirati budzet jer za odabrani odjel vec postoji budzet u periodu koji se preklapa sa unesenim datumima."
+      );
+    }
+
+    throw error;
   }
+}
+
   async updateBudgetStatus(id: string, statusOdobrenja: string, authUser?: any): Promise<any> {
   const allowedStatuses = ["ODOBREN", "ODBIJEN"];
 
@@ -150,6 +174,13 @@ if (!odobrioKorisnikId) {
       kategorijaIds,
     };
   }
+
+  private isBudgetPeriodOverlapError(error: any): boolean {
+  return (
+    error?.constraint === "budzeti_odjel_id_daterange_excl" ||
+    error?.message?.includes("budzeti_odjel_id_daterange_excl")
+  );
+}
 }
 
 module.exports = { BudgetService };
