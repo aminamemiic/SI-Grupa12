@@ -6,17 +6,25 @@
       <p class="lead">Trenutni troškovi iz baze prikazani su ispod i mogu se urediti ili obrisati.</p>
     </div>
 
-    <div class="header-actions">
-      <button type="button" class="secondary-action" disabled>Izvezi izvještaj</button>
-      <button type="button" class="secondary-action" (click)="idiNaImportTroskova()">
-        Import troškova
-      </button>
-      @if (isAdmin) {
-        <a class="primary-action" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
-          Admin Panel
-        </a>
-      }
-    </div>
+   <div class="header-actions">
+  <button type="button" class="secondary-action" disabled>Izvezi izvještaj</button>
+
+  <button type="button" class="secondary-action" (click)="idiNaImportTroskova()">
+    Import troškova
+  </button>
+
+  @if (canOpenBudgets) {
+    <button type="button" class="secondary-action" (click)="idiNaBudzetiranje()">
+      Planiranje budžeta
+    </button>
+  }
+
+  @if (isAdmin) {
+    <a class="primary-action" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
+      Admin Panel
+    </a>
+  }
+</div>
   </section>
 
   @if (accessNotice) {

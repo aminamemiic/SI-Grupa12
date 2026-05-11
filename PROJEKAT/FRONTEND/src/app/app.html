@@ -40,6 +40,16 @@
           <span class="nav-icon">IM</span>
           <span>Import troškova</span>
         </a>
+        <a
+            routerLink="/budzeti"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            [class.disabled]="!canOpenBudgets"
+            (click)="openBudgetsTab($event)"
+          >
+            <span class="nav-icon">PB</span>
+            <span>Planiranje budžeta</span>
+          </a>
       </nav>
     }
 

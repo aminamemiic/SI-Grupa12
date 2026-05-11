@@ -51,3 +51,35 @@ export interface ExpenseReferenceData {
   projekti: ReferenceItem[];
   dobavljaci: ReferenceItem[];
 }
+
+export interface Budget {
+  id: string | number;
+  naziv: string;
+  planiraniIznos: number;
+  datumPocetka: string;
+  datumZavrsetka: string;
+  odjelId: string | number;
+  odjel?: string;
+  projekatId?: string | number | null;
+  projekat?: string | null;
+  verzijaBudzeta?: number;
+  statusOdobrenja?: string;
+  kategorije: string[];
+  kategorijaIds: Array<string | number>;
+}
+
+export interface CreateBudgetRequest {
+  naziv: string;
+  planiraniIznos: number;
+  datumPocetka: string;
+  datumZavrsetka: string;
+  odjelId: string | number;
+  projekatId?: string | number | null;
+  kategorijaIds: Array<string | number>;
+}
+
+export interface BudgetReferenceData {
+  kategorije: ReferenceItem[];
+  odjeli: ReferenceItem[];
+  projekti: ReferenceItem[];
+}

@@ -12,6 +12,7 @@ const { registerSessionEndpoints } = require("./PRESENTATION API/Endpoints/Sessi
 const { registerUserEndpoints } = require("./PRESENTATION API/Endpoints/UserEndpoints");
 const { registerExpenseEndpoints } = require("./PRESENTATION API/Endpoints/ExpenseEndpoints");
 const { registerIngestionEndpoints } = require("./PRESENTATION API/Endpoints/IngestionEndpoints");
+const { registerBudgetEndpoints } = require("./PRESENTATION API/Endpoints/BudgetEndpoints");
 
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -264,6 +265,7 @@ function startServer() {
 
   registerSessionEndpoints(app, authService, writeLog, SESSION_COOKIE_NAME);
   registerExpenseEndpoints(app, authService, writeLog);
+  registerBudgetEndpoints(app, authService, writeLog);
   registerIngestionEndpoints(app, authService, writeLog);
   registerUserEndpoints(app, authService);
 

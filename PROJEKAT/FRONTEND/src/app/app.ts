@@ -16,6 +16,7 @@ export class App implements OnInit {
   private readonly router = inject(Router);
 
   public readonly expenseRoles = ['admin', 'administrativni_radnik', 'administrativni_zaposlenik'];
+  public readonly budgetRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly adminConsoleUrl = 'https://keycloak-production-4c61.up.railway.app/';
   public isLoading = false;
   public navMessage = '';
@@ -41,6 +42,9 @@ export class App implements OnInit {
     return this.authService.hasAnyRole(this.expenseRoles);
   }
 
+  public get canOpenBudgets(): boolean {
+  return this.authService.hasAnyRole(this.budgetRoles);
+}
   public get isAuthenticated(): boolean {
     return this.isLoggedIn;
   }
@@ -91,6 +95,25 @@ export class App implements OnInit {
     });
   }
 
+  public openBudgetsTab(event: Event): void {
+  if (!this.isAuthenticated) {
+    event.preventDefault();
+    this.navMessage = 'Prijavite se da biste pristupili aplikaciji.';
+    void this.router.navigate(['/']);
+    return;
+  }
+
+  if (this.canOpenBudgets) {
+    this.navMessage = '';
+    return;
+  }
+
+  event.preventDefault();
+  this.navMessage = 'Planiranju budzeta mogu pristupiti samo admin, glavni_racunovodja i finansijski_direktor.';
+  void this.router.navigate(['/home'], {
+    queryParams: { accessDenied: 'budzeti' },
+  });
+}
   private async handleKeycloakCallback(): Promise<void> {
     if (!this.authService.hasKeycloakCallback()) {
       return;

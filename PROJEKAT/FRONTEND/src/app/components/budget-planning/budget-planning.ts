@@ -1,0 +1,305 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef, Component, HostListener, OnInit, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthGuardService } from '../../../middleware/middleware.authguard';
+import { Budget, BudgetReferenceData, CreateBudgetRequest } from '../../../models/entities';
+import { BudgetService } from '../../../services/budget.service';
+
+@Component({
+  selector: 'app-budget-planning',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './budget-planning.html',
+  styleUrl: './budget-planning.css',
+})
+export class BudgetPlanningComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly budgetService = inject(BudgetService);
+  private readonly authService = inject(AuthGuardService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  public budgets: Budget[] = [];
+  public selectedBudget: Budget | null = null;
+  public referenceData: BudgetReferenceData = { kategorije: [], odjeli: [], projekti: [] };
+  public isLoading = false;
+  public isSaving = false;
+  public showForm = false;
+  public editingBudgetId: string | null = null;
+  public successMessage = '';
+  public errorMessage = '';
+
+  public budgetForm = this.fb.group({
+    naziv: ['', [Validators.required, Validators.maxLength(200)]],
+    planiraniIznos: [null as number | null, [Validators.required, Validators.min(0.01)]],
+    datumPocetka: ['', Validators.required],
+    datumZavrsetka: ['', Validators.required],
+    odjelId: ['', Validators.required],
+    projekatId: [''],
+    kategorijaIds: [[] as string[], Validators.required],
+  });
+
+  public ngOnInit(): void {
+    this.loadReferenceData();
+    this.loadBudgets();
+  }
+
+  public get canEditBudgets(): boolean {
+    return this.authService.hasAnyRole(['admin', 'glavni_racunovodja']);
+  }
+
+  public get canApproveBudgets(): boolean {
+  return this.authService.hasAnyRole(['admin', 'finansijski_direktor']);
+}
+
+  public get hasUnsavedChanges(): boolean {
+    return this.showForm && this.budgetForm.dirty;
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  public beforeUnload(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  }
+
+  public loadBudgets(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.budgetService.getBudgets().subscribe({
+      next: (budgets) => {
+        this.budgets = budgets;
+        this.selectedBudget = budgets[0] || null;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = this.getErrorMessage(error, 'Greska pri dohvatu budzeta.');
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public loadReferenceData(): void {
+    this.budgetService.getReferenceData().subscribe({
+      next: (data) => {
+        this.referenceData = data;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = this.getErrorMessage(error, 'Greska pri dohvatu podataka za formu.');
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public openCreateForm(): void {
+    if (!this.canEditBudgets) return;
+    if (!this.confirmDiscardChanges()) return;
+
+    this.showForm = true;
+    this.editingBudgetId = null;
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.budgetForm.reset({ kategorijaIds: [] });
+    this.budgetForm.markAsPristine();
+  }
+
+  public editBudget(budget: Budget): void {
+  if (!this.canEditBudgets) return;
+
+  if (budget.statusOdobrenja === 'ODOBREN') {
+    this.errorMessage = 'Odobren budzet se ne moze uredjivati.';
+    return;
+  }
+
+  if (!this.confirmDiscardChanges()) return;
+
+    this.showForm = true;
+    this.editingBudgetId = budget.id.toString();
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.budgetForm.patchValue({
+      naziv: budget.naziv,
+      planiraniIznos: budget.planiraniIznos,
+      datumPocetka: budget.datumPocetka.split('T')[0],
+      datumZavrsetka: budget.datumZavrsetka.split('T')[0],
+      odjelId: budget.odjelId?.toString() || '',
+      projekatId: budget.projekatId?.toString() || '',
+      kategorijaIds: (budget.kategorijaIds || []).map((id) => id.toString()),
+    });
+
+    this.budgetForm.markAsPristine();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  public saveBudget(): void {
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    if (this.budgetForm.invalid || this.hasInvalidPeriod() || !this.hasSelectedCategory()) {
+      this.budgetForm.markAllAsTouched();
+      if (this.hasInvalidPeriod()) {
+        this.errorMessage = 'Datum zavrsetka ne moze biti prije datuma pocetka.';
+      } else if (!this.hasSelectedCategory()) {
+        this.errorMessage = 'Odaberite barem jednu kategoriju.';
+      } else {
+        this.errorMessage = 'Popunite sva obavezna polja.';
+      }
+      return;
+    }
+
+    const formValue = this.budgetForm.value;
+    const payload: CreateBudgetRequest = {
+      naziv: formValue.naziv!,
+      planiraniIznos: Number(formValue.planiraniIznos),
+      datumPocetka: formValue.datumPocetka!,
+      datumZavrsetka: formValue.datumZavrsetka!,
+      odjelId: formValue.odjelId!,
+      projekatId: formValue.projekatId || null,
+      kategorijaIds: formValue.kategorijaIds || [],
+    };
+
+    this.isSaving = true;
+    const request = this.editingBudgetId
+      ? this.budgetService.updateBudget(this.editingBudgetId, payload)
+      : this.budgetService.createBudget(payload);
+
+    request.subscribe({
+      next: (savedBudget) => {
+        if (this.editingBudgetId) {
+          this.budgets = this.budgets.map((budget) => budget.id === savedBudget.id ? savedBudget : budget);
+          this.successMessage = 'Budzet je uspjesno azuriran.';
+        } else {
+          this.budgets = [savedBudget, ...this.budgets];
+          this.successMessage = 'Budzet je uspjesno sacuvan.';
+        }
+
+        this.selectedBudget = savedBudget;
+        this.closeForm(false);
+        this.isSaving = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = this.getErrorMessage(error, 'Greska pri spremanju budzeta.');
+        this.isSaving = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public closeForm(askConfirmation = true): void {
+    if (askConfirmation && !this.confirmDiscardChanges()) return;
+
+    this.showForm = false;
+    this.editingBudgetId = null;
+    this.budgetForm.reset({ kategorijaIds: [] });
+    this.budgetForm.markAsPristine();
+  }
+
+  public selectBudget(budget: Budget): void {
+    this.selectedBudget = budget;
+  }
+
+  public approveBudget(budget: Budget): void {
+  if (!this.canApproveBudgets) {
+    this.errorMessage = 'Nemate pravo za odobravanje budzeta.';
+    return;
+  }
+
+  this.updateBudgetStatus(budget, 'ODOBREN');
+}
+
+public rejectBudget(budget: Budget): void {
+  if (!this.canApproveBudgets) {
+    this.errorMessage = 'Nemate pravo za odbijanje budzeta.';
+    return;
+  }
+
+  this.updateBudgetStatus(budget, 'ODBIJEN');
+}
+
+private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN'): void {
+  this.successMessage = '';
+  this.errorMessage = '';
+
+  this.budgetService.updateBudgetStatus(budget.id.toString(), statusOdobrenja).subscribe({
+    next: (updatedBudget) => {
+      this.budgets = this.budgets.map((item) =>
+        item.id === updatedBudget.id ? updatedBudget : item
+      );
+
+      if (this.selectedBudget?.id === updatedBudget.id) {
+        this.selectedBudget = updatedBudget;
+      }
+
+      this.successMessage =
+        statusOdobrenja === 'ODOBREN'
+          ? 'Budzet je uspjesno odobren.'
+          : 'Budzet je odbijen.';
+
+      this.cdr.detectChanges();
+    },
+    error: (error) => {
+      console.error(error);
+      this.errorMessage = this.getErrorMessage(
+        error,
+        'Greska pri promjeni statusa budzeta.'
+      );
+      this.cdr.detectChanges();
+    },
+  });
+}
+
+  public onCategoryChange(event: Event, categoryId: string | number): void {
+    const input = event.target as HTMLInputElement;
+    const current = new Set((this.budgetForm.value.kategorijaIds || []).map((id) => id.toString()));
+
+    if (input.checked) {
+      current.add(categoryId.toString());
+    } else {
+      current.delete(categoryId.toString());
+    }
+
+    this.budgetForm.patchValue({ kategorijaIds: Array.from(current) });
+    this.budgetForm.markAsDirty();
+  }
+
+  public isCategorySelected(categoryId: string | number): boolean {
+    return (this.budgetForm.value.kategorijaIds || []).map((id) => id.toString()).includes(categoryId.toString());
+  }
+
+  public isFieldInvalid(fieldName: string): boolean {
+    const field = this.budgetForm.get(fieldName);
+    return !!field && field.invalid && (field.dirty || field.touched);
+  }
+
+  public hasInvalidPeriod(): boolean {
+    const start = this.budgetForm.value.datumPocetka;
+    const end = this.budgetForm.value.datumZavrsetka;
+    return Boolean(start && end && new Date(end) < new Date(start));
+  }
+
+  public hasSelectedCategory(): boolean {
+    return (this.budgetForm.value.kategorijaIds || []).length > 0;
+  }
+
+  public getItemLabel(item: any): string {
+    return item.naziv || item.naziv_projekta || item.nazivProjekta || item.id;
+  }
+
+  private confirmDiscardChanges(): boolean {
+    if (!this.hasUnsavedChanges) return true;
+    return window.confirm('Imate nespremljene izmjene. Zelite li nastaviti bez spremanja?');
+  }
+
+  private getErrorMessage(error: any, fallback: string): string {
+    return error?.error?.message || error?.error?.error || fallback;
+  }
+}

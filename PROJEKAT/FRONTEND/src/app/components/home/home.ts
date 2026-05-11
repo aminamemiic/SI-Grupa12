@@ -29,6 +29,7 @@ export class HomeComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   public readonly expenseRoles = ['admin', 'administrativni_radnik', 'administrativni_zaposlenik'];
+  public readonly budgetRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly adminConsoleUrl = 'https://keycloak-production-4c61.up.railway.app/';
 
   public accessNotice = '';
@@ -81,6 +82,9 @@ export class HomeComponent implements OnInit {
   public get canOpenExpenses(): boolean {
     return this.authService.hasAnyRole(this.expenseRoles);
   }
+  public get canOpenBudgets(): boolean {
+  return this.authService.hasAnyRole(this.budgetRoles);
+}
 
   public get isAdmin(): boolean {
     return this.authService.hasAnyRole(['admin']);
@@ -279,6 +283,14 @@ export class HomeComponent implements OnInit {
 
     void this.router.navigate(['/troskovi/import']);
   }
+  public idiNaBudzetiranje(): void {
+  if (!this.canOpenBudgets) {
+    this.accessNotice = 'Pristup planiranju budzeta je dozvoljen samo ulogama admin, glavni_racunovodja i finansijski_direktor.';
+    return;
+  }
+
+  void this.router.navigate(['/budzeti']);
+}
 
   private buildBreakdown(fieldName: 'kategorija' | 'odjel'): ExpenseBreakdown[] {
     const totals = new Map<string, { total: number; count: number }>();
