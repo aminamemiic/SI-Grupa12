@@ -1,30 +1,19 @@
-\# AI Usage Log
-
-
+# AI Usage Log
 
 | Datum | Sprint broj | Alat | Svrha korištenja | Opis zadatka/upita | Šta je AI predložio/generisao | Šta je tim prihvatio | Šta je tim izmijenio | Šta je tim odbacio | Rizici/problemi/greške | Korisnik alata |
-
 |---|---|---|---|---|---|---|---|---|---|---|
-
 | 25.04.2026 | Sprint 5 | Codex | Pomoć pri izradi početnog projekta | Kreiranje osnovne strukture aplikacije | Osnovnu strukturu projekta i početne komponente | Početni kostur projekta | Nazive foldera i fajlova prema dogovoru tima | Nepotrebne generičke fajlove | Moguća neusklađenost sa dogovorenom arhitekturom | Faris Aljić |
-
 | 25.04.2026 | Sprint 5 | ChatGPT | Prijedlozi za bazu podataka | Implementacija strukture baze podataka | Prijedlog tabela, veza i osnovnih atributa | Osnovni model baze | Nazive tabela i kolona prema projektu | Nepotrebne dodatne tabele | Moguća neusklađenost sa zahtjevima aplikacije | Adna Bajramović |
-
 | 28.04.2026 | Sprint 5 | ChatGPT | Pomoć pri unosu troškova | Implementacija forme za unos troška | Strukturu forme i validaciju polja | Osnovnu logiku unosa troška | Nazive polja prema projektu | Generičke poruke greške | Neispravna validacija; prazni dropdowni | Nejla Ćenanović |
-
 | 28.04.2026 | Sprint 5 | ChatGPT | Pomoć pri unosu troškova | Povezivanje forme za unos troška sa podacima | Dohvat kategorija, odjela i valuta | Prikaz referentnih podataka | Stil i raspored polja | Nepotrebne izmjene frontenda | Moguće neslaganje sa backend odgovorom | Elvedina Halilović |
-
 | 29.04.2026 | Sprint 5 | ChatGPT | Identifikacija problema učitavanja troškova | Sporo učitavanje forme za unos troška | Provjera backend endpointa, baze i referentnih podataka | Analizu backenda i baze | Nazive tabela i endpointa prema projektu | Izmjene frontenda | Prazni dropdowni; nepostojeći referentni podaci | Omer Valjevac |
-
 | 29.04.2026 | Sprint 5 | Codex | Implementacija fixa za učitavanje troškova | Optimizacija dohvaćanja podataka za formu troška | Backend fix i objedinjeni dohvat referentnih podataka | Implementaciju na backendu | SQL upite prema strukturi baze | Izmjene frontenda | Moguća neusklađenost strukture odgovora sa frontend očekivanjima | Omer Valjevac |
-
 | 29.04.2026 | Sprint 5 | GitHub Copilot | Pomoć pri frontend implementaciji | Prikaz i povezivanje forme za unos troška | Prijedloge za frontend logiku i prikaz podataka | Osnovnu frontend strukturu | Stilove i nazive polja prema projektu | Generičke UI prijedloge | Moguće neslaganje sa backend odgovorom | Amina Memić |
-
 | 30.04.2026 | Sprint 6 | Codex | Pomoć pri ispravci izgleda UI-a | Analiza i dorada korisničkog interfejsa aplikacije | Prijedloge za bolji raspored elemenata, preglednije forme, dosljednije stilove i jasnije akcije na ekranu | Opšti smjer dorade UI-a i prilagođavanje postojećim komponentama | Boje, razmake, nazive elemenata i raspored prema dogovorenom izgledu aplikacije | Generičke prijedloge koji se nisu uklapali u postojeći dizajn | Moguća neusklađenost sa postojećim frontend stilovima i komponentama | Omer Valjevac |
-
 | 30.04.2026 | Sprint 6 | ChatGPT | Pomoć pri implementaciji ažuriranja troška | Definisanje logike za izmjenu postojećeg troška | Korištenje PUT metode, validaciju obaveznih polja i provjeru statusa troška prije izmjene | Pristup sa slanjem svih podataka troška pri ažuriranju i provjeru zaključanih troškova | Nazive endpointa, polja i poruke greške prema postojećoj strukturi projekta | Parcijalno ažuriranje preko PATCH metode | Rizik izmjene zaključanih troškova ili slanja nepotpunih podataka | Ramiz Plančić |
-
 | 30.04.2026 | Sprint 6 | ChatGPT | Pomoć pri implementaciji brisanja troška | Definisanje pravila za uklanjanje troška iz sistema | Prijedlog provjere prava pristupa, zaštite zaključanih troškova i trajnog brisanja zapisa | Provjeru autentifikacije i rola prije brisanja, te blokiranje brisanja zaključanih troškova | Način obrade povezanih podataka i poruke greške prema pravilima baze i aplikacije | Soft delete pristup sa `deleted\_at` kolonom | Rizik brisanja pogrešnog zapisa ili narušavanja povezanih podataka u bazi | Ramiz Plančić |
-
-
-
+| 09.05.2026 | Sprint 7 | ChatGPT | Pomoć pri planiranju uvoza podataka | Definisanje toka za import CSV/Excel fajlova | Predložen višekoračni tok: upload, preview, validacija i potvrda | Tim je prihvatio tok sa preview prikazom prije upisa u bazu | Nazivi endpointa, polja i poruke greške prilagođeni su postojećoj strukturi projekta | Direktan upis fajla bez korisničke potvrde | Rizik upisa nevalidnih redova i nejasnog mapiranja referentnih podataka | Adna Bajramović |
+| 09.05.2026 | Sprint 7 | Codex | Pomoć pri backend implementaciji ingestion logike | Implementacija parsera za CSV/XLS/XLSX i mapiranja redova | Servisnu strukturu za parsiranje, validaciju, mapiranje referentnih podataka i potvrdu uvoza | Tim je prihvatio servisni pristup i povezivanje sa postojećim ExpenseService-om | Headeri, nazivi polja i validaciona pravila usklađeni su sa modelom troška | Potpuno odvajanje uvoza od postojeće logike kreiranja troška | Moguće neslaganje kolona iz fajla sa internim nazivima polja | Amina Memić |
+| 10.05.2026 | Sprint 7 | ChatGPT | Pomoć pri testiranju uvoza troškova | Definisanje test scenarija za ingestion servis i endpointe | Testove za validan CSV, nevalidne redove, lokalni format iznosa, historiju uvoza i greške | Tim je prihvatio glavne test scenarije i dodao ih u backend testove | Test podaci su prilagođeni postojećim referentnim podacima i mock servisima | Preopširne end-to-end scenarije koji nisu bili potrebni za ovaj sprint | Rizik lažno pozitivnih testova ako mock podaci nisu usklađeni sa servisom | Adna Bajramović |
+| 10.05.2026 | Sprint 7 | ChatGPT | Pomoć pri budžet workflow-u | Definisanje pravila za kreiranje, pregled, uređivanje i odobravanje budžeta | Predloženu podjelu na view, edit i approval role, validaciju perioda i statusni tok | Tim je prihvatio RBAC podjelu i status ODOBREN/ODBIJEN | Poruke greške i ograničenja perioda prilagođeni su bazi i trenutnom backendu | Implementaciju bez statusa odobrenja | Rizik preklapanja budžeta i nejasne odgovornosti između računovođe i direktora | Elvedina Halilović |
+| 11.05.2026 | Sprint 7 | GitHub Copilot | Pomoć pri budget testovima | Pisanje testova za BudgetService i BudgetEndpoints | Testove za validaciju budžeta, duplikate, cache invalidaciju i promjenu statusa | Tim je prihvatio osnovne unit i integracione testove | Test nazivi i mock podaci su prilagođeni projektu | UI automation testove koji nisu bili potrebni za dokaz Sprinta 7 | Rizik neusklađene terminologije u test podacima | Nejla Dženanović |
