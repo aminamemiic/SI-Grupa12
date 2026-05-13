@@ -26,4 +26,4 @@ Implementirati funkcionalnosti planirane za Sprint 7 kroz pregled podataka o tro
 ---
 
 ## Rizici i zavisnosti
-Glavni rizik u Sprintu 7 je kvalitet podataka koji dolaze iz vanjskih CSV/Excel fajlova. Potrebno je osigurati da sistem ne upiše nevalidne redove, da jasno prikaže greške korisniku i da se podaci pravilno mapiraju na postojeće referentne podatke u bazi. Sprint zavisi od već implementiranog unosa troškova, referentnih podataka, RBAC pravila i stabilne baze podataka. Dodatni rizik je preuzimanje budget funkcionalnosti iz Sprinta 8, jer taj dio širi obim Sprinta 7 i zahtijeva posebnu napomenu u dokumentaciji.
+Glavni rizik u Sprintu 7 je kvalitet podataka koji dolaze iz vanjskih CSV/Excel fajlova. Potrebno je osigurati da sistem ne upiše nevalidne redove, da jasno prikaže greške korisniku i da se podaci pravilno mapiraju na postojeće referentne podatke u bazi. Sprint zavisi od već implementiranog unosa troškova, referentnih podataka, RBAC pravila i stabilne baze podataka. Dodatni rizik je preuzimanje budget funkcionalnosti iz Sprinta 8, jer taj dio širi obim Sprinta 7 i zahtijeva posebnu napomenu u dokumentaciji. 

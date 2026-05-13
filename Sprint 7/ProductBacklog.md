@@ -32,4 +32,4 @@
 | 22 | Integracija OCR biblioteke | Technical Task | Medium | To do | 8 | Povezivanje OCR alata sa backend kodom. |
 | 23 | Redis queue integracija | Technical Task | Medium | To do | 5 | Dodavanje Redis queue mehanizma između backend API servisa i AI mikroservisa. |
 | 24 | Pretraga i filtriranje troškova | Feature | Medium | To do | 3 | Pretraga po nazivu, opisu i dobavljaču, te filtriranje po kategoriji, odjelu, projektu i periodu. |
-| 25 | Sortiranje podataka | Feature | Low | To do | 2 | Sortiranje liste troškova po datumu, nazivu, iznosu i statusu. |
+| 25 | Sortiranje podataka | Feature | Low | To do | 2 | Sortiranje liste troškova po datumu, nazivu, iznosu i statusu.  |
