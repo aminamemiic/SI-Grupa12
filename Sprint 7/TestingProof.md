@@ -93,8 +93,6 @@ Zaključak: backend testovi za Sprint 7 zadovoljavaju definisani globalni covera
 
 | ID storyja | Naziv | Planirani sprint | Status u Sprintu 7 | Napomena |
 |---|---|---:|---|---|
-| 14 | Pregled liste podataka | Sprint 7 | Završeno | Implementiran pregled liste troškova |
-| 15 | Detaljan prikaz podataka | Sprint 7 | Završeno | Detalji zapisa dostupni kroz prikaz troškova |
 | 16 | Uvoz podataka iz fajla | Sprint 7 | Završeno | Implementiran CSV/XLS/XLSX upload |
 | 17 | Obrada uvezenih podataka | Sprint 7 | Završeno | Implementirano mapiranje i transformacija redova |
 | 18 | Validacija uvezenih podataka | Sprint 7 | Završeno | Implementirano označavanje grešaka i blokiranje nevalidnih redova |
@@ -105,4 +103,4 @@ Zaključak: backend testovi za Sprint 7 zadovoljavaju definisani globalni covera
 
 ## 7. Zaključak
 
-Sprint 7 je pokrio planirani pregled podataka i uvoz podataka, a tim je dodatno završio budget funkcionalnosti iz budućeg Sprinta 8. Relevantne backend funkcionalnosti su pokrivene automatizovanim testovima, svi testovi su uspješno prošli i zadovoljen je globalni coverage prag. Najvažniji testirani tokovi su preview uvoza, validacija redova, potvrda uvoza, historija uvoza, kreiranje i uređivanje budžeta, te odobravanje ili odbijanje budžeta.
+Sprint 7 je pokrio planirani uvoz podataka, a tim je dodatno završio budget funkcionalnosti iz budućeg Sprinta 8. Cijeli tim se složio oko izmjene plana sprintova, tj. odlučeno je da se zamijene User storiji 14 i 15 (Sprint 7) sa User storijima 26, 27, 28, 29 (Sprint 8) radi bolje raspodjele posla. Relevantne backend funkcionalnosti su pokrivene automatizovanim testovima, svi testovi su uspješno prošli i zadovoljen je globalni coverage prag. Najvažniji testirani tokovi su preview uvoza, validacija redova, potvrda uvoza, historija uvoza, kreiranje i uređivanje budžeta, te odobravanje ili odbijanje budžeta.
