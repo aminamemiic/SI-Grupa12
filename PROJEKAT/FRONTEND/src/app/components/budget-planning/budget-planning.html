@@ -49,13 +49,13 @@
 
         <div class="form-group">
           <label>Datum pocetka *</label>
-          <input type="date" formControlName="datumPocetka" />
-          <small *ngIf="isFieldInvalid('datumPocetka')">Datum pocetka je obavezan.</small>
+          <input type="text" formControlName="datumPocetka" placeholder="dd.mm.yyyy" />
+          <small *ngIf="isFieldInvalid('datumPocetka')">Datum pocetka je obavezan u formatu dd.mm.yyyy.</small>
         </div>
 
         <div class="form-group">
           <label>Datum zavrsetka *</label>
-          <input type="date" formControlName="datumZavrsetka" />
+          <input type="text" formControlName="datumZavrsetka" placeholder="dd.mm.yyyy" />
           <small *ngIf="isFieldInvalid('datumZavrsetka') || hasInvalidPeriod()">Period nije validan.</small>
         </div>
 
@@ -124,7 +124,7 @@
           <tr *ngFor="let budget of budgets" [class.selected]="selectedBudget?.id === budget.id">
             <td>{{ budget.naziv }}</td>
             <td>{{ budget.planiraniIznos | number: '1.2-2' }} KM</td>
-            <td>{{ budget.datumPocetka | date: 'yyyy-MM-dd' }} - {{ budget.datumZavrsetka | date: 'yyyy-MM-dd' }}</td>
+            <td>{{ budget.datumPocetka | date: 'dd.MM.yyyy' }} - {{ budget.datumZavrsetka | date: 'dd.MM.yyyy' }}</td>
             <td>{{ budget.odjel }}</td>
             <td>{{ budget.statusOdobrenja }}</td>
             <td class="actions-cell">
@@ -166,7 +166,7 @@
         <dt>Iznos</dt>
         <dd>{{ selectedBudget.planiraniIznos | number: '1.2-2' }} KM</dd>
         <dt>Period</dt>
-        <dd>{{ selectedBudget.datumPocetka | date: 'yyyy-MM-dd' }} - {{ selectedBudget.datumZavrsetka | date: 'yyyy-MM-dd' }}</dd>
+        <dd>{{ selectedBudget.datumPocetka | date: 'dd.MM.yyyy' }} - {{ selectedBudget.datumZavrsetka | date: 'dd.MM.yyyy' }}</dd>
         <dt>Odjel</dt>
         <dd>{{ selectedBudget.odjel }}</dd>
         <dt>Projekat</dt>

@@ -143,15 +143,17 @@ if (!odobrioKorisnikId) {
       throw new Error("Planirani iznos mora biti veci od 0.");
     }
 
-    if (!payload.datumPocetka || Number.isNaN(Date.parse(payload.datumPocetka))) {
+    const datumPocetka = this.normalizeDate(payload.datumPocetka);
+    if (!datumPocetka) {
       throw new Error("Datum pocetka je obavezan i mora biti validan.");
     }
 
-    if (!payload.datumZavrsetka || Number.isNaN(Date.parse(payload.datumZavrsetka))) {
+    const datumZavrsetka = this.normalizeDate(payload.datumZavrsetka);
+    if (!datumZavrsetka) {
       throw new Error("Datum zavrsetka je obavezan i mora biti validan.");
     }
 
-    if (new Date(payload.datumZavrsetka) < new Date(payload.datumPocetka)) {
+    if (datumZavrsetka < datumPocetka) {
       throw new Error("Datum zavrsetka ne moze biti prije datuma pocetka.");
     }
 
@@ -167,12 +169,52 @@ if (!odobrioKorisnikId) {
     return {
       naziv: payload.naziv.trim(),
       planiraniIznos,
-      datumPocetka: payload.datumPocetka,
-      datumZavrsetka: payload.datumZavrsetka,
+      datumPocetka,
+      datumZavrsetka,
       odjelId: payload.odjelId,
       projekatId: payload.projekatId || null,
       kategorijaIds,
     };
+  }
+
+  private normalizeDate(value: string): string | null {
+    if (!value) {
+      return null;
+    }
+
+    const localMatch = value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/);
+    if (localMatch) {
+      const [, dayValue, monthValue, yearValue] = localMatch;
+
+      if (!this.isValidDateParts(Number(yearValue), Number(monthValue), Number(dayValue))) {
+        return null;
+      }
+
+      return `${yearValue}-${monthValue.padStart(2, "0")}-${dayValue.padStart(2, "0")}`;
+    }
+
+    const isoMatch = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (isoMatch) {
+      const [, yearValue, monthValue, dayValue] = isoMatch;
+
+      if (!this.isValidDateParts(Number(yearValue), Number(monthValue), Number(dayValue))) {
+        return null;
+      }
+
+      return value.trim();
+    }
+
+    return null;
+  }
+
+  private isValidDateParts(year: number, month: number, day: number): boolean {
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return (
+      date.getUTCFullYear() === year &&
+      date.getUTCMonth() === month - 1 &&
+      date.getUTCDate() === day
+    );
   }
 
   private isBudgetPeriodOverlapError(error: any): boolean {

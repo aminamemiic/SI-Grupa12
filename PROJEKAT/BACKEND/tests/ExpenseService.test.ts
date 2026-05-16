@@ -258,6 +258,23 @@ describe("ExpenseService", () => {
       ).rejects.toThrow("Datum je obavezan i mora biti validan.");
       expect(mockExpenseRepository.create).not.toHaveBeenCalled();
     });
+
+    test("treba prihvatiti datum u formatu dd.mm.yyyy i normalizovati ga prije upisa", async () => {
+      const localDatePayload = { ...validPayload, datum: "15.05.2026" };
+      const normalizedPayload = { ...validPayload, datum: "2026-05-15" };
+      mockExpenseRepository.create.mockResolvedValue({ id: 14, ...normalizedPayload });
+
+      await service.createExpense(localDatePayload);
+
+      expect(mockExpenseRepository.create).toHaveBeenCalledWith(normalizedPayload, undefined);
+    });
+
+    test("ne treba kreirati trošak ako dd.mm.yyyy datum nije kalendarski validan", async () => {
+      await expect(
+        service.createExpense({ ...validPayload, datum: "31.02.2026" })
+      ).rejects.toThrow("Datum je obavezan i mora biti validan.");
+      expect(mockExpenseRepository.create).not.toHaveBeenCalled();
+    });
   });
 
   describe("createExpense – validacija obaveznih ID polja", () => {
