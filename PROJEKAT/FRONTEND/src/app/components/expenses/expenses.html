@@ -144,7 +144,7 @@
         <tr *ngFor="let expense of expenses">
           <td>{{ expense.naziv }}</td>
           <td>{{ expense.iznos }}</td>
-          <td>{{ expense.datum | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
           <td>{{ expense.kategorija }}</td>
           <td>{{ expense.odjel }}</td>
           <td>{{ expense.valuta }}</td>

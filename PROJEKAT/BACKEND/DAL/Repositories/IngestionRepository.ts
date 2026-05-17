@@ -12,12 +12,18 @@ class IngestionRepository {
         nevalidnih_redova INTEGER NOT NULL DEFAULT 0,
         upisanih_redova INTEGER NOT NULL DEFAULT 0,
         greske JSONB NOT NULL DEFAULT '[]'::jsonb,
+        uvezeni_zapisi JSONB NOT NULL DEFAULT '[]'::jsonb,
         kreirao_email VARCHAR(255),
         vrijeme_uvoza TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
         CONSTRAINT chk_uvoz_troskova_status
           CHECK (status IN ('USPJESAN', 'DJELIMICAN', 'NEUSPJESAN'))
       );
+    `);
+
+    await db.query(`
+      ALTER TABLE uvoz_troskova
+      ADD COLUMN IF NOT EXISTS uvezeni_zapisi JSONB NOT NULL DEFAULT '[]'::jsonb;
     `);
   }
 
@@ -34,9 +40,10 @@ class IngestionRepository {
         nevalidnih_redova,
         upisanih_redova,
         greske,
+        uvezeni_zapisi,
         kreirao_email
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8::jsonb, $9)
       RETURNING id;
       `,
       [
@@ -47,6 +54,7 @@ class IngestionRepository {
         entry.invalidRows || 0,
         entry.insertedCount || 0,
         JSON.stringify(entry.errors || []),
+        JSON.stringify(entry.importedRows || []),
         entry.createdByEmail || null,
       ]
     );
@@ -67,6 +75,7 @@ class IngestionRepository {
         nevalidnih_redova AS "invalidRows",
         upisanih_redova AS "insertedCount",
         greske AS errors,
+        uvezeni_zapisi AS "importedRows",
         kreirao_email AS "createdByEmail",
         vrijeme_uvoza AS "createdAt"
       FROM uvoz_troskova

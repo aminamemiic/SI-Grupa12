@@ -19,6 +19,12 @@
     </button>
   }
 
+  @if (canOpenDataOverview) {
+    <button type="button" class="secondary-action" (click)="idiNaPregledPodataka()">
+      Pregled podataka
+    </button>
+  }
+
   @if (isAdmin) {
     <a class="primary-action" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
       Admin Panel
@@ -158,7 +164,7 @@
                 <tr>
                   <td>{{ expense.naziv }}</td>
                   <td>{{ expense.iznos | number: '1.2-2' }}</td>
-                  <td>{{ expense.datum | date: 'yyyy-MM-dd' }}</td>
+                  <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
                   <td>{{ expense.kategorija || '-' }}</td>
                   <td>{{ expense.odjel || '-' }}</td>
                   <td>{{ expense.valuta || '-' }}</td>

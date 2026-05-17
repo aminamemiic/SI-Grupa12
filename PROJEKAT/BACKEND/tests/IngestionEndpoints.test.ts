@@ -85,6 +85,37 @@ describe("IngestionEndpoints", () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual(history);
   });
+
+  test("GET /api/troskovi/uvoz/historija treba dozvoliti role koje smiju pregledati podatke", async () => {
+    mockIngestionService.getImportHistory.mockResolvedValue([]);
+
+    await request(app).get("/api/troskovi/uvoz/historija");
+
+    expect(authService.requireRole).toHaveBeenCalledWith(
+      "admin",
+      "administrativni_radnik",
+      "glavni_racunovodja",
+      "finansijski_direktor"
+    );
+  });
+
+  test("POST import rute ostaju ogranicene na import role", async () => {
+    mockIngestionService.confirmImport.mockResolvedValue({
+      insertedCount: 1,
+      skippedCount: 0,
+      createdExpenses: [],
+      errors: [],
+    });
+
+    await request(app)
+      .post("/api/troskovi/uvoz/potvrdi")
+      .send({ rows: [{ expense: { naziv: "Laptop" } }] });
+
+    expect(authService.requireRole).toHaveBeenCalledWith(
+      "admin",
+      "administrativni_radnik"
+    );
+  });
   test("POST /api/troskovi/uvoz/preview treba vratiti 400 ako servis baci gresku", async () => {
   mockIngestionService.previewImport.mockRejectedValue(new Error("Neispravan fajl"));
 

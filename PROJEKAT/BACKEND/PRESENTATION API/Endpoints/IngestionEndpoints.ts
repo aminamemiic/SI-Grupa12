@@ -12,6 +12,12 @@ function registerIngestionEndpoints(app: any, authService: IAuthService, _logger
     },
   });
   const requireImportRole = authService.requireRole("admin", "administrativni_radnik");
+  const requireImportHistoryRole = authService.requireRole(
+    "admin",
+    "administrativni_radnik",
+    "glavni_racunovodja",
+    "finansijski_direktor"
+  );
 
   app.post(
     "/api/troskovi/uvoz/preview",
@@ -61,7 +67,7 @@ function registerIngestionEndpoints(app: any, authService: IAuthService, _logger
   app.get(
     "/api/troskovi/uvoz/historija",
     authService.requireAuthentication,
-    requireImportRole,
+    requireImportHistoryRole,
     async (_req: any, res: any) => {
       try {
         const history = await ingestionService.getImportHistory();

@@ -128,7 +128,7 @@
             </td>
             <td class="col-naziv">{{ row.expense?.naziv || '-' }}</td>
             <td class="col-iznos">{{ row.expense?.iznos || '-' }}</td>
-            <td class="col-datum">{{ row.expense?.datum || '-' }}</td>
+            <td class="col-datum">{{ row.expense?.datum ? (row.expense.datum | date: 'dd.MM.yyyy') : '-' }}</td>
             <td class="col-kategorija">{{ row.raw?.kategorija || '-' }}</td>
             <td class="col-odjel">{{ row.raw?.odjel || '-' }}</td>
             <td class="col-valuta">{{ row.raw?.valuta || '-' }}</td>
@@ -225,7 +225,7 @@
             <tr *ngFor="let expense of confirmResult?.createdExpenses">
               <td>{{ expense?.naziv }}</td>
               <td>{{ expense?.iznos }}</td>
-              <td>{{ expense?.datum }}</td>
+              <td>{{ expense?.datum ? (expense.datum | date: 'dd.MM.yyyy') : '-' }}</td>
               <td>{{ expense?.kategorija }}</td>
               <td>{{ expense?.odjel }}</td>
               <td>{{ expense?.valuta }}</td>

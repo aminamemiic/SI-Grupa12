@@ -45,6 +45,20 @@ export interface ImportConfirmResult {
   errors: Array<{ rowNumber?: number; message: string }>;
 }
 
+export interface ImportHistoryEntry {
+  id: string;
+  fileName: string | null;
+  status: string;
+  totalRows: number;
+  validRows: number;
+  invalidRows: number;
+  insertedCount: number;
+  errors: Array<{ rowNumber?: number; message: string }>;
+  importedRows: any[];
+  createdByEmail?: string | null;
+  createdAt: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -84,8 +98,8 @@ export class IngestionService {
     );
   }
 
-  getImportHistory(): Observable<any[]> {
-    return this.http.get<any[]>(
+  getImportHistory(): Observable<ImportHistoryEntry[]> {
+    return this.http.get<ImportHistoryEntry[]>(
       `${this.apiUrl}/historija`,
       this.getAuthOptions()
     );
