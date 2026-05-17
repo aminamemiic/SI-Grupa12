@@ -263,7 +263,6 @@ export class ExpensesComponent implements OnInit {
 
     return fallback;
   }
-<<<<<<< HEAD
   searchQuery: string = '';
 
 get filteredExpenses() {
@@ -277,7 +276,6 @@ get filteredExpenses() {
     e.valuta?.toLowerCase().includes(q)
   );
 }
-=======
 
   private toIsoDate(value: string): string {
     const match = value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/);
@@ -301,5 +299,4 @@ get filteredExpenses() {
     const [, year, month, day] = match;
     return `${day}.${month}.${year}`;
   }
->>>>>>> main
 }
