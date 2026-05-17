@@ -113,6 +113,25 @@ textarea {
   resize: vertical;
 }
 
+.date-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px;
+  gap: 8px;
+}
+
+.date-picker {
+  padding: 10px 8px;
+  color: transparent;
+}
+
+.date-picker::-webkit-datetime-edit {
+  display: none;
+}
+
+.date-picker::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
 input:focus,
 select:focus,
 textarea:focus {

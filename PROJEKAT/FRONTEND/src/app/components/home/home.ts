@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
   public editForm = this.fb.group({
     naziv: ['', [Validators.required, Validators.maxLength(200)]],
     iznos: [null as number | null, [Validators.required, Validators.min(0.01)]],
-    datum: ['', Validators.required],
+    datum: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{1,2}\.\d{4}\.?$/)]],
     opis: [''],
     kategorijaId: ['', Validators.required],
     odjelId: ['', Validators.required],
@@ -159,7 +159,7 @@ export class HomeComponent implements OnInit {
     this.editForm.patchValue({
       naziv: expense.naziv,
       iznos: Number(expense.iznos),
-      datum: expense.datum.split('T')[0],
+      datum: this.toDisplayDate(expense.datum),
       opis: expense.opis || '',
       kategorijaId: expense.kategorijaId?.toString() || '',
       odjelId: expense.odjelId?.toString() || '',
@@ -190,7 +190,7 @@ export class HomeComponent implements OnInit {
     const payload: CreateExpenseRequest = {
       naziv: formValue.naziv!,
       iznos: Number(formValue.iznos),
-      datum: formValue.datum!,
+      datum: this.toIsoDate(formValue.datum!),
       opis: formValue.opis || null,
       kategorijaId: formValue.kategorijaId!,
       odjelId: formValue.odjelId!,
@@ -313,5 +313,28 @@ export class HomeComponent implements OnInit {
         percentage: maxTotal > 0 ? Math.max((value.total / maxTotal) * 100, 6) : 0,
       }))
       .sort((a, b) => b.total - a.total);
+  }
+
+  private toIsoDate(value: string): string {
+    const match = value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/);
+
+    if (!match) {
+      return value;
+    }
+
+    const [, day, month, year] = match;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+
+  private toDisplayDate(value: string): string {
+    const isoDate = value.split('T')[0];
+    const match = isoDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+    if (!match) {
+      return value;
+    }
+
+    const [, year, month, day] = match;
+    return `${day}.${month}.${year}`;
   }
 }

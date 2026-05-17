@@ -326,6 +326,32 @@ describe("BudgetService", () => {
       ).rejects.toThrow("Datum zavrsetka ne moze biti prije datuma pocetka.");
       expect(mockBudgetRepository.create).not.toHaveBeenCalled();
     });
+
+    test("treba prihvatiti datume u formatu dd.mm.yyyy i normalizovati ih prije upisa", async () => {
+      const localDatePayload = {
+        ...validPayload,
+        datumPocetka: "01.05.2026",
+        datumZavrsetka: "31.05.2026",
+      };
+      mockBudgetRepository.existsDuplicate.mockResolvedValue(false);
+      mockBudgetRepository.create.mockResolvedValue({ id: 14, ...validPayload });
+
+      await service.createBudget(localDatePayload);
+
+      expect(mockBudgetRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          datumPocetka: "2026-05-01",
+          datumZavrsetka: "2026-05-31",
+        })
+      );
+    });
+
+    test("ne treba kreirati budzet ako dd.mm.yyyy datum pocetka nije kalendarski validan", async () => {
+      await expect(
+        service.createBudget({ ...validPayload, datumPocetka: "31.02.2026" })
+      ).rejects.toThrow("Datum pocetka je obavezan i mora biti validan.");
+      expect(mockBudgetRepository.create).not.toHaveBeenCalled();
+    });
   });
 
   // ─────────────────────────────────────────────────────────────

@@ -41,16 +41,16 @@ export class ExpenseService implements IExpenseService {
   }
 
   async createExpense(payload: CreateExpenseRequest, authUser?: unknown): Promise<any> {
-    this.validateCreateExpense(payload);
+    const normalizedPayload = this.validateCreateExpense(payload);
 
-    const createdExpense = await this.expenseRepository.create(payload, authUser);
+    const createdExpense = await this.expenseRepository.create(normalizedPayload, authUser);
     this.expensesCache = null;
 
     return createdExpense;
   }
 
   async updateExpense(id: string, payload: CreateExpenseRequest): Promise<any> {
-    this.validateCreateExpense(payload);
+    const normalizedPayload = this.validateCreateExpense(payload);
 
     const existing = await this.expenseRepository.getById(id);
     if (!existing) {
@@ -61,7 +61,7 @@ export class ExpenseService implements IExpenseService {
       throw new Error("Zaključani troškovi se ne mogu mijenjati.");
     }
 
-    const updatedExpense = await this.expenseRepository.update(id, payload);
+    const updatedExpense = await this.expenseRepository.update(id, normalizedPayload);
     this.expensesCache = null;
 
     return updatedExpense;
@@ -81,7 +81,7 @@ export class ExpenseService implements IExpenseService {
     this.expensesCache = null;
   }
 
-  private validateCreateExpense(payload: CreateExpenseRequest): void {
+  private validateCreateExpense(payload: CreateExpenseRequest): CreateExpenseRequest {
     if (!payload) {
       throw new Error("Podaci za trošak nisu poslani.");
     }
@@ -104,7 +104,8 @@ export class ExpenseService implements IExpenseService {
       throw new Error("Iznos mora biti veći od 0.");
     }
 
-    if (!payload.datum || Number.isNaN(Date.parse(payload.datum))) {
+    const datum = this.normalizeDate(payload.datum);
+    if (!datum) {
       throw new Error("Datum je obavezan i mora biti validan.");
     }
 
@@ -119,6 +120,51 @@ export class ExpenseService implements IExpenseService {
     if (!payload.valutaId) {
       throw new Error("Valuta je obavezna.");
     }
+
+    return {
+      ...payload,
+      datum,
+    };
+  }
+
+  private normalizeDate(value: string): string | null {
+    if (!value) {
+      return null;
+    }
+
+    const localMatch = value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/);
+    if (localMatch) {
+      const [, dayValue, monthValue, yearValue] = localMatch;
+
+      if (!this.isValidDateParts(Number(yearValue), Number(monthValue), Number(dayValue))) {
+        return null;
+      }
+
+      return `${yearValue}-${monthValue.padStart(2, "0")}-${dayValue.padStart(2, "0")}`;
+    }
+
+    const isoMatch = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (isoMatch) {
+      const [, yearValue, monthValue, dayValue] = isoMatch;
+
+      if (!this.isValidDateParts(Number(yearValue), Number(monthValue), Number(dayValue))) {
+        return null;
+      }
+
+      return value.trim();
+    }
+
+    return null;
+  }
+
+  private isValidDateParts(year: number, month: number, day: number): boolean {
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return (
+      date.getUTCFullYear() === year &&
+      date.getUTCMonth() === month - 1 &&
+      date.getUTCDate() === day
+    );
   }
 }
 

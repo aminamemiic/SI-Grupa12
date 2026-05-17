@@ -111,6 +111,25 @@ select:focus {
   box-shadow: 0 0 0 4px rgba(23, 105, 255, 0.1);
 }
 
+.date-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px;
+  gap: 8px;
+}
+
+.date-picker {
+  padding: 10px 8px;
+  color: transparent;
+}
+
+.date-picker::-webkit-datetime-edit {
+  display: none;
+}
+
+.date-picker::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
 .checkbox-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

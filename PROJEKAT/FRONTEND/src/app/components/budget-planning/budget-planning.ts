@@ -31,8 +31,8 @@ export class BudgetPlanningComponent implements OnInit {
   public budgetForm = this.fb.group({
     naziv: ['', [Validators.required, Validators.maxLength(200)]],
     planiraniIznos: [null as number | null, [Validators.required, Validators.min(0.01)]],
-    datumPocetka: ['', Validators.required],
-    datumZavrsetka: ['', Validators.required],
+    datumPocetka: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{1,2}\.\d{4}\.?$/)]],
+    datumZavrsetka: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{1,2}\.\d{4}\.?$/)]],
     odjelId: ['', Validators.required],
     projekatId: [''],
     kategorijaIds: [[] as string[], Validators.required],
@@ -127,8 +127,8 @@ export class BudgetPlanningComponent implements OnInit {
     this.budgetForm.patchValue({
       naziv: budget.naziv,
       planiraniIznos: budget.planiraniIznos,
-      datumPocetka: budget.datumPocetka.split('T')[0],
-      datumZavrsetka: budget.datumZavrsetka.split('T')[0],
+      datumPocetka: this.toDisplayDate(budget.datumPocetka),
+      datumZavrsetka: this.toDisplayDate(budget.datumZavrsetka),
       odjelId: budget.odjelId?.toString() || '',
       projekatId: budget.projekatId?.toString() || '',
       kategorijaIds: (budget.kategorijaIds || []).map((id) => id.toString()),
@@ -158,8 +158,8 @@ export class BudgetPlanningComponent implements OnInit {
     const payload: CreateBudgetRequest = {
       naziv: formValue.naziv!,
       planiraniIznos: Number(formValue.planiraniIznos),
-      datumPocetka: formValue.datumPocetka!,
-      datumZavrsetka: formValue.datumZavrsetka!,
+      datumPocetka: this.toIsoDate(formValue.datumPocetka!),
+      datumZavrsetka: this.toIsoDate(formValue.datumZavrsetka!),
       odjelId: formValue.odjelId!,
       projekatId: formValue.projekatId || null,
       kategorijaIds: formValue.kategorijaIds || [],
@@ -280,10 +280,25 @@ private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN
     return !!field && field.invalid && (field.dirty || field.touched);
   }
 
+  public onDatePickerChange(event: Event, fieldName: 'datumPocetka' | 'datumZavrsetka'): void {
+    const value = (event.target as HTMLInputElement).value;
+
+    if (!value) {
+      return;
+    }
+
+    this.budgetForm.patchValue({
+      [fieldName]: this.toDisplayDate(value),
+    });
+  }
+
   public hasInvalidPeriod(): boolean {
     const start = this.budgetForm.value.datumPocetka;
     const end = this.budgetForm.value.datumZavrsetka;
-    return Boolean(start && end && new Date(end) < new Date(start));
+    const startIso = start ? this.toIsoDate(start) : '';
+    const endIso = end ? this.toIsoDate(end) : '';
+
+    return Boolean(startIso && endIso && endIso < startIso);
   }
 
   public hasSelectedCategory(): boolean {
@@ -301,5 +316,28 @@ private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN
 
   private getErrorMessage(error: any, fallback: string): string {
     return error?.error?.message || error?.error?.error || fallback;
+  }
+
+  private toIsoDate(value: string): string {
+    const match = value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/);
+
+    if (!match) {
+      return value;
+    }
+
+    const [, day, month, year] = match;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+
+  private toDisplayDate(value: string): string {
+    const isoDate = value.split('T')[0];
+    const match = isoDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+    if (!match) {
+      return value;
+    }
+
+    const [, year, month, day] = match;
+    return `${day}.${month}.${year}`;
   }
 }

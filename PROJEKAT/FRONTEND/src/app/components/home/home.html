@@ -158,7 +158,7 @@
                 <tr>
                   <td>{{ expense.naziv }}</td>
                   <td>{{ expense.iznos | number: '1.2-2' }}</td>
-                  <td>{{ expense.datum | date: 'yyyy-MM-dd' }}</td>
+                  <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
                   <td>{{ expense.kategorija || '-' }}</td>
                   <td>{{ expense.odjel || '-' }}</td>
                   <td>{{ expense.valuta || '-' }}</td>
@@ -227,9 +227,9 @@
 
             <label>
               Datum *
-              <input type="date" formControlName="datum" />
+              <input type="text" formControlName="datum" placeholder="dd.mm.yyyy" />
               @if (isEditFieldInvalid('datum')) {
-                <small>Datum je obavezan.</small>
+                <small>Datum je obavezan u formatu dd.mm.yyyy.</small>
               }
             </label>
 
