@@ -328,5 +328,220 @@ export class DataOverviewComponent implements OnInit {
 
     return `${day}.${month}.${year}`;
   }
+  sectionSearch: string = '';
 
+showSection(name: string): boolean {
+  if (!this.sectionSearch.trim()) return true;
+  const q = this.sectionSearch.toLowerCase().trim();
+  const map: Record<string, string[]> = {
+    'troskovi': ['trošak', 'troskovi', 'trosak', 'expense'],
+    'budzeti': ['budzet', 'budžet', 'budget'],
+    'historija': ['historija', 'uvoz', 'import'],
+    'kategorije': ['kategorija', 'kategorije'],
+    'odjeli': ['odjel', 'odjeli'],
+    'valute': ['valuta', 'valute'],
+    'projekti': ['projekat', 'projekti'],
+    'dobavljaci': ['dobavljac', 'dobavljaci'],
+  };
+  return map[name]?.some(keyword => keyword.includes(q) || q.includes(keyword)) ?? false;
 }
+expenseSearch: string = '';
+expenseSortColumn: string = '';
+expenseSortDirection: 'asc' | 'desc' = 'asc';
+
+get filteredExpenses() {
+  let list = [...this.overview.troskovi];
+
+  if (this.expenseSearch.trim()) {
+    const q = this.expenseSearch.toLowerCase();
+    list = list.filter(e =>
+      e.naziv?.toLowerCase().includes(q) ||
+      e.kategorijaNaziv?.toLowerCase().includes(q) ||
+      e.odjelNaziv?.toLowerCase().includes(q) ||
+      e.projekatNaziv?.toLowerCase().includes(q) ||
+      e.dobavljacNaziv?.toLowerCase().includes(q) ||
+      e.statusValidacije?.toLowerCase().includes(q)
+    );
+  }
+
+  if (this.expenseFilterKategorija) {
+    list = list.filter(e => e.kategorijaNaziv === this.expenseFilterKategorija);
+  }
+
+  if (this.expenseFilterOdjel) {
+    list = list.filter(e => e.odjelNaziv === this.expenseFilterOdjel);
+  }
+
+  if (this.expenseFilterStatus) {
+    list = list.filter(e => e.statusValidacije === this.expenseFilterStatus);
+  }
+  if (this.expenseFilterValuta) {
+    list = list.filter(e => e.valutaKod === this.expenseFilterValuta);
+  }
+  if (this.expenseFilterDobavljac) {
+  list = list.filter(e => e.dobavljacNaziv === this.expenseFilterDobavljac);
+}
+
+if (this.expenseMinIznos > 0 || this.expenseMaxIznos > 0) {
+  list = list.filter(e => {
+    const iznos = Number(e.iznos || 0);
+    const min = this.expenseMinIznos || this.expenseIznosMin;
+    const max = this.expenseMaxIznos || this.expenseIznosMax;
+    return iznos >= min && iznos <= max;
+  });
+}
+
+  if (this.expenseSortColumn) {
+    list.sort((a, b) => {
+      const valA = (a as any)[this.expenseSortColumn] ?? '';
+      const valB = (b as any)[this.expenseSortColumn] ?? '';
+      const cmp = valA < valB ? -1 : valA > valB ? 1 : 0;
+      return this.expenseSortDirection === 'asc' ? cmp : -cmp;
+    });
+  }
+
+  return list;
+}
+
+sortExpenses(column: string): void {
+  if (this.expenseSortColumn === column) {
+    this.expenseSortDirection = this.expenseSortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.expenseSortColumn = column;
+    this.expenseSortDirection = 'asc';
+  }
+}
+expenseFilterKategorija: string = '';
+expenseFilterOdjel: string = '';
+expenseFilterStatus: string = '';
+expenseFilterValuta: string = '';
+get uniqueKategorije() {
+  return [...new Set(this.overview.troskovi.map(e => e.kategorijaNaziv).filter(Boolean))];
+}
+
+get uniqueOdjeli() {
+  return [...new Set(this.overview.troskovi.map(e => e.odjelNaziv).filter(Boolean))];
+}
+
+get uniqueStatusi() {
+  return [...new Set(this.overview.troskovi.map(e => e.statusValidacije).filter(Boolean))];
+}
+get uniqueValute() {
+  return [...new Set(this.overview.troskovi.map(e => e.valutaKod).filter(Boolean))];
+}
+// --- IZNOS FILTER (troškovi) ---
+expenseMinIznos: number = 0;
+expenseMaxIznos: number = 0;
+expenseIznosRange: [number, number] = [0, 0];
+expenseFilterDobavljac: string = '';
+
+get uniqueDobavljaci() {
+  return [...new Set(this.overview.troskovi.map(e => e.dobavljacNaziv).filter(Boolean))];
+}
+
+get expenseIznosMin(): number {
+  return Math.min(...this.overview.troskovi.map(e => Number(e.iznos || 0)));
+}
+
+get expenseIznosMax(): number {
+  return Math.max(...this.overview.troskovi.map(e => Number(e.iznos || 0)));
+}
+
+// --- IZNOS FILTER (budžeti) ---
+budgetMinIznos: number = 0;
+budgetMaxIznos: number = 0;
+
+get budgetIznosMin(): number {
+  return Math.min(...this.overview.budzeti.map(b => Number(b.planiraniIznos || 0)));
+}
+
+get budgetIznosMax(): number {
+  return Math.max(...this.overview.budzeti.map(b => Number(b.planiraniIznos || 0)));
+}
+
+// --- BUDGET FILTER/SORT ---
+budgetSearch: string = '';
+budgetSortColumn: string = '';
+budgetSortDirection: 'asc' | 'desc' = 'asc';
+budgetFilterOdjel: string = '';
+budgetFilterStatus: string = '';
+budgetFilterKategorija: string = '';
+budgetFilterPeriodOd: string = '';
+budgetFilterPeriodDo: string = '';
+
+get uniqueBudgetOdjeli() {
+  return [...new Set(this.overview.budzeti.map(b => b.odjelNaziv).filter(Boolean))];
+}
+
+get uniqueBudgetStatusi() {
+  return [...new Set(this.overview.budzeti.map(b => b.statusOdobrenja).filter(Boolean))];
+}
+
+get uniqueBudgetKategorije() {
+  return [...new Set(this.overview.budzeti.flatMap(b => b.kategorije?.map((k: any) => k.naziv) || []).filter(Boolean))];
+}
+
+get filteredBudgets() {
+  let list = [...this.overview.budzeti];
+
+  if (this.budgetSearch.trim()) {
+    const q = this.budgetSearch.toLowerCase();
+    list = list.filter(b =>
+      b.naziv?.toLowerCase().includes(q) ||
+      b.odjelNaziv?.toLowerCase().includes(q) ||
+      b.statusOdobrenja?.toLowerCase().includes(q) ||
+      b.projekatNaziv?.toLowerCase().includes(q)
+    );
+  }
+
+  if (this.budgetFilterOdjel) {
+    list = list.filter(b => b.odjelNaziv === this.budgetFilterOdjel);
+  }
+
+  if (this.budgetFilterStatus) {
+    list = list.filter(b => b.statusOdobrenja === this.budgetFilterStatus);
+  }
+
+  if (this.budgetFilterKategorija) {
+    list = list.filter(b => b.kategorije?.some((k: any) => k.naziv === this.budgetFilterKategorija));
+  }
+
+  if (this.budgetFilterPeriodOd) {
+    list = list.filter(b => b.datumPocetka >= this.budgetFilterPeriodOd);
+  }
+
+  if (this.budgetFilterPeriodDo) {
+    list = list.filter(b => b.datumZavrsetka <= this.budgetFilterPeriodDo);
+  }
+
+  if (this.budgetMinIznos > 0 || this.budgetMaxIznos > 0) {
+    list = list.filter(b => {
+      const iznos = Number(b.planiraniIznos || 0);
+      const min = this.budgetMinIznos || this.budgetIznosMin;
+      const max = this.budgetMaxIznos || this.budgetIznosMax;
+      return iznos >= min && iznos <= max;
+    });
+  }
+
+  if (this.budgetSortColumn) {
+    list.sort((a, b) => {
+      const valA = (a as any)[this.budgetSortColumn] ?? '';
+      const valB = (b as any)[this.budgetSortColumn] ?? '';
+      const cmp = valA < valB ? -1 : valA > valB ? 1 : 0;
+      return this.budgetSortDirection === 'asc' ? cmp : -cmp;
+    });
+  }
+
+  return list;
+}
+
+sortBudgets(column: string): void {
+  if (this.budgetSortColumn === column) {
+    this.budgetSortDirection = this.budgetSortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.budgetSortColumn = column;
+    this.budgetSortDirection = 'asc';
+  }
+}
+}
+

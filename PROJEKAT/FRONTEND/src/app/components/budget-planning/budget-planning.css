@@ -25,6 +25,9 @@
 .form-card {
   background: linear-gradient(135deg, rgba(23, 105, 255, 0.05), transparent 34%), #ffffff;
 }
+.search-bar {
+  margin-bottom: 1rem;
+}
 
 .eyebrow,
 h1,

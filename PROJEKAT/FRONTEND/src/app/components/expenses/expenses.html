@@ -1,12 +1,12 @@
 <div class="expenses-page">
   <section class="expenses-header">
     <div>
-      <p class="eyebrow">Unos troškova</p>
+      <p class="eyebrow">Upravljanje troškovima</p>
       <h1>{{ editingExpenseId ? 'Uređivanje troška' : 'Novi trošak' }}</h1>
       <p>Unesite trošak kroz strukturisanu formu. Lista ispod prikazuje trenutno dostupne zapise.</p>
     </div>
   </section>
-
+ 
   <section class="form-card">
     <div class="section-heading">
       <div>
@@ -16,7 +16,7 @@
         </p>
       </div>
     </div>
-
+ 
     <form [formGroup]="expenseForm" (ngSubmit)="saveExpense()">
       <div class="form-grid">
         <div class="form-group">
@@ -24,19 +24,19 @@
           <input type="text" formControlName="naziv" placeholder="Npr. Laptop" />
           <small *ngIf="isFieldInvalid('naziv')">Naziv je obavezan.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Iznos *</label>
           <input type="number" formControlName="iznos" placeholder="Npr. 1200" />
           <small *ngIf="isFieldInvalid('iznos')">Iznos mora biti veći od 0.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Datum *</label>
           <input type="date" formControlName="datum" />
           <small *ngIf="isFieldInvalid('datum')">Datum je obavezan.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Kategorija *</label>
           <select formControlName="kategorijaId">
@@ -47,7 +47,7 @@
           </select>
           <small *ngIf="isFieldInvalid('kategorijaId')">Kategorija je obavezna.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Odjel *</label>
           <select formControlName="odjelId">
@@ -58,7 +58,7 @@
           </select>
           <small *ngIf="isFieldInvalid('odjelId')">Odjel je obavezan.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Valuta *</label>
           <select formControlName="valutaId">
@@ -69,7 +69,7 @@
           </select>
           <small *ngIf="isFieldInvalid('valutaId')">Valuta je obavezna.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Projekat</label>
           <select formControlName="projekatId">
@@ -79,7 +79,7 @@
             </option>
           </select>
         </div>
-
+ 
         <div class="form-group">
           <label>Dobavljac</label>
           <select formControlName="dobavljacId">
@@ -89,44 +89,53 @@
             </option>
           </select>
         </div>
-
+ 
         <div class="form-group full-width">
           <label>Opis</label>
           <textarea formControlName="opis" rows="3" placeholder="Unesite opis troška"></textarea>
         </div>
       </div>
-
+ 
       <div class="messages">
         <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
         <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
       </div>
-
+ 
       <div class="form-actions">
         <button type="submit" [disabled]="isSaving">
           {{ isSaving ? 'Spremanje...' : (editingExpenseId ? 'Sačuvaj izmjene' : 'Sačuvaj') }}
         </button>
-
+ 
         <button type="button" class="btn-cancel" *ngIf="editingExpenseId" (click)="cancelEdit()">
           Odustani
         </button>
       </div>
     </form>
   </section>
-
+ 
   <section class="list-card">
     <div class="section-heading">
       <div>
         <h2>Lista troškova</h2>
-        <p class="subtitle">Evidentirani troškovi iz baze.</p>
+        <p class="subtitle">Pregled svih evidentiranih troškova</p>
       </div>
       <button type="button" class="btn-refresh" (click)="loadExpenses()" [disabled]="isLoading">
         Osvježi
       </button>
     </div>
-
+ 
+   <div class="search-bar">
+  <input
+    type="text"
+    [value]="searchQuery"
+    (input)="searchQuery = $any($event.target).value"
+    placeholder="Pretraži po nazivu, kategoriji, odjelu, valuti..."
+  />
+</div>
+ 
     <p *ngIf="isLoading">Učitavanje troškova...</p>
-
-    <table *ngIf="!isLoading && expenses.length > 0">
+ 
+    <table *ngIf="!isLoading && filteredExpenses.length > 0">
       <thead>
         <tr>
           <th>Naziv</th>
@@ -139,9 +148,9 @@
           <th>Akcije</th>
         </tr>
       </thead>
-
+ 
       <tbody>
-        <tr *ngFor="let expense of expenses">
+        <tr *ngFor="let expense of filteredExpenses">
           <td>{{ expense.naziv }}</td>
           <td>{{ expense.iznos }}</td>
           <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
@@ -160,17 +169,21 @@
         </tr>
       </tbody>
     </table>
-
+ 
+    <p *ngIf="!isLoading && filteredExpenses.length === 0 && searchQuery">
+      Nema rezultata za pretragu "<strong>{{ searchQuery }}</strong>".
+    </p>
+ 
     <p *ngIf="!isLoading && expenses.length === 0">
       Trenutno nema evidentiranih troškova.
     </p>
   </section>
-
+ 
   <div class="modal-overlay" *ngIf="showDeleteModal">
     <div class="modal-card">
       <h3>Brisanje troška</h3>
       <p>Jeste li sigurni da želite izbrisati ovaj trošak? Ova radnja se ne može poništiti.</p>
-
+ 
       <div class="modal-actions">
         <button class="btn-cancel-modal" (click)="closeDeleteModal()">Odustani</button>
         <button class="btn-confirm-delete" (click)="confirmDelete()">Izbriši</button>

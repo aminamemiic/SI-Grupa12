@@ -257,6 +257,17 @@ th {
   justify-content: flex-end;
   gap: 10px;
 }
+.search-bar {
+  margin-bottom: 1rem;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
 
 @media (max-width: 900px) {
   .form-grid {

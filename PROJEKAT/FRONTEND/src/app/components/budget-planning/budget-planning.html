@@ -1,20 +1,19 @@
 <div class="budget-page">
   <section class="budget-header">
-    <div class="messages" *ngIf="!showForm">
-  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-</div>
     <div>
       <p class="eyebrow">Planiranje budzeta</p>
       <h1>Budzet po kategorijama, odjelima i periodu</h1>
       <p>Pregledajte postojece budzete i kreirajte finansijski plan za naredne periode.</p>
     </div>
-
+ 
     <button type="button" (click)="openCreateForm()" [disabled]="!canEditBudgets">
       Kreiraj novi budzet
     </button>
   </section>
-
+ <div class="messages" *ngIf="!showForm">
+      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </div>
   <section class="form-card" *ngIf="showForm">
     <div class="section-heading">
       <div>
@@ -23,7 +22,7 @@
       </div>
       <button type="button" class="btn-secondary" (click)="closeForm()">Zatvori</button>
     </div>
-
+ 
     <form [formGroup]="budgetForm" (ngSubmit)="saveBudget()">
       <div class="form-grid">
         <div class="form-group">
@@ -31,13 +30,13 @@
           <input type="text" formControlName="naziv" placeholder="Npr. Marketing Q1" />
           <small *ngIf="isFieldInvalid('naziv')">Naziv je obavezan.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Planirani iznos *</label>
           <input type="number" formControlName="planiraniIznos" placeholder="Npr. 5000" />
           <small *ngIf="isFieldInvalid('planiraniIznos')">Iznos mora biti veci od 0.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Odjel *</label>
           <select formControlName="odjelId">
@@ -46,19 +45,19 @@
           </select>
           <small *ngIf="isFieldInvalid('odjelId')">Odjel je obavezan.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Datum pocetka *</label>
           <input type="date" formControlName="datumPocetka" />
           <small *ngIf="isFieldInvalid('datumPocetka')">Datum pocetka je obavezan.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Datum zavrsetka *</label>
           <input type="date" formControlName="datumZavrsetka" />
           <small *ngIf="isFieldInvalid('datumZavrsetka') || hasInvalidPeriod()">Period nije validan.</small>
         </div>
-
+ 
         <div class="form-group">
           <label>Projekat</label>
           <select formControlName="projekatId">
@@ -66,7 +65,7 @@
             <option *ngFor="let item of referenceData.projekti" [value]="item.id">{{ getItemLabel(item) }}</option>
           </select>
         </div>
-
+ 
         <div class="form-group full-width">
           <label>Kategorije *</label>
           <div class="checkbox-grid">
@@ -82,34 +81,42 @@
           <small *ngIf="budgetForm.get('kategorijaIds')?.touched && !hasSelectedCategory()">Odaberite barem jednu kategoriju.</small>
         </div>
       </div>
-
+ 
       <div class="messages">
         <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
         <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
       </div>
-
+ 
       <div class="form-actions">
         <button type="button" class="btn-secondary" (click)="closeForm()">Odustani</button>
         <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Spremanje...' : 'Sacuvaj' }}</button>
       </div>
     </form>
   </section>
-
+ 
   <section class="content-grid">
     <article class="list-card">
       <div class="section-heading">
         <div>
           <h2>Lista budzeta</h2>
-          <p class="subtitle">Postojeci budzeti iz baze.</p>
+          <p class="subtitle">Evidencija svih kreiranih budzeta</p>
         </div>
         <button type="button" class="btn-secondary" (click)="loadBudgets()" [disabled]="isLoading">Osvjezi</button>
       </div>
 
+      <div class="search-bar">
+        <input
+          type="text"
+          [value]="searchQuery"
+          (input)="searchQuery = $any($event.target).value"
+          placeholder="Pretraži po nazivu, odjelu, statusu..."
+        />
+      </div>
+
       <p *ngIf="isLoading">Ucitavanje budzeta...</p>
-      <p class="error" *ngIf="errorMessage && !showForm">{{ errorMessage }}</p>
       <p *ngIf="!isLoading && budgets.length === 0">Trenutno nema kreiranih budzeta.</p>
 
-      <table *ngIf="!isLoading && budgets.length > 0">
+      <table *ngIf="!isLoading && filteredBudgets.length > 0">
         <thead>
           <tr>
             <th>Naziv</th>
@@ -121,39 +128,43 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let budget of budgets" [class.selected]="selectedBudget?.id === budget.id">
+          <tr *ngFor="let budget of filteredBudgets" [class.selected]="selectedBudget?.id === budget.id">
             <td>{{ budget.naziv }}</td>
             <td>{{ budget.planiraniIznos | number: '1.2-2' }} KM</td>
             <td>{{ budget.datumPocetka | date: 'dd.MM.yyyy' }} - {{ budget.datumZavrsetka | date: 'dd.MM.yyyy' }}</td>
             <td>{{ budget.odjel }}</td>
             <td>{{ budget.statusOdobrenja }}</td>
             <td class="actions-cell">
-  <button type="button" class="btn-table" (click)="selectBudget(budget)">
-    Detalji
-  </button>
+              <button type="button" class="btn-table" (click)="selectBudget(budget)">
+                Detalji
+              </button>
 
-  <button
-  type="button"
-  class="btn-table"
-  (click)="editBudget(budget)"
-  [disabled]="!canEditBudgets || budget.statusOdobrenja !== 'NACRT'"
->
-  Uredi
-</button>
+              <button
+                type="button"
+                class="btn-table"
+                (click)="editBudget(budget)"
+                [disabled]="!canEditBudgets || budget.statusOdobrenja !== 'NACRT'"
+              >
+                Uredi
+              </button>
 
-  @if (canApproveBudgets && budget.statusOdobrenja === 'NACRT') {
-    <button type="button" class="btn-table" (click)="approveBudget(budget)">
-  Odobri
-</button>
+              @if (canApproveBudgets && budget.statusOdobrenja === 'NACRT') {
+                <button type="button" class="btn-table" (click)="approveBudget(budget)">
+                  Odobri
+                </button>
 
-<button type="button" class="btn-table" (click)="rejectBudget(budget)">
-  Odbij
-</button>
-  }
-</td>
+                <button type="button" class="btn-table" (click)="rejectBudget(budget)">
+                  Odbij
+                </button>
+              }
+            </td>
           </tr>
         </tbody>
       </table>
+
+      <p *ngIf="!isLoading && filteredBudgets.length === 0 && searchQuery">
+        Nema rezultata za pretragu "{{ searchQuery }}".
+      </p>
     </article>
 
     <aside class="detail-card">
@@ -177,7 +188,6 @@
         <dd>{{ selectedBudget.verzijaBudzeta || 1 }}</dd>
         <dt>Status</dt>
         <dd>{{ selectedBudget.statusOdobrenja }}</dd>
-
       </dl>
     </aside>
   </section>

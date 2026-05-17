@@ -28,7 +28,7 @@
           (click)="openExpensesTab($event)"
         >
           <span class="nav-icon">TR</span>
-          <span>Unos troškova</span>
+          <span>Upravljanje troškovima</span>
         </a>
         <a
           routerLink="/troskovi/import"
@@ -73,18 +73,9 @@
 
   <section class="workspace">
     <header class="topbar">
-      @if (isAuthenticated) {
-        <label class="search-box">
-          <span>S</span>
-          <input type="search" placeholder="Pretrazite troskove, dobavljace, kategorije..." />
-        </label>
-      }
-
+    
       <div class="topbar-actions">
         @if (isAuthenticated) {
-          <button type="button" class="filter-button" disabled>Period</button>
-          <button type="button" class="filter-button" disabled>Kompanije</button>
-          <button type="button" class="icon-button" disabled aria-label="Obavjestenja">!</button>
           @if (primaryRole) {
             <span class="role-badge">{{ primaryRole }}</span>
           }

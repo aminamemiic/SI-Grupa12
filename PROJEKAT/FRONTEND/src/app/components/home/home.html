@@ -3,7 +3,6 @@
     <div>
       <p class="eyebrow">Nadzorna ploča</p>
       <h1>Pregled troškova</h1>
-      <p class="lead">Trenutni troškovi iz baze prikazani su ispod i mogu se urediti ili obrisati.</p>
     </div>
 
    <div class="header-actions">
@@ -128,57 +127,7 @@
       }
     </article>
 
-    <article class="panel transactions-panel">
-      <div class="panel-heading">
-        <h2>Trenutni troškovi</h2>
-        <button type="button" (click)="loadDashboardExpenses()" [disabled]="isLoadingExpenses">
-          Osvjezi
-        </button>
-      </div>
-
-      @if (isLoadingExpenses) {
-        <div class="empty-state compact">
-          <strong>Učitavanje troškova...</strong>
-        </div>
-      } @else if (expenses.length === 0) {
-        <div class="empty-state compact">
-          <strong>Nema evidentiranih troškova.</strong>
-          <p>Kada unesete troškove, prikazat će se ovdje.</p>
-        </div>
-      } @else {
-        <div class="dashboard-table-wrap">
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th>Naziv</th>
-                <th>Iznos</th>
-                <th>Datum</th>
-                <th>Kategorija</th>
-                <th>Odjel</th>
-                <th>Valuta</th>
-                <th>Akcije</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (expense of expenses; track expense.id) {
-                <tr>
-                  <td>{{ expense.naziv }}</td>
-                  <td>{{ expense.iznos | number: '1.2-2' }}</td>
-                  <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
-                  <td>{{ expense.kategorija || '-' }}</td>
-                  <td>{{ expense.odjel || '-' }}</td>
-                  <td>{{ expense.valuta || '-' }}</td>
-                  <td class="row-actions">
-                    <button type="button" class="table-action" (click)="openEditExpense(expense)">Uredi</button>
-                    <button type="button" class="table-action danger" (click)="openDeleteExpense(expense)">Izbriši</button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
-    </article>
+    
 
     <aside class="assistant-column">
       <article class="panel assistant-panel">

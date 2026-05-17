@@ -251,4 +251,17 @@ export class ExpensesComponent implements OnInit {
 
     return fallback;
   }
+  searchQuery: string = '';
+
+get filteredExpenses() {
+  if (!this.searchQuery.trim()) return this.expenses;
+
+  const q = this.searchQuery.toLowerCase();
+  return this.expenses.filter(e =>
+    e.naziv?.toLowerCase().includes(q) ||
+    e.kategorija?.toLowerCase().includes(q) ||
+    e.odjel?.toLowerCase().includes(q) ||
+    e.valuta?.toLowerCase().includes(q)
+  );
+}
 }
