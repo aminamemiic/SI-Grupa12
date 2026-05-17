@@ -87,6 +87,7 @@ export class IngestionService implements IIngestionService {
       invalidRows: errors.length,
       insertedCount: createdExpenses.length,
       errors,
+      importedRows: createdExpenses,
       createdByEmail: this.getAuthEmail(authUser),
     });
 

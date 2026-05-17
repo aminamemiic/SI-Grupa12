@@ -1,0 +1,387 @@
+<div class="overview-page">
+  <section class="overview-header">
+    <div>
+      <p class="eyebrow">Pregled podataka</p>
+      <h1>Finansijski podaci iz baze</h1>
+      <p class="lead">Objedinjeni prikaz troskova, budzeta i sifarnika dostupnih kroz backend.</p>
+    </div>
+
+    <button type="button" class="secondary-action" (click)="loadOverview()" [disabled]="isLoading">
+      {{ isLoading ? 'Ucitavanje...' : 'Osvjezi' }}
+    </button>
+  </section>
+
+  @if (errorMessage) {
+    <p class="notice error-notice">{{ errorMessage }}</p>
+  }
+
+  <section class="metric-grid" aria-label="Sažetak podataka">
+    <article class="metric-card">
+      <span>Troskovi</span>
+      <strong>{{ overview.troskovi.length }}</strong>
+      <small>{{ totalExpensesAmount | number: '1.2-2' }} ukupno</small>
+    </article>
+    <article class="metric-card">
+      <span>Budzeti</span>
+      <strong>{{ overview.budzeti.length }}</strong>
+      <small>{{ totalBudgetsAmount | number: '1.2-2' }} planirano</small>
+    </article>
+    <article class="metric-card">
+      <span>Kategorije</span>
+      <strong>{{ overview.kategorije.length }}</strong>
+      <small>Aktivni sifarnik</small>
+    </article>
+    <article class="metric-card">
+      <span>Odjeli</span>
+      <strong>{{ overview.odjeli.length }}</strong>
+      <small>Organizacione jedinice</small>
+    </article>
+    <article class="metric-card">
+      <span>Dobavljaci</span>
+      <strong>{{ overview.dobavljaci.length }}</strong>
+      <small>Partneri u bazi</small>
+    </article>
+  </section>
+
+  @if (isLoading) {
+    <section class="panel empty-state">
+      <strong>Ucitavanje pregleda podataka...</strong>
+    </section>
+  } @else if (!hasAnyData) {
+    <section class="panel empty-state">
+      <strong>Nema podataka za prikaz.</strong>
+      <p>Backend je vratio prazne nizove za sve tabele pregleda.</p>
+    </section>
+  } @else {
+    <section class="panel wide-panel">
+      <div class="panel-heading">
+        <h2>Troskovi</h2>
+        <span>{{ overview.troskovi.length }} zapisa</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Naziv</th>
+              <th>Iznos</th>
+              <th>Datum</th>
+              <th>Kategorija</th>
+              <th>Odjel</th>
+              <th>Valuta</th>
+              <th>Projekat</th>
+              <th>Dobavljac</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (expense of overview.troskovi; track expense.id) {
+              <tr
+                class="clickable-row"
+                tabindex="0"
+                role="button"
+                (click)="openExpenseDetails(expense)"
+                (keydown.enter)="openExpenseDetails(expense)" (keydown.space)="$event.preventDefault(); openExpenseDetails(expense)"
+              >
+                <td>{{ expense.naziv }}</td>
+                <td>{{ expense.iznos | number: '1.2-2' }}</td>
+                <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
+                <td>{{ expense.kategorijaNaziv || '-' }}</td>
+                <td>{{ expense.odjelNaziv || '-' }}</td>
+                <td>{{ getExpenseCurrency(expense) }}</td>
+                <td>{{ expense.projekatNaziv || '-' }}</td>
+                <td>{{ expense.dobavljacNaziv || '-' }}</td>
+                <td><span class="status-pill">{{ expense.statusValidacije || '-' }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel wide-panel">
+      <div class="panel-heading">
+        <h2>Budzeti</h2>
+        <span>{{ overview.budzeti.length }} zapisa</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Naziv</th>
+              <th>Planirani iznos</th>
+              <th>Period</th>
+              <th>Odjel</th>
+              <th>Kategorije</th>
+              <th>Projekat</th>
+              <th>Status</th>
+              <th>Verzija</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (budget of overview.budzeti; track budget.id) {
+              <tr
+                class="clickable-row"
+                tabindex="0"
+                role="button"
+                (click)="openBudgetDetails(budget)"
+                (keydown.enter)="openBudgetDetails(budget)" (keydown.space)="$event.preventDefault(); openBudgetDetails(budget)"
+              >
+                <td>{{ budget.naziv }}</td>
+                <td>{{ budget.planiraniIznos | number: '1.2-2' }}</td>
+                <td>{{ budget.datumPocetka | date: 'dd.MM.yyyy' }} - {{ budget.datumZavrsetka | date: 'dd.MM.yyyy' }}</td>
+                <td>{{ budget.odjelNaziv || '-' }}</td>
+                <td>{{ getBudgetCategories(budget) }}</td>
+                <td>{{ budget.projekatNaziv || '-' }}</td>
+                <td><span class="status-pill">{{ budget.statusOdobrenja || '-' }}</span></td>
+                <td>{{ budget.verzijaBudzeta || '-' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel wide-panel">
+      <div class="panel-heading">
+        <h2>Historija uvoza</h2>
+        <span>{{ importHistory.length }} zapisa</span>
+      </div>
+
+      @if (isLoadingImportHistory) {
+        <div class="empty-state compact-state">
+          <strong>Ucitavanje historije uvoza...</strong>
+        </div>
+      } @else if (importHistoryMessage) {
+        <div class="empty-state compact-state">
+          <strong>{{ importHistoryMessage }}</strong>
+        </div>
+      } @else if (importHistory.length === 0) {
+        <div class="empty-state compact-state">
+          <strong>Nema evidentiranih uvoza.</strong>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fajl</th>
+                <th>Vrijeme uvoza</th>
+                <th>Status</th>
+                <th>Ukupno redova</th>
+                <th>Upisano</th>
+                <th>GreÅ¡ke</th>
+                <th>Kreirao</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of importHistory; track entry.id) {
+                <tr
+                  class="clickable-row"
+                  tabindex="0"
+                  role="button"
+                  (click)="openImportHistoryDetails(entry)"
+                  (keydown.enter)="openImportHistoryDetails(entry)"
+                  (keydown.space)="$event.preventDefault(); openImportHistoryDetails(entry)"
+                >
+                  <td><strong>{{ entry.fileName || 'Uvoz bez naziva fajla' }}</strong></td>
+                  <td>{{ entry.createdAt | date: 'dd.MM.yyyy HH:mm' }}</td>
+                  <td><span class="status-pill">{{ entry.status }}</span></td>
+                  <td>{{ entry.totalRows }}</td>
+                  <td>{{ entry.insertedCount }}</td>
+                  <td>{{ entry.errors.length }}</td>
+                  <td>{{ entry.createdByEmail || '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <section class="reference-grid">
+      <article class="panel">
+        <div class="panel-heading">
+          <h2>Kategorije</h2>
+          <span>{{ overview.kategorije.length }}</span>
+        </div>
+        <div class="compact-list">
+          @for (category of overview.kategorije; track category.id) {
+            <div
+              class="list-row clickable-card"
+              tabindex="0"
+              role="button"
+              (click)="openCategoryDetails(category)"
+              (keydown.enter)="openCategoryDetails(category)" (keydown.space)="$event.preventDefault(); openCategoryDetails(category)"
+            >
+              <strong>{{ category.naziv }}</strong>
+              <small>{{ category.opis || 'Bez opisa' }}</small>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <h2>Odjeli</h2>
+          <span>{{ overview.odjeli.length }}</span>
+        </div>
+        <div class="compact-list">
+          @for (department of overview.odjeli; track department.id) {
+            <div
+              class="list-row inline-row clickable-card"
+              tabindex="0"
+              role="button"
+              (click)="openDepartmentDetails(department)"
+              (keydown.enter)="openDepartmentDetails(department)" (keydown.space)="$event.preventDefault(); openDepartmentDetails(department)"
+            >
+              <strong>{{ department.naziv }}</strong>
+              <small>{{ department.sifraOdjela || '-' }}</small>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <h2>Valute</h2>
+          <span>{{ overview.valute.length }}</span>
+        </div>
+        <div class="compact-list">
+          @for (currency of overview.valute; track currency.id) {
+            <div
+              class="list-row inline-row clickable-card"
+              tabindex="0"
+              role="button"
+              (click)="openCurrencyDetails(currency)"
+              (keydown.enter)="openCurrencyDetails(currency)" (keydown.space)="$event.preventDefault(); openCurrencyDetails(currency)"
+            >
+              <strong>{{ currency.kod }}</strong>
+              <small>{{ currency.naziv }}</small>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <h2>Projekti</h2>
+          <span>{{ overview.projekti.length }}</span>
+        </div>
+        <div class="compact-list">
+          @for (project of overview.projekti; track project.id) {
+            <div
+              class="list-row clickable-card"
+              tabindex="0"
+              role="button"
+              (click)="openProjectDetails(project)"
+              (keydown.enter)="openProjectDetails(project)" (keydown.space)="$event.preventDefault(); openProjectDetails(project)"
+            >
+              <strong>{{ project.nazivProjekta }}</strong>
+              <small>{{ project.sifraProjekta || '-' }} · {{ project.status || '-' }}</small>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article class="panel suppliers-panel">
+        <div class="panel-heading">
+          <h2>Dobavljaci</h2>
+          <span>{{ overview.dobavljaci.length }}</span>
+        </div>
+        <div class="compact-list">
+          @for (supplier of overview.dobavljaci; track supplier.id) {
+            <div
+              class="list-row clickable-card"
+              tabindex="0"
+              role="button"
+              (click)="openSupplierDetails(supplier)"
+              (keydown.enter)="openSupplierDetails(supplier)" (keydown.space)="$event.preventDefault(); openSupplierDetails(supplier)"
+            >
+              <strong>{{ supplier.nazivFirme }}</strong>
+              <small>{{ supplier.pibIdBroj || 'Bez PIB-a' }}</small>
+            </div>
+          }
+        </div>
+      </article>
+    </section>
+  }
+
+  @if (selectedDetail) {
+    <div class="detail-overlay" (click)="closeDetails()">
+      <aside class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title" (click)="$event.stopPropagation()">
+        <div class="detail-header">
+          <div>
+            <p class="eyebrow">{{ selectedDetail.type }}</p>
+            <h2 id="detail-title">{{ selectedDetail.title }}</h2>
+          </div>
+          <button type="button" class="icon-action" aria-label="Zatvori detalje" (click)="closeDetails()">X</button>
+        </div>
+
+        <dl class="detail-list">
+          @for (field of selectedDetail.fields; track field.label) {
+            <div class="detail-row">
+              <dt>{{ field.label }}</dt>
+              <dd>{{ field.value }}</dd>
+            </div>
+          }
+        </dl>
+
+        @if (selectedDetail.importedRows) {
+          <section class="detail-section">
+            <h3>Uvezeni podaci</h3>
+            @if (selectedDetail.importedRows.length === 0) {
+              <p class="detail-note">Nema sacuvanih uvezenih zapisa za ovaj import.</p>
+            } @else {
+              <div class="detail-table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Naziv</th>
+                      <th>Iznos</th>
+                      <th>Datum</th>
+                      <th>Kategorija</th>
+                      <th>Odjel</th>
+                      <th>Valuta</th>
+                      <th>Projekat</th>
+                      <th>Dobavljac</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (row of selectedDetail.importedRows; track $index) {
+                      <tr>
+                        <td>{{ getImportedExpenseValue(row, 'naziv') }}</td>
+                        <td>{{ getImportedExpenseValue(row, 'iznos') }}</td>
+                        <td>{{ getImportedExpenseValue(row, 'datum') }}</td>
+                        <td>{{ getImportedExpenseValue(row, 'kategorija') }}</td>
+                        <td>{{ getImportedExpenseValue(row, 'odjel') }}</td>
+                        <td>{{ getImportedExpenseValue(row, 'valuta') }}</td>
+                        <td>{{ getImportedExpenseValue(row, 'projekat') }}</td>
+                        <td>{{ getImportedExpenseValue(row, 'dobavljac') }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </section>
+        }
+
+        @if (selectedDetail.errors && selectedDetail.errors.length > 0) {
+          <section class="detail-section">
+            <h3>GreÅ¡ke pri uvozu</h3>
+            <div class="detail-errors">
+              @for (error of selectedDetail.errors; track $index) {
+                <p>
+                  @if (error.rowNumber) {
+                    <strong>Red {{ error.rowNumber }}:</strong>
+                  }
+                  {{ error.message }}
+                </p>
+              }
+            </div>
+          </section>
+        }
+      </aside>
+    </div>
+  }
+</div>

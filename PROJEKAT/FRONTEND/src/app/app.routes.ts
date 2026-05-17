@@ -5,12 +5,14 @@ import { Homepage } from './components/homepage/homepage';
 import { ExpensesComponent } from './components/expenses/expenses';
 import { ExpenseImportComponent } from './components/expense-import/expense-import.component';
 import { BudgetPlanningComponent } from './components/budget-planning/budget-planning';
+import { DataOverviewComponent } from './components/data-overview/data-overview';
 import { HomeComponent } from './components/home/home';
 import { RoleAccessComponent } from './components/role-access/role-access';
 import { AuthGuardService } from '../middleware/middleware.authguard';
 
 const expenseRoles = ['admin', 'administrativni_radnik', 'administrativni_zaposlenik'];
 const budgetViewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
+const dataOverviewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
 
 const requireAuth = () => {
   const authService = inject(AuthGuardService);
@@ -57,12 +59,30 @@ const canOpenBudgets = () => {
   });
 };
 
+const canOpenDataOverview = () => {
+  const authService = inject(AuthGuardService);
+  const router = inject(Router);
+
+  if (!authService.isAuthenticated()) {
+    return router.createUrlTree(['/']);
+  }
+
+  if (authService.hasAnyRole(dataOverviewRoles)) {
+    return true;
+  }
+
+  return router.createUrlTree(['/home'], {
+    queryParams: { accessDenied: 'pregled-podataka' },
+  });
+};
+
 export const routes: Routes = [
   { path: '', component: Homepage },
   { path: 'home', component: HomeComponent, canActivate: [requireAuth] },
   { path: 'troskovi', component: ExpensesComponent, canActivate: [canOpenExpenses] },
   { path: 'troskovi/import', component: ExpenseImportComponent, canActivate: [canOpenExpenses] },
   { path: 'budzeti', component: BudgetPlanningComponent, canActivate: [canOpenBudgets] },
+  { path: 'podaci/pregled', component: DataOverviewComponent, canActivate: [canOpenDataOverview] },
   {
     path: 'profile',
     component: RoleAccessComponent,

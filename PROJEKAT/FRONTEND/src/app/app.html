@@ -50,6 +50,16 @@
             <span class="nav-icon">PB</span>
             <span>Planiranje budžeta</span>
           </a>
+        <a
+          routerLink="/podaci/pregled"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [class.disabled]="!canOpenDataOverview"
+          (click)="openDataOverviewTab($event)"
+        >
+          <span class="nav-icon">PP</span>
+          <span>Pregled podataka</span>
+        </a>
       </nav>
     }
 

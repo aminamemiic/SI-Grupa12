@@ -19,6 +19,12 @@
     </button>
   }
 
+  @if (canOpenDataOverview) {
+    <button type="button" class="secondary-action" (click)="idiNaPregledPodataka()">
+      Pregled podataka
+    </button>
+  }
+
   @if (isAdmin) {
     <a class="primary-action" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
       Admin Panel

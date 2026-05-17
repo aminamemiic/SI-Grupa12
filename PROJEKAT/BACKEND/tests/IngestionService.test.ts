@@ -127,6 +127,7 @@ describe("IngestionService", () => {
         fileName: "troskovi.csv",
         status: "USPJESAN",
         insertedCount: 1,
+        importedRows: [{ id: "t-1", ...expense }],
         createdByEmail: "admin@test.ba",
       })
     );

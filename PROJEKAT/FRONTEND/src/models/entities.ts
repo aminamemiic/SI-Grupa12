@@ -83,3 +83,89 @@ export interface BudgetReferenceData {
   odjeli: ReferenceItem[];
   projekti: ReferenceItem[];
 }
+
+export interface DataOverviewExpense {
+  id: string | number;
+  naziv: string;
+  iznos: number;
+  datum: string;
+  opis?: string | null;
+  statusValidacije?: string;
+  kategorijaId?: string | number;
+  kategorijaNaziv?: string | null;
+  odjelId?: string | number;
+  odjelNaziv?: string | null;
+  valutaId?: string | number;
+  valutaKod?: string | null;
+  valutaNaziv?: string | null;
+  projekatId?: string | number | null;
+  projekatNaziv?: string | null;
+  dobavljacId?: string | number | null;
+  dobavljacNaziv?: string | null;
+  kreiraoKorisnikId?: string | number;
+}
+
+export interface DataOverviewBudget {
+  id: string | number;
+  naziv: string;
+  planiraniIznos: number;
+  datumPocetka: string;
+  datumZavrsetka: string;
+  odjelId?: string | number;
+  odjelNaziv?: string | null;
+  projekatId?: string | number | null;
+  projekatNaziv?: string | null;
+  verzijaBudzeta?: number;
+  statusOdobrenja?: string;
+  odobrioKorisnikId?: string | number | null;
+  kategorije: Array<{ id: string | number; naziv: string }>;
+  kategorijaIds: Array<string | number>;
+}
+
+export interface DataOverviewCategory {
+  id: string | number;
+  naziv: string;
+  opis?: string | null;
+}
+
+export interface DataOverviewDepartment {
+  id: string | number;
+  naziv: string;
+  sifraOdjela?: string;
+  rukovodilacId?: string | number | null;
+}
+
+export interface DataOverviewCurrency {
+  id: string | number;
+  kod: string;
+  naziv: string;
+}
+
+export interface DataOverviewProject {
+  id: string | number;
+  nazivProjekta: string;
+  sifraProjekta?: string;
+  budzetProjekta?: number;
+  datumPocetak?: string;
+  datumZavrsetak?: string | null;
+  menadzerId?: string | number | null;
+  status?: string;
+}
+
+export interface DataOverviewSupplier {
+  id: string | number;
+  nazivFirme: string;
+  pibIdBroj?: string | null;
+  adresa?: string | null;
+  rejtingPouzdanosti?: number | null;
+}
+
+export interface DataOverview {
+  troskovi: DataOverviewExpense[];
+  budzeti: DataOverviewBudget[];
+  kategorije: DataOverviewCategory[];
+  odjeli: DataOverviewDepartment[];
+  valute: DataOverviewCurrency[];
+  projekti: DataOverviewProject[];
+  dobavljaci: DataOverviewSupplier[];
+}

@@ -17,6 +17,7 @@ export class App implements OnInit {
 
   public readonly expenseRoles = ['admin', 'administrativni_radnik', 'administrativni_zaposlenik'];
   public readonly budgetRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
+  public readonly dataOverviewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly adminConsoleUrl = 'https://keycloak-production-4c61.up.railway.app/';
   public isLoading = false;
   public navMessage = '';
@@ -45,6 +46,11 @@ export class App implements OnInit {
   public get canOpenBudgets(): boolean {
   return this.authService.hasAnyRole(this.budgetRoles);
 }
+
+  public get canOpenDataOverview(): boolean {
+    return this.authService.hasAnyRole(this.dataOverviewRoles);
+  }
+
   public get isAuthenticated(): boolean {
     return this.isLoggedIn;
   }
@@ -114,6 +120,27 @@ export class App implements OnInit {
     queryParams: { accessDenied: 'budzeti' },
   });
 }
+
+  public openDataOverviewTab(event: Event): void {
+    if (!this.isAuthenticated) {
+      event.preventDefault();
+      this.navMessage = 'Prijavite se da biste pristupili aplikaciji.';
+      void this.router.navigate(['/']);
+      return;
+    }
+
+    if (this.canOpenDataOverview) {
+      this.navMessage = '';
+      return;
+    }
+
+    event.preventDefault();
+    this.navMessage = 'Pregledu podataka mogu pristupiti samo admin, glavni_racunovodja i finansijski_direktor.';
+    void this.router.navigate(['/home'], {
+      queryParams: { accessDenied: 'pregled-podataka' },
+    });
+  }
+
   private async handleKeycloakCallback(): Promise<void> {
     if (!this.authService.hasKeycloakCallback()) {
       return;
