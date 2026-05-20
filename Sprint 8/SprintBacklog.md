@@ -8,4 +8,4 @@
 | US-22 | **Generisanje izvještaja** - Kao finansijski direktor želim generisati izvještaj o troškovima kako bih imao pregled finansijskog stanja | Omer Valjevac | Done | Uz konsultaciju s ostatkom tima |
 | US-23 | **Izvještaj po periodu** - Kao finansijski direktor želim filtrirati izvještaj po vremenskom periodu | Omer Valjevac | Done | Uz konsultaciju s ostatkom tima |
 | US-24 | **Export izvještaja** - Kao korisnik želim izvesti izvještaj u različitim formatima | Omer Valjevac | Done | Uz konsultaciju s ostatkom tima |
-| US-24 | **Sažeti izvještaj** -Kao finansijski direktor želim vidjeti sažeti prikaz ključnih informacija | Omer Valjevac | Done | Uz konsultaciju s ostatkom tima |
+| US-25 | **Sažeti izvještaj** -Kao finansijski direktor želim vidjeti sažeti prikaz ključnih informacija | Omer Valjevac | Done | Uz konsultaciju s ostatkom tima |
