@@ -9,7 +9,7 @@
 ## Šta nije išlo dobro
 
 - **Blago kašnjenje pri integraciji historije grešaka uvoza**: Nedostatak rano definisanog ugovora o JSON formatu za greške uvoza uzrokovao je manje nesporazume između backend i frontend developera. To je usporilo spajanje prikaza loga grešaka na Data Overview stranici.
-- 
+  
 ## Šta treba promijeniti
 
 
