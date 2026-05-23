@@ -15,6 +15,7 @@ const { registerIngestionEndpoints } = require("./PRESENTATION API/Endpoints/Ing
 const { registerBudgetEndpoints } = require("./PRESENTATION API/Endpoints/BudgetEndpoints");
 const { registerDataOverviewEndpoints } = require("./PRESENTATION API/Endpoints/DataOverviewEndpoints");
 const { registerReportEndpoints } = require("./PRESENTATION API/Endpoints/ReportEndpoints");
+const { registerNotificationEndpoints } = require("./PRESENTATION API/Endpoints/NotificationEndpoints");
 
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -58,7 +59,7 @@ async function ensureDockerServices() {
   const composeFile = path.resolve(__dirname, "docker-compose.yml");
 
   try {
-    execSync(`docker compose -f "${composeFile}" up -d`, {
+    execSync(`docker compose -f "${composeFile}" up -d postgres keycloak`, {
       stdio: "inherit",
     });
   } catch (error) {
@@ -285,6 +286,7 @@ function startServer() {
   registerDataOverviewEndpoints(app, authService, writeLog);
   registerReportEndpoints(app, authService, writeLog);
   registerIngestionEndpoints(app, authService, writeLog);
+  registerNotificationEndpoints(app, authService, writeLog);
   registerUserEndpoints(app, authService);
 
   app.listen(PORT, "0.0.0.0", () => {

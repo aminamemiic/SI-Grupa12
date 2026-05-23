@@ -1,7 +1,7 @@
-<section class="comparison-panel" aria-label="Poredjenje planiranih i stvarnih troskova">
+<section class="comparison-panel" aria-label="Poređenje planiranih i stvarnih troškova">
   <div class="panel-heading">
     <div>
-      <h2>Planirani i stvarni troskovi</h2>
+      <h2>Planirani i stvarni troškovi</h2>
       <p class="comparison-note">Odaberite kategorije, odjele i period za prikaz odstupanja.</p>
     </div>
     <button type="button" class="secondary-action compact-action" (click)="closePanel.emit()">Zatvori</button>
@@ -49,7 +49,7 @@
       class="secondary-action compact-action"
       [disabled]="selectedCategories.size === 0 && selectedDepartments.size === 0 && !dateFrom && !dateTo"
       (click)="clearComparison()">
-      Ocisti poredjenje
+      Očisti poređenje
     </button>
 <p class="comparison-legend">
   Pozitivno odstupanje znači da je stvarna potrošnja veća od planirane,
@@ -78,7 +78,7 @@
 
   @if (rows.length === 0) {
     <div class="empty-state">
-      <strong>Nema planiranih ili stvarnih troskova za odabrane filtere.</strong>
+      <strong>Nema planiranih ili stvarnih troškova za odabrane filtere.</strong>
     </div>
   } @else {
     <div class="table-wrap">

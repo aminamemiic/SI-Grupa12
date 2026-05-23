@@ -1,0 +1,130 @@
+<div class="notifications-page">
+  <section class="notifications-header">
+    <div>
+      <p class="eyebrow">AI notifikacije</p>
+      <h1>Centar za upozorenja</h1>
+      <p class="lead">{{ unreadCount }} nepročitanih nalaza zahtijeva pažnju.</p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="secondary-action" (click)="loadNotifications()" [disabled]="isLoading">
+        {{ isLoading ? 'Osvježavanje...' : 'Osvježi' }}
+      </button>
+      <button type="button" class="primary-action" (click)="markAllAsRead()" [disabled]="isUpdating || unreadCount === 0">
+        Označi sve kao pročitano
+      </button>
+    </div>
+  </section>
+
+  @if (errorMessage) {
+    <p class="notice error-notice">{{ errorMessage }}</p>
+  }
+
+  <section class="notifications-layout">
+    <article class="panel list-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Notifikacije</h2>
+          <span>{{ unreadCount }} nepročitane</span>
+        </div>
+      </div>
+
+      <div class="filter-row" aria-label="Filter notifikacija">
+        @for (filter of filters; track filter.value) {
+          <button
+            type="button"
+            [class.active]="activeFilter === filter.value"
+            (click)="setFilter(filter.value)"
+          >
+            {{ filter.label }}
+          </button>
+        }
+      </div>
+
+      @if (isLoading) {
+        <div class="empty-state">
+          <strong>Učitavanje notifikacija...</strong>
+        </div>
+      } @else if (filteredNotifications.length === 0) {
+        <div class="empty-state">
+          <strong>Nema notifikacija za odabrani filter.</strong>
+        </div>
+      } @else {
+        <div class="notification-list">
+          @for (notification of filteredNotifications; track trackNotification($index, notification)) {
+            <button
+              type="button"
+              class="notification-item"
+              [class.active]="selectedNotification?.id === notification.id"
+              [class.read]="notification.procitano"
+              (click)="selectNotification(notification)"
+            >
+              <span class="status-dot" [class]="priorityClass(notification.prioritet)"></span>
+              <span class="item-content">
+                <span class="item-title">{{ notification.naslov }}</span>
+                <span class="item-summary">{{ getSummary(notification) }}</span>
+                <span class="item-meta">{{ formatRelativeTime(notification.vrijemeKreiranja) }} · AI sistem</span>
+              </span>
+              <span class="priority-pill" [class]="priorityClass(notification.prioritet)">
+                {{ priorityIcon(notification.prioritet) }} {{ priorityLabel(notification.prioritet) }}
+              </span>
+            </button>
+          }
+        </div>
+      }
+    </article>
+
+    <article class="panel detail-panel">
+      @if (selectedNotification; as notification) {
+        <div class="detail-topline">
+          <span class="priority-pill" [class]="priorityClass(notification.prioritet)">
+            {{ priorityIcon(notification.prioritet) }} {{ priorityLabel(notification.prioritet) }}
+          </span>
+          <span>{{ formatRelativeTime(notification.vrijemeKreiranja) }}</span>
+        </div>
+
+        <h2>{{ notification.naslov }}</h2>
+        <p class="detail-summary">{{ selectedSummary }}</p>
+
+        <div class="detail-metrics" aria-label="Detalji notifikacije">
+          <div>
+            <span>Prioritet</span>
+            <strong>{{ priorityLabel(notification.prioritet) }}</strong>
+          </div>
+          <div>
+            <span>Status</span>
+            <strong>{{ notification.procitano ? 'Pročitano' : 'Novo' }}</strong>
+          </div>
+          <div>
+            <span>Izvor</span>
+            <strong>AI analiza</strong>
+          </div>
+          <div>
+            <span>Kreirano</span>
+            <strong>{{ formatDate(notification.vrijemeKreiranja) }}</strong>
+          </div>
+        </div>
+
+        <section class="recommendation-box">
+          <h3>Preporuka AI sistema</h3>
+          <p>{{ selectedRecommendation }}</p>
+        </section>
+
+        <div class="detail-actions">
+          <button
+            type="button"
+            class="primary-action"
+            (click)="markSelectedAsRead()"
+            [disabled]="notification.procitano || isUpdating"
+          >
+            {{ notification.procitano ? 'Već pročitano' : 'Označi kao pročitano' }}
+          </button>
+        </div>
+      } @else {
+        <div class="empty-state detail-empty">
+          <strong>Odaberite notifikaciju za detaljan prikaz.</strong>
+        </div>
+      }
+    </article>
+  </section>
+</div>

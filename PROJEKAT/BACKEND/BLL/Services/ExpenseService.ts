@@ -1,15 +1,21 @@
 import type { CreateExpenseRequest, IExpenseService } from "../Interfaces/IExpenseService";
 
 const { ExpenseRepository } = require("../../DAL/Repositories/ExpenseRepository");
+const { AIAnalysisService } = require("./AIAnalysisService");
+const { NotificationService } = require("./NotificationService");
 
 export class ExpenseService implements IExpenseService {
   private expenseRepository: any;
+  private aiAnalysisService: any;
+  private notificationService: any;
   private expensesCache: { expiresAt: number; data: any[] } | null = null;
   private referenceDataCache: { expiresAt: number; data: any } | null = null;
   private readonly cacheTtlMs = 30 * 1000;
 
   constructor() {
     this.expenseRepository = new ExpenseRepository();
+    this.aiAnalysisService = new AIAnalysisService();
+    this.notificationService = new NotificationService();
   }
 
   async getAllExpenses(): Promise<any[]> {
@@ -43,7 +49,8 @@ export class ExpenseService implements IExpenseService {
   async createExpense(payload: CreateExpenseRequest, authUser?: unknown): Promise<any> {
     const normalizedPayload = this.validateCreateExpense(payload);
 
-    const createdExpense = await this.expenseRepository.create(normalizedPayload, authUser);
+    let createdExpense = await this.expenseRepository.create(normalizedPayload, authUser);
+    createdExpense = await this.runAiValidationForCreatedExpense(createdExpense);
     this.expensesCache = null;
 
     return createdExpense;
@@ -125,6 +132,28 @@ export class ExpenseService implements IExpenseService {
       ...payload,
       datum,
     };
+  }
+
+  private async runAiValidationForCreatedExpense(createdExpense: any): Promise<any> {
+    try {
+      const context = await this.expenseRepository.getAiAnalysisContext(createdExpense);
+      const analysis = await this.aiAnalysisService.analyzeExpense(createdExpense, context);
+
+      if (analysis?.status !== "ANOMALIJA") {
+        return await this.expenseRepository.updateValidationStatus(createdExpense.id, "VALIDAN");
+      }
+
+      const updatedExpense = await this.expenseRepository.updateValidationStatus(createdExpense.id, "ANOMALIJA");
+      await this.expenseRepository.createAnomaly(createdExpense.id, analysis);
+      await this.notificationService.createAnomalyNotification(updatedExpense, analysis);
+
+      return {
+        ...updatedExpense,
+        aiAnaliza: analysis,
+      };
+    } catch (error) {
+      return createdExpense;
+    }
   }
 
   private normalizeDate(value: string): string | null {

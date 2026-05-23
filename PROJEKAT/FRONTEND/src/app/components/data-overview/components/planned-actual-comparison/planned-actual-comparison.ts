@@ -40,10 +40,10 @@ export class PlannedActualComparisonComponent {
   };
   private readonly statusPriority: Record<string, number> = {
     'Bez plana': 1,
-    Kriticno: 2,
-    Prekoraceno: 3,
-    'U okviru budzeta': 4,
-    'Nije iskoristeno': 5,
+    Kritično: 2,
+    Prekoračeno: 3,
+    'U okviru budžeta': 4,
+    'Nije iskorišteno': 5,
   };
 
   public get categoryOptions(): string[] {
@@ -127,7 +127,7 @@ export class PlannedActualComparisonComponent {
   }
 
   public get criticalVarianceCount(): number {
-    return this.rows.filter((row) => row.status === 'Kriticno').length;
+    return this.rows.filter((row) => row.status === 'Kritično').length;
   }
 
   public get highestOverrunLabel(): string {
@@ -170,7 +170,13 @@ export class PlannedActualComparisonComponent {
   }
 
   public getStatusClass(status: string): string {
-    return status.toLowerCase().replace(/\s+/g, '-').replace('š', 's').replace('ć', 'c');
+    return status
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[čć]/g, 'c')
+      .replace(/š/g, 's')
+      .replace(/ž/g, 'z')
+      .replace(/đ/g, 'd');
   }
 
   private getBudgetAmountForGroup(budget: DataOverviewBudget): number {
@@ -231,17 +237,17 @@ export class PlannedActualComparisonComponent {
     }
 
     if (actualAmount === 0 && plannedAmount > 0) {
-      return 'Nije iskoristeno';
+      return 'Nije iskorišteno';
     }
 
     if (utilization !== null && utilization > 125) {
-      return 'Kriticno';
+      return 'Kritično';
     }
 
     if (utilization !== null && utilization > 100) {
-      return 'Prekoraceno';
+      return 'Prekoračeno';
     }
 
-    return 'U okviru budzeta';
+    return 'U okviru budžeta';
   }
 }

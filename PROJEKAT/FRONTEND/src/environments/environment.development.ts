@@ -1,6 +1,6 @@
-// Local Docker Compose config - backend runs locally, auth uses public Keycloak.
+// Local Docker Compose config - backend and Keycloak run locally.
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000/api',
-  keycloakUrl: 'https://keycloak-production-4c61.up.railway.app'
+  keycloakUrl: 'http://localhost:8080'
 };

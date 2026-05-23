@@ -12,6 +12,7 @@ from app.schemas import (
     HealthResponse,
 )
 from app.services.analysis_service import AnalysisService
+from app.services.anomaly_service import AnomalyService
 
 
 app = FastAPI(
@@ -21,6 +22,7 @@ app = FastAPI(
 )
 
 analysis_service = AnalysisService()
+anomaly_service = AnomalyService()
 
 
 @app.on_event("startup")
@@ -33,9 +35,9 @@ def health() -> HealthResponse:
     return HealthResponse(status="ok", service="ai-service")
 
 
-@app.post("/ai/expense-check", status_code=status.HTTP_501_NOT_IMPLEMENTED)
-def expense_check(_payload: ExpenseCheckRequest) -> dict[str, str]:
-    return {"message": "Expense anomaly detection endpoint is ready for implementation."}
+@app.post("/ai/expense-check")
+def expense_check(payload: ExpenseCheckRequest) -> dict:
+    return anomaly_service.analyze_expense(payload.expense, payload.context)
 
 
 @app.post("/ai/category-suggestion", status_code=status.HTTP_501_NOT_IMPLEMENTED)

@@ -45,7 +45,7 @@ export class ReportsComponent implements OnInit {
       return '-';
     }
 
-    const from = this.report.period.datumOd ? this.formatDate(this.report.period.datumOd) : 'Pocetak';
+    const from = this.report.period.datumOd ? this.formatDate(this.report.period.datumOd) : 'Početak';
     const to = this.report.period.datumDo ? this.formatDate(this.report.period.datumDo) : 'Danas';
 
     return `${from} - ${to}`;
@@ -60,7 +60,7 @@ export class ReportsComponent implements OnInit {
   }
 
   public get selectedReportTypeLabel(): string {
-    return this.reportType === 'detaljni' ? 'Detaljni' : 'Sazeti';
+    return this.reportType === 'detaljni' ? 'Detaljni' : 'Sažeti';
   }
 
   public get utilizationLabel(): string {
@@ -85,7 +85,7 @@ export class ReportsComponent implements OnInit {
     }
 
     if (this.periodIsInvalid) {
-      this.errorMessage = 'Datum od ne moze biti poslije datuma do.';
+      this.errorMessage = 'Datum od ne može biti poslije datuma do.';
       return;
     }
 
@@ -101,7 +101,7 @@ export class ReportsComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = this.getErrorMessage(error, 'Greska pri generisanju izvjestaja.');
+        this.errorMessage = this.getErrorMessage(error, 'Greška pri generisanju izvještaja.');
         this.report = null;
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -150,7 +150,7 @@ export class ReportsComponent implements OnInit {
     }
 
     if (this.periodIsInvalid || this.isExporting) {
-      this.errorMessage = this.periodIsInvalid ? 'Datum od ne moze biti poslije datuma do.' : '';
+      this.errorMessage = this.periodIsInvalid ? 'Datum od ne može biti poslije datuma do.' : '';
       return;
     }
 
@@ -161,13 +161,13 @@ export class ReportsComponent implements OnInit {
     this.reportService.exportExpenseReport(format, this.buildFilters()).subscribe({
       next: (blob) => {
         this.downloadBlob(blob, this.getExportFilename(format));
-        this.successMessage = 'Izvjestaj je spreman za preuzimanje.';
+        this.successMessage = 'Izvještaj je spreman za preuzimanje.';
         this.isExporting = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = this.getErrorMessage(error, 'Greska tokom izvoza izvjestaja.');
+        this.errorMessage = this.getErrorMessage(error, 'Greška tokom izvoza izvještaja.');
         this.isExporting = false;
         this.cdr.detectChanges();
       },
@@ -284,7 +284,7 @@ export class ReportsComponent implements OnInit {
     const message = error?.error?.message || error?.error?.error || error?.message || fallback;
 
     if (error?.status === 401 || String(message).toLowerCase().includes('token')) {
-      return 'Sesija je istekla. Odjavi se i prijavi ponovo, pa generisi izvjestaj.';
+      return 'Sesija je istekla. Odjavi se i prijavi ponovo, pa generiši izvještaj.';
     }
 
     return message;

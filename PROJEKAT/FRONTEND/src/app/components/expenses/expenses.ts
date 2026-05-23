@@ -73,7 +73,7 @@ export class ExpensesComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = 'Greska pri dohvatu troskova. Provjerite prijavu i konekciju prema backendu.';
+        this.errorMessage = 'Greška pri dohvatu troškova. Provjerite prijavu i konekciju prema backendu.';
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -89,7 +89,7 @@ export class ExpensesComponent implements OnInit {
       error: (error) => {
         console.error(error);
         this.errorMessage =
-          'Greska pri dohvatu podataka za formu. Provjerite prijavu i konekciju prema backendu.';
+          'Greška pri dohvatu podataka za formu. Provjerite prijavu i konekciju prema backendu.';
         this.cdr.detectChanges();
       },
     });
@@ -128,14 +128,14 @@ export class ExpensesComponent implements OnInit {
             e.id === updatedExpense.id ? updatedExpense : e
           );
           this.cancelEdit();
-          this.successMessage = 'Trosak je uspjesno azuriran.';
+          this.successMessage = 'Trošak je uspješno ažuriran.';
           this.isSaving = false;
           this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
         this.errorMessage =
-            this.getErrorMessage(error, 'Greska pri azuriranju troska.');
+            this.getErrorMessage(error, 'Greška pri ažuriranju troška.');
         this.isSaving = false;
         this.cdr.detectChanges();
       },
@@ -145,14 +145,14 @@ export class ExpensesComponent implements OnInit {
         next: (createdExpense) => {
           this.expenses = [createdExpense, ...this.expenses];
           this.expenseForm.reset();
-          this.successMessage = 'Trosak je uspjesno spremljen.';
+          this.successMessage = 'Trošak je uspješno spremljen.';
           this.isSaving = false;
           this.cdr.detectChanges();
         },
         error: (error) => {
           console.error(error);
           this.errorMessage =
-            this.getErrorMessage(error, 'Greska pri spremanju troska.');
+            this.getErrorMessage(error, 'Greška pri spremanju troška.');
           this.isSaving = false;
           this.cdr.detectChanges();
         },
@@ -196,14 +196,14 @@ export class ExpensesComponent implements OnInit {
     this.expenseService.deleteExpense(this.expenseToDeleteId).subscribe({
       next: () => {
         this.expenses = this.expenses.filter((e) => e.id !== this.expenseToDeleteId);
-        this.successMessage = 'Trosak je uspjesno obrisan.';
+        this.successMessage = 'Trošak je uspješno obrisan.';
         this.closeDeleteModal();
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
         this.errorMessage =
-          this.getErrorMessage(error, 'Greska pri brisanju troska.');
+          this.getErrorMessage(error, 'Greška pri brisanju troška.');
         this.closeDeleteModal();
         this.cdr.detectChanges();
       },

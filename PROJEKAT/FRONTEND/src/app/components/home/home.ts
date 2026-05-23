@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit {
     this.loadReferenceData();
 
     if (this.route.snapshot.queryParamMap.get('accessDenied') === 'troskovi') {
-      this.accessNotice = 'Pristup formi za unos troskova je dozvoljen samo ulogama admin i administrativni_radnik.';
+      this.accessNotice = 'Pristup formi za unos troškova je dozvoljen samo ulogama admin i administrativni_radnik.';
     }
 
     if (this.route.snapshot.queryParamMap.get('accessDenied') === 'pregled-podataka') {
@@ -85,7 +85,7 @@ export class HomeComponent implements OnInit {
     }
 
     if (this.route.snapshot.queryParamMap.get('accessDenied') === 'izvjestaji') {
-      this.accessNotice = 'Pristup izvjestajima je dozvoljen samo ulogama admin, glavni_racunovodja i finansijski_direktor.';
+      this.accessNotice = 'Pristup izvještajima je dozvoljen samo ulogama admin, glavni_racunovodja i finansijski_direktor.';
     }
   }
 
@@ -148,7 +148,7 @@ export class HomeComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.dashboardError = 'Greska pri dohvatu troskova.';
+        this.dashboardError = 'Greška pri dohvatu troškova.';
         this.isLoadingExpenses = false;
         this.cdr.detectChanges();
       },
@@ -163,7 +163,7 @@ export class HomeComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.dashboardError = 'Greska pri dohvatu podataka za uredjivanje troskova.';
+        this.dashboardError = 'Greška pri dohvatu podataka za uređivanje troškova.';
         this.cdr.detectChanges();
       },
     });
@@ -223,14 +223,14 @@ export class HomeComponent implements OnInit {
         this.expenses = this.expenses.map((expense) =>
           expense.id === updatedExpense.id ? updatedExpense : expense
         );
-        this.dashboardMessage = 'Trosak je uspjesno azuriran.';
+        this.dashboardMessage = 'Trošak je uspješno ažuriran.';
         this.isSavingExpense = false;
         this.closeEditExpense();
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
-        this.dashboardError = error?.error?.message || 'Greska pri azuriranju troska.';
+        this.dashboardError = error?.error?.message || 'Greška pri ažuriranju troška.';
         this.isSavingExpense = false;
         this.cdr.detectChanges();
       },
@@ -254,13 +254,13 @@ export class HomeComponent implements OnInit {
     this.expenseService.deleteExpense(deleteId).subscribe({
       next: () => {
         this.expenses = this.expenses.filter((expense) => expense.id.toString() !== deleteId);
-        this.dashboardMessage = 'Trosak je uspjesno obrisan.';
+        this.dashboardMessage = 'Trošak je uspješno obrisan.';
         this.closeDeleteExpense();
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
-        this.dashboardError = error?.error?.message || 'Greska pri brisanju troska.';
+        this.dashboardError = error?.error?.message || 'Greška pri brisanju troška.';
         this.closeDeleteExpense();
         this.cdr.detectChanges();
       },
@@ -286,7 +286,7 @@ export class HomeComponent implements OnInit {
 
   public idiNaTroskove(): void {
     if (!this.canOpenExpenses) {
-      this.accessNotice = 'Pristup formi za unos troskova je dozvoljen samo ulogama admin i administrativni_radnik.';
+      this.accessNotice = 'Pristup formi za unos troškova je dozvoljen samo ulogama admin i administrativni_radnik.';
       return;
     }
 
@@ -295,7 +295,7 @@ export class HomeComponent implements OnInit {
 
   public idiNaImportTroskova(): void {
     if (!this.canOpenExpenses) {
-      this.accessNotice = 'Pristup importu troskova je dozvoljen samo ulogama admin i administrativni_radnik.';
+      this.accessNotice = 'Pristup importu troškova je dozvoljen samo ulogama admin i administrativni_radnik.';
       return;
     }
 
@@ -303,7 +303,7 @@ export class HomeComponent implements OnInit {
   }
   public idiNaBudzetiranje(): void {
   if (!this.canOpenBudgets) {
-    this.accessNotice = 'Pristup planiranju budzeta je dozvoljen samo ulogama admin, glavni_racunovodja i finansijski_direktor.';
+    this.accessNotice = 'Pristup planiranju budžeta je dozvoljen samo ulogama admin, glavni_racunovodja i finansijski_direktor.';
     return;
   }
 
@@ -321,7 +321,7 @@ export class HomeComponent implements OnInit {
 
   public idiNaIzvjestaje(): void {
     if (!this.canOpenReports) {
-      this.accessNotice = 'Pristup izvjestajima je dozvoljen samo ulogama admin, glavni_racunovodja i finansijski_direktor.';
+      this.accessNotice = 'Pristup izvještajima je dozvoljen samo ulogama admin, glavni_racunovodja i finansijski_direktor.';
       return;
     }
 
@@ -332,7 +332,7 @@ export class HomeComponent implements OnInit {
     const totals = new Map<string, { total: number; count: number }>();
 
     this.expenses.forEach((expense) => {
-      const label = String(expense[fieldName] || 'Nerasporedjeno');
+      const label = String(expense[fieldName] || 'Neraspoređeno');
       const existing = totals.get(label) || { total: 0, count: 0 };
       existing.total += Number(expense.iznos || 0);
       existing.count += 1;

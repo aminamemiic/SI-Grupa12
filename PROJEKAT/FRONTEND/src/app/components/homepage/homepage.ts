@@ -43,7 +43,7 @@ export class Homepage {
       if (error instanceof DOMException && error.name === 'AbortError') {
         this.errorMessage = 'Logout timeout. Provjeri da li je backend pokrenut.';
       } else {
-        this.errorMessage = error instanceof Error ? error.message : 'Greska pri logoutu.';
+        this.errorMessage = error instanceof Error ? error.message : 'Greška pri logoutu.';
       }
     } finally {
       this.isLoading = false;

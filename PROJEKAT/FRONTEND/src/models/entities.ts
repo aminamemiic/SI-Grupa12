@@ -216,3 +216,15 @@ export interface ExpenseReport {
   };
   expenses: DataOverviewExpense[];
 }
+
+export type NotificationPriority = 'LOW' | 'MEDIUM' | 'HIGH';
+
+export interface AppNotification {
+  id: string | number;
+  naslov: string;
+  poruka: string;
+  prioritet: NotificationPriority;
+  korisnikId?: string | number;
+  procitano: boolean;
+  vrijemeKreiranja: string;
+}

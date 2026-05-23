@@ -1,8 +1,8 @@
-<section class="comparison-panel" aria-label="Poredjenje odabranih troskova">
+<section class="comparison-panel" aria-label="Poređenje odabranih troškova">
   <div class="panel-heading">
     <div>
-      <h2>Poredjenje odabranih troskova</h2>
-      <p class="comparison-note">{{ expenses.length }} troskova spremno za poredjenje</p>
+      <h2>Poređenje odabranih troškova</h2>
+      <p class="comparison-note">{{ expenses.length }} troškova spremno za poređenje</p>
     </div>
     <button type="button" class="secondary-action compact-action" (click)="closePanel.emit()">
       Zatvori
@@ -15,19 +15,19 @@
       <strong>{{ totalAmount | number: '1.2-2' }} KM</strong>
     </article>
     <article>
-      <span>Najveci trosak u KM</span>
+      <span>Najveći trošak u KM</span>
       <strong>{{ highestAmount === null ? '-' : (highestAmount | number: '1.2-2') + ' KM' }}</strong>
     </article>
     <article>
-      <span>Najmanji trosak u KM</span>
+      <span>Najmanji trošak u KM</span>
       <strong>{{ lowestAmount === null ? '-' : (lowestAmount | number: '1.2-2') + ' KM' }}</strong>
     </article>
     <article>
-      <span>Prosjecan trosak u KM</span>
+      <span>Prosječan trošak u KM</span>
       <strong>{{ averageAmount === null ? '-' : (averageAmount | number: '1.2-2') + ' KM' }}</strong>
     </article>
     <article>
-      <span>Razlika najveci - najmanji u KM</span>
+      <span>Razlika najveći - najmanji u KM</span>
       <strong>{{ amountDifference === null ? '-' : (amountDifference | number: '1.2-2') + ' KM' }}</strong>
     </article>
   </div>
@@ -44,7 +44,7 @@
           <th>Odjel</th>
           <th>Valuta</th>
           <th>Projekat</th>
-          <th>Dobavljac</th>
+          <th>Dobavljač</th>
           <th>Status</th>
         </tr>
       </thead>
