@@ -1,13 +1,13 @@
 <div class="budget-page">
   <section class="budget-header">
     <div>
-      <p class="eyebrow">Planiranje budzeta</p>
-      <h1>Budzet po kategorijama, odjelima i periodu</h1>
-      <p>Pregledajte postojece budzete i kreirajte finansijski plan za naredne periode.</p>
+      <p class="eyebrow">Planiranje budžeta</p>
+      <h1>Budžet po kategorijama, odjelima i periodu</h1>
+      <p>Pregledajte postojeće budžete i kreirajte finansijski plan za naredne periode.</p>
     </div>
  
     <button type="button" (click)="openCreateForm()" [disabled]="!canEditBudgets">
-      Kreiraj novi budzet
+      Kreiraj novi budžet
     </button>
   </section>
  <div class="messages" *ngIf="!showForm">
@@ -17,8 +17,8 @@
   <section class="form-card" *ngIf="showForm">
     <div class="section-heading">
       <div>
-        <h2>{{ editingBudgetId ? 'Uredi budzet' : 'Novi budzet' }}</h2>
-        <p class="subtitle">Polja oznacena zvjezdicom su obavezna.</p>
+        <h2>{{ editingBudgetId ? 'Uredi budžet' : 'Novi budžet' }}</h2>
+        <p class="subtitle">Polja označena zvjezdicom su obavezna.</p>
       </div>
       <button type="button" class="btn-secondary" (click)="closeForm()">Zatvori</button>
     </div>
@@ -26,7 +26,7 @@
     <form [formGroup]="budgetForm" (ngSubmit)="saveBudget()">
       <div class="form-grid">
         <div class="form-group">
-          <label>Naziv budzeta *</label>
+          <label>Naziv budžeta *</label>
           <input type="text" formControlName="naziv" placeholder="Npr. Marketing Q1" />
           <small *ngIf="isFieldInvalid('naziv')">Naziv je obavezan.</small>
         </div>
@@ -34,7 +34,7 @@
         <div class="form-group">
           <label>Planirani iznos *</label>
           <input type="number" formControlName="planiraniIznos" placeholder="Npr. 5000" />
-          <small *ngIf="isFieldInvalid('planiraniIznos')">Iznos mora biti veci od 0.</small>
+          <small *ngIf="isFieldInvalid('planiraniIznos')">Iznos mora biti veći od 0.</small>
         </div>
  
         <div class="form-group">
@@ -47,27 +47,27 @@
         </div>
  
         <div class="form-group">
-          <label>Datum pocetka *</label>
+          <label>Datum početka *</label>
           <div class="date-inputs">
             <input type="text" formControlName="datumPocetka" placeholder="dd.mm.yyyy" />
             <input
               type="date"
               class="date-picker"
-              title="Odaberite datum pocetka"
+              title="Odaberite datum početka"
               (change)="onDatePickerChange($event, 'datumPocetka')"
             />
           </div>
-          <small *ngIf="isFieldInvalid('datumPocetka')">Datum pocetka je obavezan u formatu dd.mm.yyyy.</small>
+          <small *ngIf="isFieldInvalid('datumPocetka')">Datum početka je obavezan u formatu dd.mm.yyyy.</small>
         </div>
  
         <div class="form-group">
-          <label>Datum zavrsetka *</label>
+          <label>Datum završetka *</label>
           <div class="date-inputs">
             <input type="text" formControlName="datumZavrsetka" placeholder="dd.mm.yyyy" />
             <input
               type="date"
               class="date-picker"
-              title="Odaberite datum zavrsetka"
+              title="Odaberite datum završetka"
               (change)="onDatePickerChange($event, 'datumZavrsetka')"
             />
           </div>
@@ -105,7 +105,7 @@
  
       <div class="form-actions">
         <button type="button" class="btn-secondary" (click)="closeForm()">Odustani</button>
-        <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Spremanje...' : 'Sacuvaj' }}</button>
+        <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Spremanje...' : 'Sačuvaj' }}</button>
       </div>
     </form>
   </section>
@@ -114,10 +114,10 @@
     <article class="list-card">
       <div class="section-heading">
         <div>
-          <h2>Lista budzeta</h2>
-          <p class="subtitle">Evidencija svih kreiranih budzeta</p>
+          <h2>Lista budžeta</h2>
+          <p class="subtitle">Evidencija svih kreiranih budžeta</p>
         </div>
-        <button type="button" class="btn-secondary" (click)="loadBudgets()" [disabled]="isLoading">Osvjezi</button>
+        <button type="button" class="btn-secondary" (click)="loadBudgets()" [disabled]="isLoading">Osvježi</button>
       </div>
 
       <div class="search-bar">
@@ -129,8 +129,8 @@
         />
       </div>
 
-      <p *ngIf="isLoading">Ucitavanje budzeta...</p>
-      <p *ngIf="!isLoading && budgets.length === 0">Trenutno nema kreiranih budzeta.</p>
+      <p *ngIf="isLoading">Učitavanje budžeta...</p>
+      <p *ngIf="!isLoading && budgets.length === 0">Trenutno nema kreiranih budžeta.</p>
 
       <table *ngIf="!isLoading && filteredBudgets.length > 0">
         <thead>
@@ -184,8 +184,8 @@
     </article>
 
     <aside class="detail-card">
-      <h2>Detalji budzeta</h2>
-      <p *ngIf="!selectedBudget">Odaberite budzet za prikaz detalja.</p>
+      <h2>Detalji budžeta</h2>
+      <p *ngIf="!selectedBudget">Odaberite budžet za prikaz detalja.</p>
 
       <dl *ngIf="selectedBudget">
         <dt>Naziv</dt>

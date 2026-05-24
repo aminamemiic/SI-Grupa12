@@ -15,6 +15,7 @@ const { registerIngestionEndpoints } = require("./PRESENTATION API/Endpoints/Ing
 const { registerBudgetEndpoints } = require("./PRESENTATION API/Endpoints/BudgetEndpoints");
 const { registerDataOverviewEndpoints } = require("./PRESENTATION API/Endpoints/DataOverviewEndpoints");
 const { registerReportEndpoints } = require("./PRESENTATION API/Endpoints/ReportEndpoints");
+const { registerNotificationEndpoints } = require("./PRESENTATION API/Endpoints/NotificationEndpoints");
 
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -151,6 +152,20 @@ async function ensureBaseData() {
           CHECK (status IN ('USPJESAN', 'DJELIMICAN', 'NEUSPJESAN'))
       );
 
+      CREATE TABLE IF NOT EXISTS ai_analize (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tip VARCHAR(50) NOT NULL,
+        status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
+        parametri JSONB NOT NULL DEFAULT '{}'::jsonb,
+        rezultat JSONB,
+        error_message TEXT,
+        pokrenuto TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        zavrseno TIMESTAMP,
+
+        CONSTRAINT chk_ai_analize_status
+          CHECK (status IN ('PENDING', 'RUNNING', 'COMPLETED', 'FAILED'))
+      );
+
       INSERT INTO uloge (naziv, opis) VALUES
       ('ADMINISTRATOR', 'Administrator sistema'),
       ('GLAVNI_RACUNOVODJA', 'Glavni racunovodja'),
@@ -271,6 +286,7 @@ function startServer() {
   registerDataOverviewEndpoints(app, authService, writeLog);
   registerReportEndpoints(app, authService, writeLog);
   registerIngestionEndpoints(app, authService, writeLog);
+  registerNotificationEndpoints(app, authService, writeLog);
   registerUserEndpoints(app, authService);
 
   app.listen(PORT, "0.0.0.0", () => {

@@ -149,7 +149,7 @@ export class AuthGuardService {
       });
 
       if (!tokenResponse.ok) {
-        return { status: 'error', message: 'Neuspjesna razmjena authorization code za access token.' };
+        return { status: 'error', message: 'Neuspješna razmjena authorization code za access token.' };
       }
 
       const tokens = (await tokenResponse.json()) as {
@@ -191,7 +191,7 @@ export class AuthGuardService {
 
       return {
         status: 'error',
-        message: error instanceof Error ? error.message : 'Greska pri loginu.',
+        message: error instanceof Error ? error.message : 'Greška pri loginu.',
       };
     }
   }

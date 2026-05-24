@@ -15,7 +15,7 @@
     </div>
 
     <button type="button" class="secondary-action" (click)="loadOverview()" [disabled]="isLoading">
-      {{ isLoading ? 'Ucitavanje...' : 'Osvjezi' }}
+      {{ isLoading ? 'Učitavanje...' : 'Osvježi' }}
     </button>
   </section>
 
@@ -25,13 +25,13 @@
 
   <section class="metric-grid" aria-label="Sažetak podataka">
     <article class="metric-card">
-      <span>Troskovi</span>
+      <span>Troškovi</span>
       <strong>{{ overview.troskovi.length }}</strong>
       <small>{{ totalExpensesAmount | number: '1.2-2' }} ukupno</small>
     </article>
 
     <article class="metric-card">
-      <span>Budzeti</span>
+      <span>Budžeti</span>
       <strong>{{ overview.budzeti.length }}</strong>
       <small>{{ totalBudgetsAmount | number: '1.2-2' }} planirano</small>
     </article>
@@ -47,14 +47,14 @@
     </article>
 
     <article class="metric-card">
-      <span>Dobavljaci</span>
+      <span>Dobavljači</span>
       <strong>{{ overview.dobavljaci.length }}</strong>
     </article>
   </section>
 
   @if (isLoading) {
     <section class="panel empty-state">
-      <strong>Ucitavanje pregleda podataka...</strong>
+      <strong>Učitavanje pregleda podataka...</strong>
     </section>
   } @else if (!hasAnyData) {
     <section class="panel empty-state">
@@ -66,13 +66,13 @@
     <!-- TROŠKOVI -->
     <section class="panel wide-panel" *ngIf="showSection('troskovi')">
       <div class="panel-heading">
-        <h2>Troskovi</h2>
+        <h2>Troškovi</h2>
         <span>{{ filteredExpenses.length }} zapisa</span>
       </div>
 
       
       <div class="selection-actions">
-        <span class="selection-count">{{ selectedExpenseIds.size }} odabrano za poredjenje</span>
+        <span class="selection-count">{{ selectedExpenseIds.size }} odabrano za poređenje</span>
 
         <button
           type="button"
@@ -86,13 +86,13 @@
           class="secondary-action compact-action"
           (click)="clearExpenseSelection()"
           [disabled]="selectedExpenseIds.size === 0">
-          Ocisti odabir
+          Očisti odabir
         </button>
         <button
           type="button"
           class="compare-action"
           (click)="openCategoryComparisonPanel()">
-          Grupno poredjenje
+          Grupno poređenje
         </button>
 
         <button
@@ -174,7 +174,7 @@
         </select>
 
         <select [value]="expenseFilterDobavljac" (change)="expenseFilterDobavljac = $any($event.target).value">
-          <option value="">Svi dobavljaci</option>
+          <option value="">Svi dobavljači</option>
           <option *ngFor="let d of uniqueDobavljaci" [value]="d">{{ d }}</option>
         </select>
 
@@ -216,7 +216,7 @@
               <th class="col-check">
                 <input
                   type="checkbox"
-                  title="Oznaci sve prikazane troskove"
+                  title="Označi sve prikazane troškove"
                   [checked]="areAllFilteredExpensesSelected()"
                   (click)="$event.stopPropagation()"
                   (change)="selectAllFilteredExpenses()" />
@@ -251,7 +251,7 @@
               </th>
 
               <th (click)="sortExpenses('dobavljacNaziv')" class="sortable">
-                Dobavljac <span>{{ expenseSortColumn === 'dobavljacNaziv' ? (expenseSortDirection === 'asc' ? '↑' : '↓') : '↕' }}</span>
+                Dobavljač <span>{{ expenseSortColumn === 'dobavljacNaziv' ? (expenseSortDirection === 'asc' ? '↑' : '↓') : '↕' }}</span>
               </th>
 
               <th (click)="sortExpenses('statusValidacije')" class="sortable">
@@ -304,7 +304,7 @@
     <!-- BUDŽETI -->
     <section class="panel wide-panel" *ngIf="showSection('budzeti')">
       <div class="panel-heading">
-        <h2>Budzeti</h2>
+        <h2>Budžeti</h2>
         <span>{{ filteredBudgets.length }} zapisa</span>
       </div>
 
@@ -452,7 +452,7 @@
 
       @if (isLoadingImportHistory) {
         <div class="empty-state compact-state">
-          <strong>Ucitavanje historije uvoza...</strong>
+          <strong>Učitavanje historije uvoza...</strong>
         </div>
       } @else if (importHistoryMessage) {
         <div class="empty-state compact-state">
@@ -598,7 +598,7 @@
 
       <article class="panel suppliers-panel" *ngIf="showSection('dobavljaci')">
         <div class="panel-heading">
-          <h2>Dobavljaci</h2>
+          <h2>Dobavljači</h2>
           <span>{{ overview.dobavljaci.length }}</span>
         </div>
 
@@ -647,7 +647,7 @@
             <h3>Uvezeni podaci</h3>
 
             @if (selectedDetail.importedRows.length === 0) {
-              <p class="detail-note">Nema sacuvanih uvezenih zapisa za ovaj import.</p>
+              <p class="detail-note">Nema sačuvanih uvezenih zapisa za ovaj import.</p>
             } @else {
               <div class="detail-table-wrap">
                 <table>
@@ -660,7 +660,7 @@
                       <th>Odjel</th>
                       <th>Valuta</th>
                       <th>Projekat</th>
-                      <th>Dobavljac</th>
+                      <th>Dobavljač</th>
                     </tr>
                   </thead>
 

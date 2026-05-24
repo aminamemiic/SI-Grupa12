@@ -1,8 +1,8 @@
 <div class="reports-page">
   <section class="reports-header">
     <div>
-      <p class="eyebrow">Izvjestaji</p>
-      <h1>Izvjestaj o troskovima</h1>
+      <p class="eyebrow">Izvještaji</p>
+      <h1>Izvještaj o troškovima</h1>
       <p class="lead">{{ periodLabel }}</p>
     </div>
 
@@ -23,15 +23,15 @@
   </section>
 
   <section class="filter-panel">
-    <div class="report-type-group" aria-label="Tip izvjestaja">
-      <span>Tip izvjestaja</span>
+    <div class="report-type-group" aria-label="Tip izvještaja">
+      <span>Tip izvještaja</span>
       <div class="segmented-control">
         <button
           type="button"
           [class.active]="reportType === 'sazeti'"
           (click)="selectReportType('sazeti')"
         >
-          Sazeti
+          Sažeti
         </button>
         <button
           type="button"
@@ -54,7 +54,7 @@
         <input
           type="date"
           class="date-picker"
-          title="Odaberite pocetni datum"
+          title="Odaberite početni datum"
           [value]="toNativeDate(dateFrom)"
           (change)="onPeriodDatePickerChange('from', $event)"
         />
@@ -95,12 +95,12 @@
 
   @if (isLoading) {
     <section class="panel empty-state">
-      <strong>Generisanje izvjestaja...</strong>
+      <strong>Generisanje izvještaja...</strong>
     </section>
   } @else if (report; as currentReport) {
-    <section class="metric-grid" aria-label="Sazetak izvjestaja">
+    <section class="metric-grid" aria-label="Sažetak izvještaja">
       <article class="metric-card">
-        <span>Ukupno troskova</span>
+        <span>Ukupno troškova</span>
         <strong>{{ currentReport.summary.totalExpenses }}</strong>
       </article>
       <article class="metric-card">
@@ -109,17 +109,17 @@
         <small>BAM</small>
       </article>
       <article class="metric-card">
-        <span>Prosjecan trosak</span>
+        <span>Prosječan trošak</span>
         <strong>{{ formatAmount(currentReport.summary.averageAmount) }}</strong>
         <small>BAM</small>
       </article>
       <article class="metric-card">
-        <span>Ukupni budzet</span>
+        <span>Ukupni budžet</span>
         <strong>{{ formatAmount(currentReport.summary.budgetTotal) }}</strong>
-        <small>{{ currentReport.summary.budgetCount }} budzeta</small>
+        <small>{{ currentReport.summary.budgetCount }} budžeta</small>
       </article>
       <article class="metric-card">
-        <span>Iskoristenost budzeta</span>
+        <span>Iskorištenost budžeta</span>
         <strong>{{ utilizationLabel }}</strong>
       </article>
       <article class="metric-card">
@@ -131,7 +131,7 @@
         <strong>{{ currentReport.summary.topDepartment?.label || '-' }}</strong>
       </article>
       <article class="metric-card">
-        <span>Najveci trosak</span>
+        <span>Najveći trošak</span>
         <strong>{{ currentReport.summary.highestExpense?.naziv || '-' }}</strong>
         <small>{{ formatAmount(currentReport.summary.highestExpense?.iznos) }}</small>
       </article>
@@ -140,7 +140,7 @@
     <section class="report-grid">
       <article class="panel">
         <div class="panel-heading">
-          <h2>Troskovi po kategorijama</h2>
+          <h2>Troškovi po kategorijama</h2>
           <span>{{ currentReport.breakdowns.byCategory.length }}</span>
         </div>
         @if (currentReport.breakdowns.byCategory.length === 0) {
@@ -163,7 +163,7 @@
 
       <article class="panel">
         <div class="panel-heading">
-          <h2>Troskovi po odjelima</h2>
+          <h2>Troškovi po odjelima</h2>
           <span>{{ currentReport.breakdowns.byDepartment.length }}</span>
         </div>
         @if (currentReport.breakdowns.byDepartment.length === 0) {
@@ -198,7 +198,7 @@
                 <span>{{ item.label }}</span>
                 <strong>{{ formatAmount(item.total) }}</strong>
                 <small>Ukupno za mjesec</small>
-                <small>{{ item.count }} troskova</small>
+                <small>{{ item.count }} troškova</small>
                 <small>Prosjek: {{ formatAmount(item.average) }}</small>
               </div>
             }
@@ -210,13 +210,13 @@
     @if (isDetailedReport) {
     <section class="panel wide-panel">
       <div class="panel-heading">
-        <h2>Relevantni troskovi</h2>
+        <h2>Relevantni troškovi</h2>
         <span>{{ currentReport.expenses.length }} zapisa</span>
       </div>
 
       @if (!hasExpenses) {
         <div class="empty-state compact-state">
-          <strong>Nema troskova za odabrani period.</strong>
+          <strong>Nema troškova za odabrani period.</strong>
         </div>
       } @else {
         <div class="table-wrap">

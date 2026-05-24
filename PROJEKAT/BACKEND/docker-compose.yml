@@ -53,8 +53,30 @@ services:
       JWKS_URI: https://keycloak-production-4c61.up.railway.app/realms/Grupa12SI/protocol/openid-connect/certs
       SESSION_SECRET: stavi_ovdje_jaku_tajnu_za_session
       FRONTEND_ORIGIN: http://localhost:4200
+      AI_SERVICE_URL: http://ai-service:8000
     ports:
       - "3000:3000"
+    restart: "no"
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: grupa12_ai
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:Adna123!@postgres:5432/grupa12app
+      AI_SERVICE_PORT: 8000
+      NODE_ENV: development
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: "no"
 volumes:
   postgres_data:

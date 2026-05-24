@@ -104,7 +104,7 @@ export class DataOverviewComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = error?.error?.message || 'Greska pri dohvatu pregleda podataka.';
+        this.errorMessage = error?.error?.message || 'Greška pri dohvatu pregleda podataka.';
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -213,8 +213,8 @@ export class DataOverviewComponent implements OnInit {
 
   public openExpenseDetails(expense: DataOverviewExpense): void {
     this.selectedDetail = {
-      type: 'Trosak',
-      title: expense.naziv || 'Trosak',
+      type: 'Trošak',
+      title: expense.naziv || 'Trošak',
       fields: [
         { label: 'Naziv', value: this.formatValue(expense.naziv) },
         { label: 'Iznos', value: this.formatAmount(expense.iznos) },
@@ -226,24 +226,24 @@ export class DataOverviewComponent implements OnInit {
         { label: 'Valuta kod', value: this.formatValue(expense.valutaKod) },
         { label: 'Valuta naziv', value: this.formatValue(expense.valutaNaziv) },
         { label: 'Projekat naziv', value: this.formatValue(expense.projekatNaziv) },
-        { label: 'Dobavljac naziv', value: this.formatValue(expense.dobavljacNaziv) },
+        { label: 'Dobavljač naziv', value: this.formatValue(expense.dobavljacNaziv) },
       ],
     };
   }
 
   public openBudgetDetails(budget: DataOverviewBudget): void {
     this.selectedDetail = {
-      type: 'Budzet',
-      title: budget.naziv || 'Budzet',
+      type: 'Budžet',
+      title: budget.naziv || 'Budžet',
       fields: [
         { label: 'Naziv', value: this.formatValue(budget.naziv) },
         { label: 'Planirani iznos', value: this.formatAmount(budget.planiraniIznos) },
-        { label: 'Datum pocetka', value: this.formatDate(budget.datumPocetka) },
-        { label: 'Datum zavrsetka', value: this.formatDate(budget.datumZavrsetka) },
+        { label: 'Datum početka', value: this.formatDate(budget.datumPocetka) },
+        { label: 'Datum završetka', value: this.formatDate(budget.datumZavrsetka) },
         { label: 'Odjel naziv', value: this.formatValue(budget.odjelNaziv) },
         { label: 'Kategorije', value: this.getBudgetCategories(budget) },
         { label: 'Projekat naziv', value: this.formatValue(budget.projekatNaziv) },
-        { label: 'Verzija budzeta', value: this.formatValue(budget.verzijaBudzeta) },
+        { label: 'Verzija budžeta', value: this.formatValue(budget.verzijaBudzeta) },
         { label: 'Status odobrenja', value: this.formatValue(budget.statusOdobrenja) },
       ],
     };
@@ -266,7 +266,7 @@ export class DataOverviewComponent implements OnInit {
       title: department.naziv || 'Odjel',
       fields: [
         { label: 'Naziv', value: this.formatValue(department.naziv) },
-        { label: 'Sifra odjela', value: this.formatValue(department.sifraOdjela) },
+        { label: 'Šifra odjela', value: this.formatValue(department.sifraOdjela) },
       ],
     };
   }
@@ -288,10 +288,10 @@ export class DataOverviewComponent implements OnInit {
       title: project.nazivProjekta || 'Projekat',
       fields: [
         { label: 'Naziv projekta', value: this.formatValue(project.nazivProjekta) },
-        { label: 'Sifra projekta', value: this.formatValue(project.sifraProjekta) },
-        { label: 'Budzet projekta', value: this.formatAmount(project.budzetProjekta) },
-        { label: 'Datum pocetka', value: this.formatDate(project.datumPocetak) },
-        { label: 'Datum zavrsetka', value: this.formatDate(project.datumZavrsetak) },
+        { label: 'Šifra projekta', value: this.formatValue(project.sifraProjekta) },
+        { label: 'Budžet projekta', value: this.formatAmount(project.budzetProjekta) },
+        { label: 'Datum početka', value: this.formatDate(project.datumPocetak) },
+        { label: 'Datum završetka', value: this.formatDate(project.datumZavrsetak) },
         { label: 'Status', value: this.formatValue(project.status) },
       ],
     };
@@ -299,8 +299,8 @@ export class DataOverviewComponent implements OnInit {
 
   public openSupplierDetails(supplier: DataOverviewSupplier): void {
     this.selectedDetail = {
-      type: 'Dobavljac',
-      title: supplier.nazivFirme || 'Dobavljac',
+      type: 'Dobavljač',
+      title: supplier.nazivFirme || 'Dobavljač',
       fields: [
         { label: 'Naziv firme', value: this.formatValue(supplier.nazivFirme) },
         { label: 'PIB broj', value: this.formatValue(supplier.pibIdBroj) },
