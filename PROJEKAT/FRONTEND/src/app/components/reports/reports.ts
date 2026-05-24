@@ -8,6 +8,8 @@ import {
   ReportType,
 } from '../../../models/entities';
 import { ReportService } from '../../../services/report.service';
+import { AiAnalysisService, DatabaseAnalysisResult } from '../../../services/ai-analysis.service';
+
 
 @Component({
   selector: 'app-reports',
@@ -18,6 +20,7 @@ import { ReportService } from '../../../services/report.service';
 })
 export class ReportsComponent implements OnInit {
   private readonly reportService = inject(ReportService);
+  private readonly aiAnalysisService = inject(AiAnalysisService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   public report: ExpenseReport | null = null;
@@ -28,6 +31,13 @@ export class ReportsComponent implements OnInit {
   public isExporting = false;
   public errorMessage = '';
   public successMessage = '';
+
+  // AI analiza
+  public aiAnalysis: DatabaseAnalysisResult | null = null;
+  public isAiLoading = false;
+  public aiError = '';
+  public showAiPanel = false;
+
 
   public ngOnInit(): void {
     this.loadReport();
@@ -289,6 +299,57 @@ export class ReportsComponent implements OnInit {
 
     return message;
   }
+
+  public runAiAnalysis(): void {
+    this.isAiLoading = true;
+    this.aiError = '';
+    this.aiAnalysis = null;
+    this.showAiPanel = true;
+
+    this.aiAnalysisService.runDatabaseAnalysis().subscribe({
+      next: (result) => {
+        this.aiAnalysis = result;
+        this.isAiLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.aiError = this.getErrorMessage(error, 'Greška pri pokretanju AI analize.');
+        this.isAiLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public closeAiPanel(): void {
+    this.showAiPanel = false;
+    this.aiAnalysis = null;
+    this.aiError = '';
+  }
+
+  public get aiTrendLabel(): string {
+    switch (this.aiAnalysis?.trenKretanja) {
+      case 'RAST': return '↑ Rast';
+      case 'PAD': return '↓ Pad';
+      default: return '→ Stabilan';
+    }
+  }
+
+  public get aiTrendClass(): string {
+    switch (this.aiAnalysis?.trenKretanja) {
+      case 'RAST': return 'trend-rast';
+      case 'PAD': return 'trend-pad';
+      default: return 'trend-stabilan';
+    }
+  }
+
+  public pouzdanostLabel(p: string): string {
+    switch (p) {
+      case 'VISOKA': return '● Visoka';
+      case 'SREDNJA': return '◐ Srednja';
+      default: return '○ Niska';
+    }
+  }
+
 
   private getMonthSortValue(label: string): number {
     const monthOrder: Record<string, number> = {

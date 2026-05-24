@@ -7,6 +7,16 @@
     </div>
 
     <div class="header-actions">
+      <button
+        type="button"
+        id="btn-ai-analiza"
+        class="ai-action"
+        (click)="runAiAnalysis()"
+        [disabled]="isAiLoading"
+      >
+        <span class="ai-icon">✦</span>
+        {{ isAiLoading ? 'Analiza u toku...' : 'Pokreni AI analizu' }}
+      </button>
       <button type="button" class="secondary-action" (click)="loadReport()" [disabled]="isLoading">
         {{ isLoading ? 'Generisanje...' : 'Generisi ' + selectedReportTypeLabel.toLowerCase() }}
       </button>
@@ -254,4 +264,121 @@
     </section>
     }
   }
+
+  <!-- ═══ AI ANALIZA PANEL ═══════════════════════════════════════════════ -->
+
+  @if (showAiPanel) {
+    <section class="ai-panel" id="ai-analiza-rezultati">
+      <div class="ai-panel-header">
+        <div class="ai-panel-title">
+          <span class="ai-badge">✦ AI</span>
+          <h2>AI analiza cjelokupne baze</h2>
+        </div>
+        <button type="button" class="ai-close" (click)="closeAiPanel()" aria-label="Zatvori AI analizu">✕</button>
+      </div>
+
+      @if (isAiLoading) {
+        <div class="ai-loading">
+          <div class="ai-spinner"></div>
+          <p>AI analizira cjelokupnu bazu troškova i budžeta...</p>
+        </div>
+      } @else if (aiError) {
+        <p class="notice error-notice">{{ aiError }}</p>
+      } @else if (aiAnalysis) {
+
+        <!-- Sažetak -->
+        <p class="ai-sazetak">{{ aiAnalysis.sažetak }}</p>
+
+        <!-- Ključne metrike -->
+        <div class="ai-metrics">
+          <div class="ai-metric">
+            <span>Ukupno troškova</span>
+            <strong>{{ aiAnalysis.ukupnoTroskova }}</strong>
+          </div>
+          <div class="ai-metric">
+            <span>Ukupni iznos</span>
+            <strong>{{ formatAmount(aiAnalysis.ukupniIznos) }}</strong>
+            <small>BAM</small>
+          </div>
+          <div class="ai-metric">
+            <span>Prosj. mjese. iznos</span>
+            <strong>{{ formatAmount(aiAnalysis.prosjecniMjesecniIznos) }}</strong>
+            <small>BAM</small>
+          </div>
+          <div class="ai-metric">
+            <span>Trend kretanja</span>
+            <strong [class]="aiTrendClass">{{ aiTrendLabel }}</strong>
+            <small>{{ aiAnalysis.postotakPromjene > 0 ? '+' : '' }}{{ aiAnalysis.postotakPromjene }}%</small>
+          </div>
+          <div class="ai-metric">
+            <span>Top kategorija</span>
+            <strong>{{ aiAnalysis.topKategorija || '-' }}</strong>
+          </div>
+          <div class="ai-metric">
+            <span>Top odjel</span>
+            <strong>{{ aiAnalysis.topOdjel || '-' }}</strong>
+          </div>
+        </div>
+
+        <!-- Mjesečni trendovi -->
+        @if (aiAnalysis.mjesecniTrendovi.length > 0) {
+          <div class="ai-section">
+            <h3>Kretanje troškova po mjesecima</h3>
+            <div class="ai-trend-bars">
+              @for (t of aiAnalysis.mjesecniTrendovi; track t.mjesec) {
+                <div class="ai-trend-bar-row">
+                  <span class="ai-trend-label">{{ t.mjesec }}</span>
+                  <div class="ai-bar-track">
+                    <div
+                      class="ai-bar-fill"
+                      [style.width.%]="aiAnalysis.ukupniIznos > 0 ? (t.ukupniIznos / aiAnalysis.ukupniIznos) * 100 : 0"
+                    ></div>
+                  </div>
+                  <span class="ai-trend-val">{{ formatAmount(t.ukupniIznos) }}</span>
+                  <small class="ai-trend-sub">{{ t.brojTroskova }} troš.</small>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Predviđanje budžeta -->
+        @if (aiAnalysis.predvidjanjeBudzeta.length > 0) {
+          <div class="ai-section">
+            <h3>Predviđanje budžeta za naredni period</h3>
+            <div class="ai-predictions">
+              @for (pred of aiAnalysis.predvidjanjeBudzeta; track pred.sljedeciMjesec) {
+                <div class="ai-prediction-card">
+                  <span class="ai-pred-month">{{ pred.sljedeciMjesec }}</span>
+                  <strong class="ai-pred-amount">{{ formatAmount(pred.predvideniIznos) }} BAM</strong>
+                  <div class="ai-pred-range">
+                    <small>Min: {{ formatAmount(pred.donjaBoundary) }}</small>
+                    <small>Max: {{ formatAmount(pred.gornjaBoundary) }}</small>
+                  </div>
+                  <span class="ai-pouzdanost" [class]="'pouzdanost-' + pred.pouzdanostProcjene.toLowerCase()">
+                    {{ pouzdanostLabel(pred.pouzdanostProcjene) }}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Preporuke -->
+        @if (aiAnalysis.preporuke.length > 0) {
+          <div class="ai-section">
+            <h3>Preporuke</h3>
+            <ul class="ai-recommendations">
+              @for (p of aiAnalysis.preporuke; track p) {
+                <li>{{ p }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <p class="ai-generated-at">Generisano: {{ aiAnalysis.generisanoU | date:'dd.MM.yyyy HH:mm' }}</p>
+      }
+    </section>
+  }
+
 </div>
