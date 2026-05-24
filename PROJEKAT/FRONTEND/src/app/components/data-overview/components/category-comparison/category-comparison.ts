@@ -79,11 +79,11 @@ export class CategoryComparisonComponent {
       return `${this.selectedCategories.size} kategorija, ${this.selectedDepartments.size} odjela`;
     }
 
-    return 'Poredjenje po periodu';
+    return 'Poređenje po periodu';
   }
 
   public get emptySelectionMessage(): string {
-    return 'Nema troskova za prikaz poredjenja.';
+    return 'Nema troškova za prikaz poređenja.';
   }
 
   public get comparisonExpenses(): DataOverviewExpense[] {

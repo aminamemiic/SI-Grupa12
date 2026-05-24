@@ -8,7 +8,7 @@
    <div class="header-actions">
   @if (canOpenReports) {
     <button type="button" class="secondary-action" (click)="idiNaIzvjestaje()">
-      Izvjestaji
+      Izvještaji
     </button>
   }
 
@@ -233,7 +233,7 @@
             </label>
 
             <label>
-              Dobavljac
+              Dobavljač
               <select formControlName="dobavljacId">
                 <option value="">Bez dobavljača</option>
                 @for (item of referenceData.dobavljaci; track item.id) {
@@ -251,7 +251,7 @@
           <div class="modal-actions">
             <button type="button" class="secondary-action" (click)="closeEditExpense()">Odustani</button>
             <button type="submit" class="primary-action" [disabled]="isSavingExpense">
-              {{ isSavingExpense ? 'Spremanje...' : 'Saččuvaj izmjene' }}
+              {{ isSavingExpense ? 'Spremanje...' : 'Sačuvaj izmjene' }}
             </button>
           </div>
         </form>

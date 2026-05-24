@@ -68,7 +68,17 @@
           (click)="openReportsTab($event)"
         >
           <span class="nav-icon">IZ</span>
-          <span>Izvjestaji</span>
+          <span>Izvještaji</span>
+        </a>
+        <a
+          routerLink="/notifikacije"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [class.disabled]="!canOpenNotifications"
+          (click)="openNotificationsTab($event)"
+        >
+          <span class="nav-icon">AI</span>
+          <span>AI notifikacije</span>
         </a>
       </nav>
     }

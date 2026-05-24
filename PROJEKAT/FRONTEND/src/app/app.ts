@@ -19,6 +19,7 @@ export class App implements OnInit {
   public readonly budgetRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly dataOverviewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly reportRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
+  public readonly notificationRoles = ['admin', 'glavni_racunovodja'];
   public readonly adminConsoleUrl = 'https://keycloak-production-4c61.up.railway.app/';
   public isLoading = false;
   public navMessage = '';
@@ -54,6 +55,10 @@ export class App implements OnInit {
 
   public get canOpenReports(): boolean {
     return this.authService.hasAnyRole(this.reportRoles);
+  }
+
+  public get canOpenNotifications(): boolean {
+    return this.authService.hasAnyRole(this.notificationRoles);
   }
 
   public get isAuthenticated(): boolean {
@@ -100,7 +105,7 @@ export class App implements OnInit {
     }
 
     event.preventDefault();
-    this.navMessage = 'Formi za unos troskova mogu pristupiti samo admin i administrativni_radnik.';
+    this.navMessage = 'Formi za unos troškova mogu pristupiti samo admin i administrativni_radnik.';
     void this.router.navigate(['/home'], {
       queryParams: { accessDenied: 'troskovi' },
     });
@@ -120,7 +125,7 @@ export class App implements OnInit {
   }
 
   event.preventDefault();
-  this.navMessage = 'Planiranju budzeta mogu pristupiti samo admin, glavni_racunovodja i finansijski_direktor.';
+  this.navMessage = 'Planiranju budžeta mogu pristupiti samo admin, glavni_racunovodja i finansijski_direktor.';
   void this.router.navigate(['/home'], {
     queryParams: { accessDenied: 'budzeti' },
   });
@@ -160,9 +165,29 @@ export class App implements OnInit {
     }
 
     event.preventDefault();
-    this.navMessage = 'Izvjestajima mogu pristupiti samo admin, glavni_racunovodja i finansijski_direktor.';
+    this.navMessage = 'Izvještajima mogu pristupiti samo admin, glavni_racunovodja i finansijski_direktor.';
     void this.router.navigate(['/home'], {
       queryParams: { accessDenied: 'izvjestaji' },
+    });
+  }
+
+  public openNotificationsTab(event: Event): void {
+    if (!this.isAuthenticated) {
+      event.preventDefault();
+      this.navMessage = 'Prijavite se da biste pristupili aplikaciji.';
+      void this.router.navigate(['/']);
+      return;
+    }
+
+    if (this.canOpenNotifications) {
+      this.navMessage = '';
+      return;
+    }
+
+    event.preventDefault();
+    this.navMessage = 'Notifikacijama mogu pristupiti samo admin i glavni_racunovodja.';
+    void this.router.navigate(['/home'], {
+      queryParams: { accessDenied: 'notifikacije' },
     });
   }
 

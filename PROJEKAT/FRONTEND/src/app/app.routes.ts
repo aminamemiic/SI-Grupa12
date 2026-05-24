@@ -7,6 +7,7 @@ import { ExpenseImportComponent } from './components/expense-import/expense-impo
 import { BudgetPlanningComponent } from './components/budget-planning/budget-planning';
 import { DataOverviewComponent } from './components/data-overview/data-overview';
 import { ReportsComponent } from './components/reports/reports';
+import { NotificationsComponent } from './components/notifications/notifications';
 import { HomeComponent } from './components/home/home';
 import { RoleAccessComponent } from './components/role-access/role-access';
 import { AuthGuardService } from '../middleware/middleware.authguard';
@@ -15,6 +16,7 @@ const expenseRoles = ['admin', 'administrativni_radnik', 'administrativni_zaposl
 const budgetViewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
 const dataOverviewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
 const reportRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
+const notificationRoles = ['admin', 'glavni_racunovodja'];
 
 const requireAuth = () => {
   const authService = inject(AuthGuardService);
@@ -95,6 +97,23 @@ const canOpenReports = () => {
   });
 };
 
+const canOpenNotifications = () => {
+  const authService = inject(AuthGuardService);
+  const router = inject(Router);
+
+  if (!authService.isAuthenticated()) {
+    return router.createUrlTree(['/']);
+  }
+
+  if (authService.hasAnyRole(notificationRoles)) {
+    return true;
+  }
+
+  return router.createUrlTree(['/home'], {
+    queryParams: { accessDenied: 'notifikacije' },
+  });
+};
+
 export const routes: Routes = [
   { path: '', component: Homepage },
   { path: 'home', component: HomeComponent, canActivate: [requireAuth] },
@@ -103,6 +122,7 @@ export const routes: Routes = [
   { path: 'budzeti', component: BudgetPlanningComponent, canActivate: [canOpenBudgets] },
   { path: 'podaci/pregled', component: DataOverviewComponent, canActivate: [canOpenDataOverview] },
   { path: 'izvjestaji', component: ReportsComponent, canActivate: [canOpenReports] },
+  { path: 'notifikacije', component: NotificationsComponent, canActivate: [canOpenNotifications] },
   {
     path: 'profile',
     component: RoleAccessComponent,
@@ -125,7 +145,7 @@ export const routes: Routes = [
     path: 'glavni_racunovodja',
     component: RoleAccessComponent,
     canActivate: [requireAuth],
-    data: { title: 'Glavni racunovodja', apiPath: '/glavni_racunovodja', allowedRoles: ['admin', 'glavni_racunovodja'] },
+    data: { title: 'Glavni računovođa', apiPath: '/glavni_racunovodja', allowedRoles: ['admin', 'glavni_racunovodja'] },
   },
   {
     path: 'administrativni_radnik',

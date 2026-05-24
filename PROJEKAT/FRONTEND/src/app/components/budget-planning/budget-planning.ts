@@ -76,7 +76,7 @@ export class BudgetPlanningComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = this.getErrorMessage(error, 'Greska pri dohvatu budzeta.');
+        this.errorMessage = this.getErrorMessage(error, 'Greška pri dohvatu budžeta.');
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -91,7 +91,7 @@ export class BudgetPlanningComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = this.getErrorMessage(error, 'Greska pri dohvatu podataka za formu.');
+        this.errorMessage = this.getErrorMessage(error, 'Greška pri dohvatu podataka za formu.');
         this.cdr.detectChanges();
       },
     });
@@ -113,7 +113,7 @@ export class BudgetPlanningComponent implements OnInit {
   if (!this.canEditBudgets) return;
 
   if (budget.statusOdobrenja === 'ODOBREN') {
-    this.errorMessage = 'Odobren budzet se ne moze uredjivati.';
+    this.errorMessage = 'Odobren budžet se ne može uređivati.';
     return;
   }
 
@@ -145,7 +145,7 @@ export class BudgetPlanningComponent implements OnInit {
     if (this.budgetForm.invalid || this.hasInvalidPeriod() || !this.hasSelectedCategory()) {
       this.budgetForm.markAllAsTouched();
       if (this.hasInvalidPeriod()) {
-        this.errorMessage = 'Datum zavrsetka ne moze biti prije datuma pocetka.';
+        this.errorMessage = 'Datum završetka ne može biti prije datuma početka.';
       } else if (!this.hasSelectedCategory()) {
         this.errorMessage = 'Odaberite barem jednu kategoriju.';
       } else {
@@ -174,10 +174,10 @@ export class BudgetPlanningComponent implements OnInit {
       next: (savedBudget) => {
         if (this.editingBudgetId) {
           this.budgets = this.budgets.map((budget) => budget.id === savedBudget.id ? savedBudget : budget);
-          this.successMessage = 'Budzet je uspjesno azuriran.';
+          this.successMessage = 'Budžet je uspješno ažuriran.';
         } else {
           this.budgets = [savedBudget, ...this.budgets];
-          this.successMessage = 'Budzet je uspjesno sacuvan.';
+          this.successMessage = 'Budžet je uspješno sačuvan.';
         }
 
         this.selectedBudget = savedBudget;
@@ -187,7 +187,7 @@ export class BudgetPlanningComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = this.getErrorMessage(error, 'Greska pri spremanju budzeta.');
+        this.errorMessage = this.getErrorMessage(error, 'Greška pri spremanju budžeta.');
         this.isSaving = false;
         this.cdr.detectChanges();
       },
@@ -209,7 +209,7 @@ export class BudgetPlanningComponent implements OnInit {
 
   public approveBudget(budget: Budget): void {
   if (!this.canApproveBudgets) {
-    this.errorMessage = 'Nemate pravo za odobravanje budzeta.';
+    this.errorMessage = 'Nemate pravo za odobravanje budžeta.';
     return;
   }
 
@@ -218,7 +218,7 @@ export class BudgetPlanningComponent implements OnInit {
 
 public rejectBudget(budget: Budget): void {
   if (!this.canApproveBudgets) {
-    this.errorMessage = 'Nemate pravo za odbijanje budzeta.';
+    this.errorMessage = 'Nemate pravo za odbijanje budžeta.';
     return;
   }
 
@@ -241,8 +241,8 @@ private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN
 
       this.successMessage =
         statusOdobrenja === 'ODOBREN'
-          ? 'Budzet je uspjesno odobren.'
-          : 'Budzet je odbijen.';
+          ? 'Budžet je uspješno odobren.'
+          : 'Budžet je odbijen.';
 
       this.cdr.detectChanges();
     },
@@ -250,7 +250,7 @@ private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN
       console.error(error);
       this.errorMessage = this.getErrorMessage(
         error,
-        'Greska pri promjeni statusa budzeta.'
+        'Greška pri promjeni statusa budžeta.'
       );
       this.cdr.detectChanges();
     },
@@ -311,7 +311,7 @@ private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN
 
   private confirmDiscardChanges(): boolean {
     if (!this.hasUnsavedChanges) return true;
-    return window.confirm('Imate nespremljene izmjene. Zelite li nastaviti bez spremanja?');
+    return window.confirm('Imate nespremljene izmjene. Želite li nastaviti bez spremanja?');
   }
 
   private getErrorMessage(error: any, fallback: string): string {

@@ -1,15 +1,15 @@
-<section class="comparison-panel category-compare-controls" aria-label="Grupno poredjenje troskova po kategorijama">
+<section class="comparison-panel category-compare-controls" aria-label="Grupno poređenje troškova po kategorijama">
   <div class="panel-heading">
     <div>
-      <h2>Grupno poredjenje</h2>
-      <p class="comparison-note">Odaberite po cemu zelite porediti troskove. Ako nista nije odabrano, porede se svi dostupni podaci.</p>
+      <h2>Grupno poređenje</h2>
+      <p class="comparison-note">Odaberite po čemu želite porediti troškove. Ako ništa nije odabrano, porede se svi dostupni podaci.</p>
     </div>
     <button type="button" class="secondary-action compact-action" (click)="closePanel.emit()">
       Zatvori
     </button>
   </div>
 
-  <div class="comparison-mode-row" aria-label="Nacin grupnog poredjenja">
+  <div class="comparison-mode-row" aria-label="Način grupnog poređenja">
     <label class="category-option" [class.category-option-selected]="comparisonMode === 'category'">
       <input type="radio" name="comparisonMode" [checked]="comparisonMode === 'category'" (change)="setComparisonMode('category')" />
       <span>Po kategoriji</span>
@@ -75,7 +75,7 @@
       class="secondary-action compact-action"
       [disabled]="selectedCategories.size === 0 && selectedDepartments.size === 0 && !dateFrom && !dateTo && comparisonMode === 'category'"
       (click)="clearComparison()">
-      Ocisti grupno poredjenje
+      Očisti grupno poređenje
     </button>
   </div>
 
@@ -90,7 +90,7 @@
         <strong>{{ totalAmount | number: '1.2-2' }} KM</strong>
       </article>
       <article>
-        <span>Broj troskova</span>
+        <span>Broj troškova</span>
         <strong>{{ expenseCount }}</strong>
       </article>
       <article>
@@ -109,7 +109,7 @@
 
     @if (rows.length === 0) {
       <div class="empty-state compact-state">
-        <strong>Nema troskova za odabrane kategorije i period.</strong>
+        <strong>Nema troškova za odabrane kategorije i period.</strong>
       </div>
     } @else {
       <div class="category-comparison-bars">
@@ -134,11 +134,11 @@
           <thead>
             <tr>
               <th>{{ groupColumnLabel }}</th>
-              <th>Broj troskova</th>
+              <th>Broj troškova</th>
               <th>Ukupno KM</th>
               <th>Prosjek KM</th>
-              <th>Najveci trosak KM</th>
-              <th>Najmanji trosak KM</th>
+              <th>Najveći trošak KM</th>
+              <th>Najmanji trošak KM</th>
               <th>Udio</th>
             </tr>
           </thead>

@@ -107,6 +107,113 @@ class ExpenseRepository {
     return this.getById(result.rows[0].id);
   }
 
+  async updateValidationStatus(id: string, statusValidacije: string) {
+    await db.query(
+      "UPDATE troskovi SET status_validacije = $1 WHERE id = $2;",
+      [statusValidacije, id]
+    );
+
+    return this.getById(id);
+  }
+
+  async createAnomaly(trosakId: string, analysis: any) {
+    const primaryFinding = Array.isArray(analysis?.findings) && analysis.findings.length > 0
+      ? analysis.findings[0]
+      : null;
+    const anomalyType = primaryFinding?.type || "AI_ANOMALY";
+    const description = analysis?.explanation || primaryFinding?.message || "AI analiza je oznacila trosak kao anomaliju.";
+
+    const result = await db.query(
+      `
+      INSERT INTO anomalije (tip_anomalije, opis_detekcije, trosak_id, status_potvrde)
+      VALUES ($1, $2, $3, 'OTVORENA')
+      RETURNING
+        id,
+        tip_anomalije AS "tipAnomalije",
+        opis_detekcije AS "opisDetekcije",
+        trosak_id AS "trosakId",
+        status_potvrde AS "statusPotvrde";
+      `,
+      [anomalyType, description, trosakId]
+    );
+
+    return result.rows[0];
+  }
+
+  async getAiAnalysisContext(expense: any) {
+    const historicalResult = await db.query(
+      `
+      SELECT
+        id,
+        naziv,
+        iznos,
+        datum,
+        kategorija_id AS "kategorijaId",
+        odjel_id AS "odjelId",
+        dobavljac_id AS "dobavljacId"
+      FROM troskovi
+      WHERE id <> $1
+        AND kategorija_id = $2
+        AND odjel_id = $3
+        AND datum >= ($4::date - INTERVAL '12 months')
+      ORDER BY datum DESC
+      LIMIT 100;
+      `,
+      [expense.id, expense.kategorijaId, expense.odjelId, expense.datum]
+    );
+
+    const duplicateResult = await db.query(
+      `
+      SELECT id, naziv, iznos, datum
+      FROM troskovi
+      WHERE id <> $1
+        AND LOWER(TRIM(naziv)) = LOWER(TRIM($2))
+        AND iznos = $3
+        AND datum = $4
+      LIMIT 10;
+      `,
+      [expense.id, expense.naziv, expense.iznos, expense.datum]
+    );
+
+    const budgetResult = await db.query(
+      `
+      SELECT
+        b.id,
+        b.naziv,
+        b.planirani_iznos AS "planiraniIznos",
+        COALESCE(SUM(t.iznos) FILTER (WHERE t.id <> $1), 0) AS "potrosenoPrijeTroska"
+      FROM budzeti b
+      JOIN budzet_kategorije bk ON bk.budzet_id = b.id
+      LEFT JOIN troskovi t
+        ON t.odjel_id = b.odjel_id
+       AND t.kategorija_id = bk.kategorija_id
+       AND t.datum BETWEEN b.datum_pocetka AND b.datum_zavrsetka
+      WHERE b.odjel_id = $2
+        AND bk.kategorija_id = $3
+        AND $4::date BETWEEN b.datum_pocetka AND b.datum_zavrsetka
+        AND b.status_odobrenja = 'ODOBREN'
+      GROUP BY b.id
+      ORDER BY b.datum_pocetka DESC
+      LIMIT 1;
+      `,
+      [expense.id, expense.odjelId, expense.kategorijaId, expense.datum]
+    );
+
+    const budget = budgetResult.rows[0]
+      ? {
+          ...budgetResult.rows[0],
+          planiraniIznos: Number(budgetResult.rows[0].planiraniIznos),
+          potrosenoPrijeTroska: Number(budgetResult.rows[0].potrosenoPrijeTroska),
+        }
+      : null;
+
+    return {
+      historicalExpenses: historicalResult.rows.map((row: any) => ({ ...row, iznos: Number(row.iznos) })),
+      duplicateCandidates: duplicateResult.rows.map((row: any) => ({ ...row, iznos: Number(row.iznos) })),
+      budget,
+    };
+  }
+
   private normalizeRole(role: string): string {
     return role
       .normalize("NFD")
