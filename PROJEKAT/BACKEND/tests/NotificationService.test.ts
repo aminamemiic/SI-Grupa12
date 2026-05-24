@@ -68,4 +68,35 @@ describe("NotificationService", () => {
     expect(result.procitano).toBe(true);
     expect(mockNotificationRepository.markAsRead).toHaveBeenCalledWith("notif-1", "user-1");
   });
+
+  test("getNotificationsForUser baca gresku kada nema userId", async () => {
+    mockNotificationRepository.getUserIdFromAuth.mockResolvedValue(null);
+    await expect(service.getNotificationsForUser({})).rejects.toThrow("Nije moguce dohvatiti korisnika za notifikacije.");
+  });
+
+  test("getUnreadCountForUser baca gresku kada nema userId", async () => {
+    mockNotificationRepository.getUserIdFromAuth.mockResolvedValue(null);
+    await expect(service.getUnreadCountForUser({})).rejects.toThrow("Nije moguce dohvatiti korisnika za notifikacije.");
+  });
+
+  test("markAsRead baca gresku kada id nije proslijedjen", async () => {
+    await expect(service.markAsRead("", {})).rejects.toThrow("ID notifikacije je obavezan.");
+  });
+
+  test("markAsRead baca gresku kada notifikacija ne postoji", async () => {
+    mockNotificationRepository.getUserIdFromAuth.mockResolvedValue("user-1");
+    mockNotificationRepository.markAsRead.mockResolvedValue(null);
+    await expect(service.markAsRead("notif-1", { sub: "user" })).rejects.toThrow("Notifikacija ne postoji ili ne pripada korisniku.");
+  });
+
+  test("createAnomalyNotification vraca prazan niz kada nema recipienta", async () => {
+    mockNotificationRepository.getRecipientsForAnomalyNotifications.mockResolvedValue([]);
+    mockNotificationRepository.createForUsers.mockResolvedValue([]);
+
+    const expense = { naziv: "Stavka", iznos: 10 };
+    const analysis = { severity: "LOW" };
+
+    const res = await service.createAnomalyNotification(expense, analysis);
+    expect(res).toEqual([]);
+  });
 });
