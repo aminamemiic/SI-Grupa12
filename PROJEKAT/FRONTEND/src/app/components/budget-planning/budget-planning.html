@@ -205,6 +205,68 @@
         <dt>Status</dt>
         <dd>{{ selectedBudget.statusOdobrenja }}</dd>
       </dl>
+
+      <div class="projection-divider" *ngIf="selectedBudget"></div>
+
+      <div class="projection-section" *ngIf="selectedBudget">
+        <h3 class="projection-title">
+          <svg class="w-5 h-5 projection-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+          Projekcija budžeta za tekući mjesec
+        </h3>
+
+        <div class="projection-loading" *ngIf="isProjectionLoading">
+          <div class="spinner-small"></div>
+          <span>Učitavanje projekcije...</span>
+        </div>
+
+        <div class="projection-error" *ngIf="!isProjectionLoading && projectionErrorMessage">
+          {{ projectionErrorMessage }}
+        </div>
+
+        <div class="projection-content" *ngIf="!isProjectionLoading && selectedBudgetProjection">
+          <!-- Alert badge -->
+          <div class="projection-alert" [class.alert-danger]="selectedBudgetProjection.projektovanoKrajnjeStanje < 0" [class.alert-success]="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">
+            <span class="alert-icon-wrapper">
+              <span *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje < 0">⚠️</span>
+              <span *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">✓</span>
+            </span>
+            <div class="alert-text">
+              <span class="alert-status-title" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje < 0">Moguće probijanje budžeta!</span>
+              <span class="alert-status-title" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">U granicama budžeta</span>
+              <span class="alert-status-desc" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje < 0">Projektovano prekoračenje: {{ -selectedBudgetProjection.projektovanoKrajnjeStanje | number: '1.2-2' }} KM</span>
+              <span class="alert-status-desc" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">Preostali projektovani višak: {{ selectedBudgetProjection.projektovanoKrajnjeStanje | number: '1.2-2' }} KM</span>
+            </div>
+          </div>
+
+          <!-- Metrics grid -->
+          <div class="projection-metrics">
+            <div class="metric-item">
+              <span class="metric-label">Dnevna brzina potrošnje:</span>
+              <span class="metric-value font-mono">{{ selectedBudgetProjection.dnevnaBrzinaTrosenja | number: '1.2-2' }} KM/dan</span>
+            </div>
+            
+            <div class="metric-item">
+              <span class="metric-label">Potrošeno prije ovog mjeseca:</span>
+              <span class="metric-value font-mono">{{ selectedBudgetProjection.potrosenoPrijeOvogMjeseca | number: '1.2-2' }} KM</span>
+            </div>
+
+            <div class="metric-item">
+              <span class="metric-label">Potrošeno u ovom mjesecu:</span>
+              <span class="metric-value font-mono">{{ selectedBudgetProjection.potrosenoUovomMjesecu | number: '1.2-2' }} KM</span>
+            </div>
+
+            <div class="metric-item highlight">
+              <span class="metric-label">Projektovana potrošnja (mjesec):</span>
+              <span class="metric-value font-mono">{{ selectedBudgetProjection.projektovanaPotrosnjaZaMjesec | number: '1.2-2' }} KM</span>
+            </div>
+
+            <div class="metric-item final-balance" [class.negative]="selectedBudgetProjection.projektovanoKrajnjeStanje < 0">
+              <span class="metric-label">Projektovano krajnje stanje:</span>
+              <span class="metric-value font-mono font-bold">{{ selectedBudgetProjection.projektovanoKrajnjeStanje | number: '1.2-2' }} KM</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </aside>
   </section>
 </div>

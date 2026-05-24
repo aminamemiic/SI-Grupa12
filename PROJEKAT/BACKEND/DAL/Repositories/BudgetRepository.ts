@@ -340,6 +340,44 @@ async updateStatus(id: string, statusOdobrenja: string, odobrioKorisnikId: strin
     return this.findOrCreateUserFromAuth(authUser);
   }
 
+  async getBudgetSpentStats(budgetId: string) {
+    const result = await db.query(
+      `
+      SELECT
+        b.id,
+        b.planirani_iznos AS "planiraniIznos",
+        COALESCE(SUM(t.iznos) FILTER (
+          WHERE t.datum < date_trunc('month', CURRENT_DATE)
+        ), 0) AS "potrosenoPrijeOvogMjeseca",
+        COALESCE(SUM(t.iznos) FILTER (
+          WHERE t.datum >= date_trunc('month', CURRENT_DATE)
+            AND t.datum <= CURRENT_DATE
+        ), 0) AS "potrosenoUovomMjesecu"
+      FROM budzeti b
+      LEFT JOIN budzet_kategorije bk ON bk.budzet_id = b.id
+      LEFT JOIN troskovi t
+        ON t.odjel_id = b.odjel_id
+       AND t.kategorija_id = bk.kategorija_id
+       AND t.datum >= b.datum_pocetka
+       AND t.datum <= b.datum_zavrsetka
+       AND t.status_validacije != 'ODBIJEN'
+      WHERE b.id = $1
+      GROUP BY b.id;
+      `,
+      [budgetId]
+    );
+
+    if (result.rowCount === 0) {
+      throw new Error("Budzet ne postoji.");
+    }
+
+    const row = result.rows[0];
+    return {
+      planiraniIznos: Number(row.planiraniIznos),
+      potrosenoPrijeOvogMjeseca: Number(row.potrosenoPrijeOvogMjeseca),
+      potrosenoUovomMjesecu: Number(row.potrosenoUovomMjesecu)
+    };
+  }
 }
 
 module.exports = { BudgetRepository };

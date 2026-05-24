@@ -26,6 +26,27 @@ export class BudgetService implements IBudgetService {
     return this.budgetRepository.getById(id);
   }
 
+  async getBudgetProjection(id: string): Promise<any> {
+    const stats = await this.budgetRepository.getBudgetSpentStats(id);
+    const now = new Date();
+    const currentDay = now.getDate();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+
+    const dailySpendingRate = currentDay > 0 ? stats.potrosenoUovomMjesecu / currentDay : 0;
+    const projectedThisMonth = dailySpendingRate * daysInMonth;
+    const projectedFinalBalance = stats.planiraniIznos - stats.potrosenoPrijeOvogMjeseca - projectedThisMonth;
+
+    return {
+      budgetId: id,
+      planiraniIznos: stats.planiraniIznos,
+      potrosenoPrijeOvogMjeseca: stats.potrosenoPrijeOvogMjeseca,
+      potrosenoUovomMjesecu: stats.potrosenoUovomMjesecu,
+      dnevnaBrzinaTrosenja: dailySpendingRate,
+      projektovanaPotrosnjaZaMjesec: projectedThisMonth,
+      projektovanoKrajnjeStanje: projectedFinalBalance
+    };
+  }
+
   async getReferenceData(): Promise<any> {
     if (this.referenceDataCache && this.referenceDataCache.expiresAt > Date.now()) {
       return this.referenceDataCache.data;

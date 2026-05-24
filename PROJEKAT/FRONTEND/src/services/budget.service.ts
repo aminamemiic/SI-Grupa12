@@ -48,6 +48,10 @@ updateBudgetStatus(id: string, statusOdobrenja: "ODOBREN" | "ODBIJEN"): Observab
   getReferenceData(): Observable<BudgetReferenceData> {
     return this.http.get<BudgetReferenceData>(`${this.apiUrl}/reference-data`, this.getAuthOptions());
   }
-  
+
+  getBudgetProjection(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/projekcija`, this.getAuthOptions());
+  }
 }
+
 
