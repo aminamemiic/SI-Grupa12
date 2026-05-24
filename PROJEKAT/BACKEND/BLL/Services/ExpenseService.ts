@@ -46,6 +46,22 @@ export class ExpenseService implements IExpenseService {
     return referenceData;
   }
 
+  async suggestCategory(payload: any): Promise<any> {
+    const naziv = typeof payload?.naziv === "string" ? payload.naziv.trim() : "";
+
+    if (!naziv) {
+      throw new Error("Naziv troska je obavezan za AI prijedlog kategorije.");
+    }
+
+    const referenceData = await this.getReferenceData();
+    return this.aiAnalysisService.suggestExpenseCategory({
+      naziv,
+      opis: payload?.opis || null,
+      dobavljac: payload?.dobavljac || null,
+      categories: referenceData.kategorije || [],
+    });
+  }
+
   async createExpense(payload: CreateExpenseRequest, authUser?: unknown): Promise<any> {
     const normalizedPayload = this.validateCreateExpense(payload);
 

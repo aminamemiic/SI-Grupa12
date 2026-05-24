@@ -36,8 +36,10 @@ export class ExpensesComponent implements OnInit {
 
   isLoading = false;
   isSaving = false;
+  isSuggestingCategory = false;
   successMessage = '';
   errorMessage = '';
+  categorySuggestionMessage = '';
   editingExpenseId: string | null = null;
   showDeleteModal = false;
   expenseToDeleteId: string | null = null;
@@ -98,6 +100,7 @@ export class ExpensesComponent implements OnInit {
   saveExpense(): void {
     this.successMessage = '';
     this.errorMessage = '';
+    this.categorySuggestionMessage = '';
 
     if (this.expenseForm.invalid) {
       this.expenseForm.markAllAsTouched();
@@ -160,10 +163,61 @@ export class ExpensesComponent implements OnInit {
     }
   }
 
+  suggestCategory(): void {
+    const naziv = this.expenseForm.get('naziv')?.value?.trim() || '';
+
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.categorySuggestionMessage = '';
+
+    if (!naziv) {
+      this.expenseForm.get('naziv')?.markAsTouched();
+      this.errorMessage = 'Unesite naziv troska prije AI prijedloga.';
+      return;
+    }
+
+    const dobavljacId = this.expenseForm.get('dobavljacId')?.value || '';
+    const dobavljac = this.referenceData.dobavljaci.find(
+      (item) => String(item.id) === String(dobavljacId)
+    );
+
+    this.isSuggestingCategory = true;
+
+    this.expenseService.suggestCategory({
+      naziv,
+      opis: this.expenseForm.get('opis')?.value || null,
+      dobavljac: dobavljac ? this.getItemLabel(dobavljac) : null,
+    }).subscribe({
+      next: (suggestion) => {
+        const category = this.referenceData.kategorije.find(
+          (item) => String(item.id) === String(suggestion.categoryId)
+        );
+
+        if (category) {
+          this.expenseForm.patchValue({ kategorijaId: String(category.id) });
+          this.categorySuggestionMessage =
+            `AI prijedlog: ${this.getItemLabel(category)} (${Math.round((suggestion.confidence || 0) * 100)}%).`;
+        } else {
+          this.errorMessage = suggestion.reason || 'AI nije pronasao prijedlog kategorije.';
+        }
+
+        this.isSuggestingCategory = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = this.getErrorMessage(error, 'Greska pri AI prijedlogu kategorije.');
+        this.isSuggestingCategory = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
   editExpense(expense: Expense): void {
     this.editingExpenseId = expense.id.toString();
     this.successMessage = '';
     this.errorMessage = '';
+    this.categorySuggestionMessage = '';
 
     this.expenseForm.patchValue({
       naziv: expense.naziv,
@@ -219,6 +273,7 @@ export class ExpensesComponent implements OnInit {
     this.expenseForm.reset();
     this.successMessage = '';
     this.errorMessage = '';
+    this.categorySuggestionMessage = '';
   }
 
   isFieldInvalid(fieldName: string): boolean {

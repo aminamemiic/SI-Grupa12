@@ -14,6 +14,13 @@ type ExpenseAnalysisResult = {
   recommendedAction: string;
 };
 
+type CategorySuggestionResult = {
+  categoryId: string | null;
+  categoryName: string | null;
+  confidence: number;
+  reason: string;
+};
+
 export class AIAnalysisService {
   private readonly aiServiceUrl: string;
 
@@ -42,6 +49,35 @@ export class AIAnalysisService {
       return await response.json() as ExpenseAnalysisResult;
     } catch (_error) {
       return this.fallbackExpenseAnalysis(expense, context);
+    }
+  }
+
+  async suggestExpenseCategory(payload: any): Promise<CategorySuggestionResult> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+
+    try {
+      const response = await fetch(`${this.aiServiceUrl}/ai/category-suggestion`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`AI servis je vratio status ${response.status}.`);
+      }
+
+      return await response.json() as CategorySuggestionResult;
+    } catch (_error) {
+      return {
+        categoryId: null,
+        categoryName: null,
+        confidence: 0,
+        reason: "AI servis trenutno nije dostupan za prijedlog kategorije.",
+      };
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
@@ -115,6 +151,7 @@ export class AIAnalysisService {
         : "Nije potrebna dodatna akcija.",
     };
   }
+
 }
 
 module.exports = { AIAnalysisService };
