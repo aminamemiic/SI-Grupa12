@@ -29,6 +29,33 @@ export class NotificationService implements INotificationService {
       naslov: title,
       poruka: message,
       prioritet: priority,
+      tipNotifikacije: "AI_ANOMALIJA",
+      povezaniTrosakId: expense?.id || null,
+    });
+  }
+
+  async createPotentialDuplicateNotification(expense: any, analysis: any): Promise<any[]> {
+    const recipients = await this.notificationRepository.getRecipientsForAnomalyNotifications();
+    const recipientIds = recipients.map((recipient: any) => recipient.id);
+
+    const amount = Number(expense?.iznos || 0).toFixed(2);
+    const currency = expense?.valuta || "BAM";
+    const title = `Dupli trosak: ${expense?.naziv || "Trosak"}`;
+    const explanation =
+      analysis?.explanation ||
+      "Sistem je pronasao moguci identican trosak sa istim nazivom, iznosom i datumom.";
+    const message = [
+      `Trosak "${expense?.naziv || "bez naziva"}" (${amount} ${currency}) je oznacen kao moguci duplikat.`,
+      explanation,
+      "Preporucena akcija: obrisati zapis ako je greskom ponovljen ili ga sacuvati ako predstavlja stvarni trosak.",
+    ].join(" ");
+
+    return this.notificationRepository.createForUsers(recipientIds, {
+      naslov: title,
+      poruka: message,
+      prioritet: "MEDIUM",
+      tipNotifikacije: "DUPLI_TROSAK",
+      povezaniTrosakId: expense?.id || null,
     });
   }
 
@@ -66,6 +93,14 @@ export class NotificationService implements INotificationService {
     }
 
     return notification;
+  }
+
+  async markDuplicateActionHandled(expenseId: string, actionStatus: "SACUVAN" | "OBRISAN"): Promise<any[]> {
+    if (!expenseId) {
+      return [];
+    }
+
+    return this.notificationRepository.markActionHandledByExpenseId(expenseId, actionStatus);
   }
 }
 

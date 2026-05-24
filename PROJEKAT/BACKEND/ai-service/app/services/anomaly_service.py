@@ -30,7 +30,8 @@ class AnomalyService:
                 )
 
         duplicate_candidates = context.get("duplicateCandidates") or []
-        if len(duplicate_candidates) > 0:
+        has_duplicate_finding = len(duplicate_candidates) > 0
+        if has_duplicate_finding:
             findings.append(
                 {
                     "type": "POTENCIJALNI_DUPLIKAT",
@@ -41,7 +42,7 @@ class AnomalyService:
             )
 
         budget = context.get("budget")
-        if budget:
+        if budget and not has_duplicate_finding:
             planned_amount = self._to_float(budget.get("planiraniIznos"))
             spent_before = self._to_float(budget.get("potrosenoPrijeTroska"))
             projected_spent = spent_before + amount

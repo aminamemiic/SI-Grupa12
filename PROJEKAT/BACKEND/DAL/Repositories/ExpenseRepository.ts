@@ -44,6 +44,7 @@ class ExpenseRepository {
       JOIN valute v ON v.id = t.valuta_id
       LEFT JOIN projekti p ON p.id = t.projekat_id
       LEFT JOIN dobavljaci d ON d.id = t.dobavljac_id
+      WHERE t.status_validacije <> 'POTENCIJALNI_DUPLIKAT'
       ORDER BY t.datum DESC, t.naziv ASC;
     `);
 
@@ -114,6 +115,41 @@ class ExpenseRepository {
     );
 
     return this.getById(id);
+  }
+
+  async getBudgetContextForExpense(expense: any) {
+    const budgetResult = await db.query(
+      `
+      SELECT
+        b.id,
+        b.naziv,
+        b.planirani_iznos AS "planiraniIznos",
+        COALESCE(SUM(t.iznos) FILTER (WHERE t.id <> $1), 0) AS "potrosenoPrijeTroska"
+      FROM budzeti b
+      JOIN budzet_kategorije bk ON bk.budzet_id = b.id
+      LEFT JOIN troskovi t
+        ON t.odjel_id = b.odjel_id
+       AND t.kategorija_id = bk.kategorija_id
+       AND t.datum BETWEEN b.datum_pocetka AND b.datum_zavrsetka
+       AND t.status_validacije IN ('VALIDAN', 'ZAKLJUCAN')
+      WHERE b.odjel_id = $2
+        AND bk.kategorija_id = $3
+        AND $4::date BETWEEN b.datum_pocetka AND b.datum_zavrsetka
+        AND b.status_odobrenja = 'ODOBREN'
+      GROUP BY b.id
+      ORDER BY b.datum_pocetka DESC
+      LIMIT 1;
+      `,
+      [expense.id, expense.odjelId, expense.kategorijaId, expense.datum]
+    );
+
+    return budgetResult.rows[0]
+      ? {
+          ...budgetResult.rows[0],
+          planiraniIznos: Number(budgetResult.rows[0].planiraniIznos),
+          potrosenoPrijeTroska: Number(budgetResult.rows[0].potrosenoPrijeTroska),
+        }
+      : null;
   }
 
   async createAnomaly(trosakId: string, analysis: any) {
@@ -188,6 +224,7 @@ class ExpenseRepository {
         ON t.odjel_id = b.odjel_id
        AND t.kategorija_id = bk.kategorija_id
        AND t.datum BETWEEN b.datum_pocetka AND b.datum_zavrsetka
+       AND t.status_validacije IN ('VALIDAN', 'ZAKLJUCAN')
       WHERE b.odjel_id = $2
         AND bk.kategorija_id = $3
         AND $4::date BETWEEN b.datum_pocetka AND b.datum_zavrsetka

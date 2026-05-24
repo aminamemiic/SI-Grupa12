@@ -283,7 +283,7 @@
 
                 <td>{{ expense.naziv }}</td>
                 <td>{{ expense.iznos | number: '1.2-2' }}</td>
-                <td>{{ expense.datum | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
                 <td>{{ expense.kategorijaNaziv || '-' }}</td>
                 <td>{{ expense.odjelNaziv || '-' }}</td>
                 <td>{{ getExpenseCurrency(expense) }}</td>
@@ -426,7 +426,7 @@
 
                 <td>{{ budget.naziv }}</td>
                 <td>{{ budget.planiraniIznos | number: '1.2-2' }}</td>
-                <td>{{ budget.datumPocetka | date: 'dd/MM/yyyy' }} - {{ budget.datumZavrsetka | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ budget.datumPocetka | date: 'dd.MM.yyyy' }} - {{ budget.datumZavrsetka | date: 'dd.MM.yyyy' }}</td>
                 <td>{{ budget.odjelNaziv || '-' }}</td>
                 <td>{{ getBudgetCategories(budget) }}</td>
                 <td>{{ budget.projekatNaziv || '-' }}</td>
@@ -488,7 +488,7 @@
                   (keydown.space)="$event.preventDefault(); openImportHistoryDetails(entry)">
 
                   <td><strong>{{ entry.fileName || 'Uvoz bez naziva fajla' }}</strong></td>
-                  <td>{{ entry.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ entry.createdAt | date: 'dd.MM.yyyy HH:mm' }}</td>
                   <td><span class="status-pill">{{ entry.status }}</span></td>
                   <td>{{ entry.totalRows }}</td>
                   <td>{{ entry.insertedCount }}</td>

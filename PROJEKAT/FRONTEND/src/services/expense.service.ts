@@ -50,6 +50,14 @@ export class ExpenseService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, this.getAuthOptions());
   }
 
+  savePotentialDuplicate(id: string | number): Observable<Expense> {
+    return this.http.post<Expense>(`${this.apiUrl}/${id}/duplikat/sacuvaj`, {}, this.getAuthOptions());
+  }
+
+  deletePotentialDuplicate(id: string | number): Observable<{ id: string | number; deleted: boolean }> {
+    return this.http.delete<{ id: string | number; deleted: boolean }>(`${this.apiUrl}/${id}/duplikat`, this.getAuthOptions());
+  }
+
   getReferenceData(): Observable<ExpenseReferenceData> {
     return this.http.get<ExpenseReferenceData>(`${this.apiUrl}/reference-data`, this.getAuthOptions());
   }

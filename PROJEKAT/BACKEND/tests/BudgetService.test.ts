@@ -327,7 +327,7 @@ describe("BudgetService", () => {
       expect(mockBudgetRepository.create).not.toHaveBeenCalled();
     });
 
-    test("treba prihvatiti datume u formatu dd.mm.yyyy i normalizovati ih prije upisa", async () => {
+    test("treba prihvatiti datume u formatu DD.MM.YYYY i normalizovati ih prije upisa", async () => {
       const localDatePayload = {
         ...validPayload,
         datumPocetka: "01.05.2026",
@@ -346,7 +346,7 @@ describe("BudgetService", () => {
       );
     });
 
-    test("ne treba kreirati budzet ako dd.mm.yyyy datum pocetka nije kalendarski validan", async () => {
+    test("ne treba kreirati budzet ako DD.MM.YYYY datum pocetka nije kalendarski validan", async () => {
       await expect(
         service.createBudget({ ...validPayload, datumPocetka: "31.02.2026" })
       ).rejects.toThrow("Datum pocetka je obavezan i mora biti validan.");

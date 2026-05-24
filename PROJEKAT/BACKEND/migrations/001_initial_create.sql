@@ -300,15 +300,22 @@ CREATE TABLE notifikacije (
     poruka           TEXT        NOT NULL,
     prioritet        VARCHAR(30) NOT NULL DEFAULT 'MEDIUM',
     korisnik_id      UUID        NOT NULL,
+    tip_notifikacije VARCHAR(50) NOT NULL DEFAULT 'AI_ANOMALIJA',
+    povezani_trosak_id UUID NULL,
+    akcija_status    VARCHAR(30) NULL,
     procitano        BOOLEAN     NOT NULL DEFAULT FALSE,
     -- Novo: datum kreiranja notifikacije (za sortiranje i historiju)
     vrijeme_kreiranja TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_notifikacije_korisnici
         FOREIGN KEY (korisnik_id) REFERENCES korisnici(id) ON DELETE CASCADE,
+    CONSTRAINT fk_notifikacije_troskovi
+        FOREIGN KEY (povezani_trosak_id) REFERENCES troskovi(id) ON DELETE SET NULL,
 
     CONSTRAINT chk_prioritet
-        CHECK (prioritet IN ('LOW', 'MEDIUM', 'HIGH'))
+        CHECK (prioritet IN ('LOW', 'MEDIUM', 'HIGH')),
+    CONSTRAINT chk_notifikacije_akcija_status
+        CHECK (akcija_status IS NULL OR akcija_status IN ('SACUVAN', 'OBRISAN'))
 );
 
 -- =========================

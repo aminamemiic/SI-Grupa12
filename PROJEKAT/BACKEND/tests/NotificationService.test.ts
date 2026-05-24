@@ -7,6 +7,7 @@ const mockNotificationRepository = {
   getByUserId: jest.fn(),
   getUnreadCountByUserId: jest.fn(),
   markAsRead: jest.fn(),
+  markActionHandledByExpenseId: jest.fn(),
 };
 
 jest.mock("../DAL/Repositories/NotificationRepository", () => ({
@@ -98,5 +99,33 @@ describe("NotificationService", () => {
 
     const res = await service.createAnomalyNotification(expense, analysis);
     expect(res).toEqual([]);
+  });
+
+  test("treba kreirati notifikaciju za potencijalni dupli trosak", async () => {
+    mockNotificationRepository.getRecipientsForAnomalyNotifications.mockResolvedValue([{ id: "user-1" }]);
+    mockNotificationRepository.createForUsers.mockResolvedValue([{ id: "notif-dup" }]);
+
+    await service.createPotentialDuplicateNotification(
+      { id: "trosak-1", naziv: "Sto", iznos: 20000, valuta: "BAM" },
+      { explanation: "Pronadjen je moguci duplikat." }
+    );
+
+    expect(mockNotificationRepository.createForUsers).toHaveBeenCalledWith(
+      ["user-1"],
+      expect.objectContaining({
+        naslov: "Dupli trosak: Sto",
+        tipNotifikacije: "DUPLI_TROSAK",
+        povezaniTrosakId: "trosak-1",
+      })
+    );
+  });
+
+  test("markDuplicateActionHandled delegira repository poziv", async () => {
+    mockNotificationRepository.markActionHandledByExpenseId.mockResolvedValue([{ id: "notif-1" }]);
+
+    const result = await service.markDuplicateActionHandled("trosak-1", "SACUVAN");
+
+    expect(result).toEqual([{ id: "notif-1" }]);
+    expect(mockNotificationRepository.markActionHandledByExpenseId).toHaveBeenCalledWith("trosak-1", "SACUVAN");
   });
 });

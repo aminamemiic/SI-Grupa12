@@ -31,8 +31,8 @@ export class BudgetPlanningComponent implements OnInit {
   public budgetForm = this.fb.group({
     naziv: ['', [Validators.required, Validators.maxLength(200)]],
     planiraniIznos: [null as number | null, [Validators.required, Validators.min(0.01)]],
-    datumPocetka: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{1,2}\.\d{4}\.?$/)]],
-    datumZavrsetka: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{1,2}\.\d{4}\.?$/)]],
+    datumPocetka: ['', [Validators.required, Validators.pattern(/^\d{2}\.\d{2}\.\d{4}\.?$/)]],
+    datumZavrsetka: ['', [Validators.required, Validators.pattern(/^\d{2}\.\d{2}\.\d{4}\.?$/)]],
     odjelId: ['', Validators.required],
     projekatId: [''],
     kategorijaIds: [[] as string[], Validators.required],

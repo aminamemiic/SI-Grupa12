@@ -351,9 +351,11 @@ export class AIAnalysisService {
       findings.push(duplicateFinding);
     }
 
-    // 4. Check budget constraints
+    // 4. Check budget constraints. Potential duplicates are not counted as new budget
+    // consumption until they are reviewed, otherwise the same invoice can create a
+    // false budget-exceeded anomaly.
     const budget = context?.budget;
-    if (budget && Number.isFinite(Number(budget.planiraniIznos))) {
+    if (!duplicateFinding && budget && Number.isFinite(Number(budget.planiraniIznos))) {
       const planned = Number(budget.planiraniIznos);
       const spentBefore = Number(budget.potrosenoPrijeTroska || 0);
       const projected = spentBefore + amount;

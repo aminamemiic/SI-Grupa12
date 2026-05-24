@@ -38,7 +38,7 @@ describe("AIAnalysisService fallback logic", () => {
     expect(result.riskScore).toBeCloseTo(0.35, 2);
   });
 
-  test("detektuje duplikat kao upozorenje i prekoracen budzet kao anomaliju", () => {
+  test("duplikat ne smije postati budzetska anomalija samo zato sto bi isti trosak bio uracunat dva puta", () => {
     const expense = { iznos: 600, naziv: "Trosak", datum: "2026-04-20" };
     const context = {
       duplicateCandidates: [{ id: 1, iznos: 600, naziv: "Trosak", datum: "2026-04-20" }],
@@ -46,9 +46,9 @@ describe("AIAnalysisService fallback logic", () => {
     };
 
     const result = (svc as any).fallbackExpenseAnalysis(expense, context);
-    expect(result.status).toBe("ANOMALIJA");
+    expect(result.status).toBe("VALIDAN");
     expect(result.findings.some((f: any) => f.type === "POTENCIJALNI_DUPLIKAT")).toBe(true);
-    expect(result.findings.some((f: any) => f.type === "BUDGET_EXCEEDED")).toBe(true);
-    expect(result.severity).toBe("HIGH");
+    expect(result.findings.some((f: any) => f.type === "BUDGET_EXCEEDED")).toBe(false);
+    expect(result.severity).toBe("MEDIUM");
   });
 });

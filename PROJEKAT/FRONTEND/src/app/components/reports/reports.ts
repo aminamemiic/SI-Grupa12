@@ -80,7 +80,7 @@ export class ReportsComponent implements OnInit {
 
   public loadReport(): void {
     if (!this.periodDatesAreValid()) {
-      this.errorMessage = 'Datumi moraju biti u formatu dd.mm.yyyy.';
+      this.errorMessage = 'Datumi moraju biti u formatu DD.MM.YYYY.';
       return;
     }
 
@@ -145,7 +145,7 @@ export class ReportsComponent implements OnInit {
 
   public exportReport(format: ReportExportFormat): void {
     if (!this.periodDatesAreValid()) {
-      this.errorMessage = 'Datumi moraju biti u formatu dd.mm.yyyy.';
+      this.errorMessage = 'Datumi moraju biti u formatu DD.MM.YYYY.';
       return;
     }
 
@@ -214,12 +214,9 @@ export class ReportsComponent implements OnInit {
   }
 
   private buildFilters(): ReportFilters {
-    const datumOd = this.normalizeDisplayDate(this.dateFrom);
-    const datumDo = this.normalizeDisplayDate(this.dateTo);
-
     return {
-      ...(datumOd ? { datumOd } : {}),
-      ...(datumDo ? { datumDo } : {}),
+      ...(this.dateFrom.trim() ? { datumOd: this.normalizeDateForApi(this.dateFrom) } : {}),
+      ...(this.dateTo.trim() ? { datumDo: this.normalizeDateForApi(this.dateTo) } : {}),
       tipIzvjestaja: this.reportType,
     };
   }
@@ -267,8 +264,18 @@ export class ReportsComponent implements OnInit {
   }
 
   private getExportFilename(format: ReportExportFormat): string {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = this.toDisplayDate(new Date().toISOString().slice(0, 10));
     return `izvjestaj-troskovi-${today}.${format}`;
+  }
+
+  private normalizeDateForApi(value: string): string {
+    const match = value.trim().match(/^(\d{2})\.(\d{2})\.(\d{4})\.?$/);
+    if (!match) {
+      return value;
+    }
+
+    const [, day, month, year] = match;
+    return `${day}.${month}.${year}`;
   }
 
   private downloadBlob(blob: Blob, filename: string): void {

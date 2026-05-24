@@ -20,7 +20,7 @@ class NotificationRepository {
       FROM korisnici k
       JOIN uloge u ON u.id = k.uloga_id
       WHERE k.status_naloga = 'AKTIVAN'
-        AND u.naziv = 'GLAVNI_RACUNOVODJA'
+        AND u.naziv IN ('ADMINISTRATOR', 'GLAVNI_RACUNOVODJA')
       ORDER BY k.email ASC;
     `);
 
@@ -34,14 +34,30 @@ class NotificationRepository {
 
     const values: any[] = [];
     const placeholders = userIds.map((userId, index) => {
-      const offset = index * 4;
-      values.push(notification.naslov, notification.poruka, notification.prioritet, userId);
-      return `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4})`;
+      const offset = index * 7;
+      values.push(
+        notification.naslov,
+        notification.poruka,
+        notification.prioritet,
+        userId,
+        notification.tipNotifikacije || "AI_ANOMALIJA",
+        notification.povezaniTrosakId || null,
+        notification.akcijaStatus || null
+      );
+      return `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${offset + 5}, $${offset + 6}, $${offset + 7})`;
     });
 
     const result = await AppDB.db.query(
       `
-      INSERT INTO notifikacije (naslov, poruka, prioritet, korisnik_id)
+      INSERT INTO notifikacije (
+        naslov,
+        poruka,
+        prioritet,
+        korisnik_id,
+        tip_notifikacije,
+        povezani_trosak_id,
+        akcija_status
+      )
       VALUES ${placeholders.join(", ")}
       RETURNING
         id,
@@ -49,6 +65,9 @@ class NotificationRepository {
         poruka,
         prioritet,
         korisnik_id AS "korisnikId",
+        tip_notifikacije AS "tipNotifikacije",
+        povezani_trosak_id AS "povezaniTrosakId",
+        akcija_status AS "akcijaStatus",
         procitano,
         vrijeme_kreiranja AS "vrijemeKreiranja";
       `,
@@ -67,6 +86,9 @@ class NotificationRepository {
         poruka,
         prioritet,
         korisnik_id AS "korisnikId",
+        tip_notifikacije AS "tipNotifikacije",
+        povezani_trosak_id AS "povezaniTrosakId",
+        akcija_status AS "akcijaStatus",
         procitano,
         vrijeme_kreiranja AS "vrijemeKreiranja"
       FROM notifikacije
@@ -100,6 +122,9 @@ class NotificationRepository {
         poruka,
         prioritet,
         korisnik_id AS "korisnikId",
+        tip_notifikacije AS "tipNotifikacije",
+        povezani_trosak_id AS "povezaniTrosakId",
+        akcija_status AS "akcijaStatus",
         procitano,
         vrijeme_kreiranja AS "vrijemeKreiranja";
       `,
@@ -107,6 +132,31 @@ class NotificationRepository {
     );
 
     return this.mapNotification(result.rows[0]);
+  }
+
+  async markActionHandledByExpenseId(expenseId: string, actionStatus: string) {
+    const result = await AppDB.db.query(
+      `
+      UPDATE notifikacije
+      SET procitano = TRUE,
+          akcija_status = $2
+      WHERE povezani_trosak_id = $1
+      RETURNING
+        id,
+        naslov,
+        poruka,
+        prioritet,
+        korisnik_id AS "korisnikId",
+        tip_notifikacije AS "tipNotifikacije",
+        povezani_trosak_id AS "povezaniTrosakId",
+        akcija_status AS "akcijaStatus",
+        procitano,
+        vrijeme_kreiranja AS "vrijemeKreiranja";
+      `,
+      [expenseId, actionStatus]
+    );
+
+    return result.rows.map((row: any) => this.mapNotification(row));
   }
 
   private normalizeRole(role: string): string {

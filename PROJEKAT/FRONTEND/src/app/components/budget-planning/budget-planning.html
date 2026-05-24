@@ -49,7 +49,7 @@
         <div class="form-group">
           <label>Datum početka *</label>
           <div class="date-inputs">
-            <input type="text" formControlName="datumPocetka" placeholder="dd.mm.yyyy" />
+            <input type="text" formControlName="datumPocetka" placeholder="DD.MM.YYYY" />
             <input
               type="date"
               class="date-picker"
@@ -57,13 +57,13 @@
               (change)="onDatePickerChange($event, 'datumPocetka')"
             />
           </div>
-          <small *ngIf="isFieldInvalid('datumPocetka')">Datum početka je obavezan u formatu dd.mm.yyyy.</small>
+          <small *ngIf="isFieldInvalid('datumPocetka')">Datum početka je obavezan u formatu DD.MM.YYYY.</small>
         </div>
  
         <div class="form-group">
           <label>Datum završetka *</label>
           <div class="date-inputs">
-            <input type="text" formControlName="datumZavrsetka" placeholder="dd.mm.yyyy" />
+            <input type="text" formControlName="datumZavrsetka" placeholder="DD.MM.YYYY" />
             <input
               type="date"
               class="date-picker"

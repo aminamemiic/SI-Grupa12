@@ -290,6 +290,12 @@ h2 {
   border: 1px solid #fecdca;
 }
 
+.success-notice {
+  color: #027a48;
+  background: #ecfdf3;
+  border: 1px solid #abefc6;
+}
+
 .empty-state {
   display: grid;
   place-items: center;

@@ -193,7 +193,7 @@ export class ExpenseService implements IExpenseService {
     // Validate datum (date)
     const datum = this.normalizeDate(payload.datum);
     if (!datum) {
-      throw new Error("Datum je obavezan i mora biti u formatu DD.MM.YYYY. ili YYYY-MM-DD.");
+      throw new Error("Datum je obavezan i mora biti u formatu DD.MM.YYYY.");
     }
 
     // Validate that date is not in the future
@@ -243,11 +243,18 @@ export class ExpenseService implements IExpenseService {
       const context = await this.expenseRepository.getAiAnalysisContext(createdExpense);
       const analysis = await this.aiAnalysisService.analyzeExpense(createdExpense, context);
 
+      if (this.hasPotentialDuplicateFinding(analysis)) {
+        const updatedExpense = await this.expenseRepository.updateValidationStatus(createdExpense.id, "POTENCIJALNI_DUPLIKAT");
+        await this.notificationService.createPotentialDuplicateNotification(updatedExpense, analysis);
+
+        return {
+          ...updatedExpense,
+          aiAnaliza: analysis,
+        };
+      }
+
       if (analysis?.status !== "ANOMALIJA") {
-        const status = this.hasPotentialDuplicateFinding(analysis)
-          ? "POTENCIJALNI_DUPLIKAT"
-          : "VALIDAN";
-        const updatedExpense = await this.expenseRepository.updateValidationStatus(createdExpense.id, status);
+        const updatedExpense = await this.expenseRepository.updateValidationStatus(createdExpense.id, "VALIDAN");
 
         return {
           ...updatedExpense,
@@ -271,6 +278,84 @@ export class ExpenseService implements IExpenseService {
   private hasPotentialDuplicateFinding(analysis: any): boolean {
     return Array.isArray(analysis?.findings)
       && analysis.findings.some((finding: any) => finding?.type === "POTENCIJALNI_DUPLIKAT");
+  }
+
+  async resolvePotentialDuplicate(id: string, action: "SAVE" | "DELETE"): Promise<any> {
+    if (!id) {
+      throw new Error("ID troska je obavezan.");
+    }
+
+    const existing = await this.expenseRepository.getById(id);
+    if (!existing) {
+      throw new Error("Trosak ne postoji.");
+    }
+
+    if (!["POTENCIJALNI_DUPLIKAT", "ANOMALIJA"].includes(existing.statusValidacije)) {
+      throw new Error("Trosak nije u statusu koji zahtijeva odluku.");
+    }
+
+    if (action === "DELETE") {
+      await this.notificationService.markDuplicateActionHandled(id, "OBRISAN");
+      await this.expenseRepository.delete(id);
+      this.expensesCache = null;
+
+      return { id, action: "DELETE", deleted: true };
+    }
+
+    if (existing.statusValidacije === "ANOMALIJA") {
+      await this.notificationService.markDuplicateActionHandled(id, "SACUVAN");
+      this.expensesCache = null;
+
+      return existing;
+    }
+
+    const budget = await this.expenseRepository.getBudgetContextForExpense(existing);
+    const amount = Number(existing.iznos || 0);
+    const planned = Number(budget?.planiraniIznos || 0);
+    const spentBefore = Number(budget?.potrosenoPrijeTroska || 0);
+    const projected = spentBefore + amount;
+
+    if (budget && planned > 0 && projected > planned) {
+      const percentageOverBudget = Number((((projected - planned) / planned) * 100).toFixed(1));
+      const analysis = {
+        status: "ANOMALIJA",
+        severity: "HIGH",
+        riskScore: 0.9,
+        explanation: `Trosak bi doveo do prekoracenja planiranog budzeta za ${percentageOverBudget}%.`,
+        recommendedAction: "Provjeriti trosak i odobrenje prije dalje obrade.",
+        findings: [
+          {
+            type: "BUDGET_EXCEEDED",
+            severity: "HIGH",
+            message: `Trosak bi doveo do prekoracenja planiranog budzeta za ${percentageOverBudget}%.`,
+            evidence: {
+              plannedAmount: planned,
+              spentBefore,
+              projectedSpent: projected,
+              deviation: Number((projected - planned).toFixed(2)),
+              percentageOverBudget,
+            },
+          },
+        ],
+      };
+
+      const updatedExpense = await this.expenseRepository.updateValidationStatus(id, "ANOMALIJA");
+      await this.expenseRepository.createAnomaly(id, analysis);
+      await this.notificationService.createAnomalyNotification(updatedExpense, analysis);
+      await this.notificationService.markDuplicateActionHandled(id, "SACUVAN");
+      this.expensesCache = null;
+
+      return {
+        ...updatedExpense,
+        aiAnaliza: analysis,
+      };
+    }
+
+    const updatedExpense = await this.expenseRepository.updateValidationStatus(id, "VALIDAN");
+    await this.notificationService.markDuplicateActionHandled(id, "SACUVAN");
+    this.expensesCache = null;
+
+    return updatedExpense;
   }
 
   private normalizeDate(value: string): string | null {

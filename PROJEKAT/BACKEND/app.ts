@@ -136,6 +136,13 @@ async function ensureBaseData() {
     await connectWithRetry(client);
 
     await client.query(`
+      ALTER TABLE troskovi
+      DROP CONSTRAINT IF EXISTS chk_status_validacije;
+
+      ALTER TABLE troskovi
+      ADD CONSTRAINT chk_status_validacije
+      CHECK (status_validacije IN ('NA_CEKANJU', 'VALIDAN', 'POTENCIJALNI_DUPLIKAT', 'ANOMALIJA', 'ODBIJEN', 'ZAKLJUCAN'));
+
       CREATE TABLE IF NOT EXISTS uvoz_troskova (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         naziv_fajla VARCHAR(255),
@@ -165,6 +172,25 @@ async function ensureBaseData() {
         CONSTRAINT chk_ai_analize_status
           CHECK (status IN ('PENDING', 'RUNNING', 'COMPLETED', 'FAILED'))
       );
+
+      ALTER TABLE notifikacije
+      ADD COLUMN IF NOT EXISTS tip_notifikacije VARCHAR(50) NOT NULL DEFAULT 'AI_ANOMALIJA',
+      ADD COLUMN IF NOT EXISTS povezani_trosak_id UUID NULL,
+      ADD COLUMN IF NOT EXISTS akcija_status VARCHAR(30) NULL;
+
+      ALTER TABLE notifikacije
+      DROP CONSTRAINT IF EXISTS fk_notifikacije_troskovi;
+
+      ALTER TABLE notifikacije
+      ADD CONSTRAINT fk_notifikacije_troskovi
+      FOREIGN KEY (povezani_trosak_id) REFERENCES troskovi(id) ON DELETE SET NULL;
+
+      ALTER TABLE notifikacije
+      DROP CONSTRAINT IF EXISTS chk_notifikacije_akcija_status;
+
+      ALTER TABLE notifikacije
+      ADD CONSTRAINT chk_notifikacije_akcija_status
+      CHECK (akcija_status IS NULL OR akcija_status IN ('SACUVAN', 'OBRISAN'));
 
       INSERT INTO uloge (naziv, opis) VALUES
       ('ADMINISTRATOR', 'Administrator sistema'),

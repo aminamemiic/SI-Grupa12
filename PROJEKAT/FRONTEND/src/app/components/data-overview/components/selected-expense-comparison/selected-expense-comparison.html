@@ -56,7 +56,7 @@
             <td>{{ expense.naziv }}</td>
             <td>{{ expense.iznos | number: '1.2-2' }} {{ getExpenseCurrency(expense) }}</td>
             <td>{{ getExpenseAmountInBam(expense) | number: '1.2-2' }} KM</td>
-            <td>{{ expense.datum | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
             <td>{{ expense.kategorijaNaziv || '-' }}</td>
             <td>{{ expense.odjelNaziv || '-' }}</td>
             <td>{{ getExpenseCurrency(expense) }}</td>

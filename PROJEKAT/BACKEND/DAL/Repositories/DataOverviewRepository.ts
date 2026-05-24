@@ -32,6 +32,7 @@ class DataOverviewRepository {
             LEFT JOIN valute v ON v.id = tr.valuta_id
             LEFT JOIN projekti p ON p.id = tr.projekat_id
             LEFT JOIN dobavljaci d ON d.id = tr.dobavljac_id
+            WHERE tr.status_validacije <> 'POTENCIJALNI_DUPLIKAT'
             ORDER BY tr.datum DESC, tr.naziv ASC
           ) t
         ), '[]'::json) AS troskovi,

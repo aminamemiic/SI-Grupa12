@@ -20,6 +20,10 @@
     <p class="notice error-notice">{{ errorMessage }}</p>
   }
 
+  @if (actionMessage) {
+    <p class="notice success-notice">{{ actionMessage }}</p>
+  }
+
   <section class="notifications-layout">
     <article class="panel list-panel">
       <div class="panel-heading">
@@ -110,7 +114,32 @@
           <p>{{ selectedRecommendation }}</p>
         </section>
 
+        @if (selectedDuplicateNeedsDecision) {
+          <section class="recommendation-box">
+            <h3>Odluka za trosak</h3>
+            <p>Odobrite trosak ako je stvaran ili ga obrisite ako je greskom ponovljen.</p>
+          </section>
+        }
+
         <div class="detail-actions">
+          @if (selectedDuplicateNeedsDecision) {
+            <button
+              type="button"
+              class="secondary-action"
+              (click)="deleteSelectedDuplicate()"
+              [disabled]="isUpdating"
+            >
+              Obrisi
+            </button>
+            <button
+              type="button"
+              class="primary-action"
+              (click)="approveSelectedDuplicate()"
+              [disabled]="isUpdating"
+            >
+              Odobri
+            </button>
+          }
           <button
             type="button"
             class="primary-action"

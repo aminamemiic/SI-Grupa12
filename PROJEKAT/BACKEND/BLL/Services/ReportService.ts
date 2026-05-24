@@ -29,7 +29,7 @@ export class ReportService implements IReportService {
     const format = this.normalizeExportFormat(requestedFormat);
     const reportType = this.normalizeReportType(query?.tipIzvjestaja || query?.tip || query?.reportType);
     const report = await this.getExpenseReport(query);
-    const timestamp = new Date().toISOString().slice(0, 10);
+    const timestamp = this.formatPeriodDate(new Date()) || "danas";
     const reportTypeLabel = reportType === "detaljni" ? "detaljni" : "sazeti";
 
     if (format === "xlsx") {
@@ -60,11 +60,11 @@ export class ReportService implements IReportService {
     const datumDo = this.normalizeDate(query?.datumDo || query?.dateTo || query?.endDate || query?.do);
 
     if ((query?.datumOd || query?.dateFrom || query?.startDate || query?.od) && !datumOd) {
-      throw new Error("Datum od mora biti u formatu YYYY-MM-DD.");
+      throw new Error("Datum od mora biti u formatu DD.MM.YYYY.");
     }
 
     if ((query?.datumDo || query?.dateTo || query?.endDate || query?.do) && !datumDo) {
-      throw new Error("Datum do mora biti u formatu YYYY-MM-DD.");
+      throw new Error("Datum do mora biti u formatu DD.MM.YYYY.");
     }
 
     if (datumOd && datumDo && datumOd > datumDo) {
@@ -84,12 +84,16 @@ export class ReportService implements IReportService {
       return null;
     }
 
-    const match = dateValue.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!match) {
+    const trimmed = dateValue.trim();
+    const localMatch = trimmed.match(/^(\d{2})\.(\d{2})\.(\d{4})\.?$/);
+    const isoMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!localMatch && !isoMatch) {
       return null;
     }
 
-    const [, yearValue, monthValue, dayValue] = match;
+    const dayValue = localMatch ? localMatch[1] : isoMatch![3];
+    const monthValue = localMatch ? localMatch[2] : isoMatch![2];
+    const yearValue = localMatch ? localMatch[3] : isoMatch![1];
     const year = Number(yearValue);
     const month = Number(monthValue);
     const day = Number(dayValue);
@@ -424,8 +428,8 @@ export class ReportService implements IReportService {
       lines.push(
         "",
         "Troskovi:",
-        ...report.expenses.slice(0, 35).map((expense: any) =>
-          `${expense.datum || "-"} | ${expense.naziv || "-"} | ${this.formatAmount(expense.iznos)} | ${expense.kategorijaNaziv || "-"}`
+      ...report.expenses.slice(0, 35).map((expense: any) =>
+          `${this.formatPeriodDate(expense.datum) || "-"} | ${expense.naziv || "-"} | ${this.formatAmount(expense.iznos)} | ${expense.kategorijaNaziv || "-"}`
         )
       );
 
@@ -468,7 +472,7 @@ export class ReportService implements IReportService {
       "",
       "Troskovi:",
       ...report.expenses.slice(0, 35).map((expense: any) =>
-        `${expense.datum || "-"} | ${expense.naziv || "-"} | ${this.formatAmount(expense.iznos)} | ${expense.kategorijaNaziv || "-"}`
+        `${this.formatPeriodDate(expense.datum) || "-"} | ${expense.naziv || "-"} | ${this.formatAmount(expense.iznos)} | ${expense.kategorijaNaziv || "-"}`
       ),
     ];
 

@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
   public editForm = this.fb.group({
     naziv: ['', [Validators.required, Validators.maxLength(200)]],
     iznos: [null as number | null, [Validators.required, Validators.min(0.01)]],
-    datum: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{1,2}\.\d{4}\.?$/)]],
+    datum: ['', [Validators.required, Validators.pattern(/^\d{2}\.\d{2}\.\d{4}\.?$/)]],
     opis: [''],
     kategorijaId: ['', Validators.required],
     odjelId: ['', Validators.required],

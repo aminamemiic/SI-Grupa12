@@ -11,6 +11,7 @@ const mockExpenseService = {
   createExpense: jest.fn(),
   updateExpense: jest.fn(),
   deleteExpense: jest.fn(),
+  resolvePotentialDuplicate: jest.fn(),
 };
 
 jest.mock("../BLL/Services/ExpenseService", () => ({
@@ -328,6 +329,35 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe("Greška pri brisanju troška.");
+    });
+  });
+
+  describe("Akcije za potencijalni duplikat", () => {
+    test("POST /api/troskovi/:id/duplikat/sacuvaj treba sacuvati duplikat", async () => {
+      mockExpenseService.resolvePotentialDuplicate.mockResolvedValue({
+        id: "dup-1",
+        statusValidacije: "VALIDAN",
+      });
+
+      const response = await request(app).post("/api/troskovi/dup-1/duplikat/sacuvaj");
+
+      expect(response.status).toBe(200);
+      expect(response.body.statusValidacije).toBe("VALIDAN");
+      expect(mockExpenseService.resolvePotentialDuplicate).toHaveBeenCalledWith("dup-1", "SAVE");
+    });
+
+    test("DELETE /api/troskovi/:id/duplikat treba obrisati duplikat", async () => {
+      mockExpenseService.resolvePotentialDuplicate.mockResolvedValue({
+        id: "dup-1",
+        action: "DELETE",
+        deleted: true,
+      });
+
+      const response = await request(app).delete("/api/troskovi/dup-1/duplikat");
+
+      expect(response.status).toBe(200);
+      expect(response.body.deleted).toBe(true);
+      expect(mockExpenseService.resolvePotentialDuplicate).toHaveBeenCalledWith("dup-1", "DELETE");
     });
   });
 });
