@@ -79,6 +79,13 @@
         >
           <span class="nav-icon">AI</span>
           <span>AI notifikacije</span>
+          @if (unreadNotificationCount$ | async; as unreadNotificationCount) {
+            @if (unreadNotificationCount > 0) {
+              <span class="notification-count" [attr.aria-label]="unreadNotificationCount + ' nepročitanih notifikacija'">
+                {{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}
+              </span>
+            }
+          }
         </a>
       </nav>
     }

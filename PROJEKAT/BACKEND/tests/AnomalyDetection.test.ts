@@ -49,7 +49,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
       const context = {
         historicalExpenses: historicalAmounts.map((iznos) => ({ iznos })),
         duplicateCandidates: [],
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);
@@ -67,7 +67,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
       const context = {
         historicalExpenses: historicalAmounts.map((iznos) => ({ iznos })),
         duplicateCandidates: [],
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);
@@ -83,7 +83,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
       const context = {
         historicalExpenses: historicalAmounts.map((iznos) => ({ iznos })),
         duplicateCandidates: [],
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);
@@ -99,7 +99,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
       const context = {
         historicalExpenses: historicalAmounts.map((iznos) => ({ iznos })),
         duplicateCandidates: [],
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);
@@ -127,7 +127,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
       const context = {
         historicalExpenses: [],
         duplicateCandidates,
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);
@@ -152,7 +152,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
       const context = {
         historicalExpenses: [],
         duplicateCandidates,
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);
@@ -183,7 +183,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
       const context = {
         historicalExpenses: [],
         duplicateCandidates,
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);
@@ -207,7 +207,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
       const context = {
         historicalExpenses: [],
         duplicateCandidates,
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);
@@ -333,7 +333,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
           { iznos: 110 },
         ],
         duplicateCandidates: [],
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       });
 
       const normalExpense = { ...validExpense, iznos: 100 }; // u normalnom rasponu
@@ -416,6 +416,22 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
   // ─────────────────────────────────────────────────────────────
 
   describe("Budžetna ograničenja (Budget Constraints)", () => {
+    test("trebalo bi detektovati anomaliju ako budzet ne postoji za odjel, kategoriju i datum", () => {
+      const expense = { ...validExpense, iznos: 300 };
+      const context = {
+        historicalExpenses: [],
+        duplicateCandidates: [],
+        budget: null,
+      };
+
+      const result = aiService["fallbackExpenseAnalysis"](expense, context);
+
+      expect(result.status).toBe("ANOMALIJA");
+      const missingBudget = result.findings.find((f: any) => f.type === "BUDGET_NOT_DEFINED");
+      expect(missingBudget).toBeDefined();
+      expect(missingBudget?.severity).toBe("HIGH");
+    });
+
     test("trebalo bi detektovati ako trošak prelazi budžet", () => {
       const expense = { ...validExpense, iznos: 800 };
       const budget = {
@@ -471,7 +487,7 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
           { iznos: 110 },
         ],
         duplicateCandidates: [],
-        budget: null,
+        budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
       };
 
       const result = aiService["fallbackExpenseAnalysis"](expense, context);

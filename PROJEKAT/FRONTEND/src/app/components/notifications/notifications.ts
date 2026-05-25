@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { forkJoin, of, Subscription, timer } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { AppNotification, NotificationPriority } from '../../../models/entities';
 import { ExpenseService } from '../../../services/expense.service';
@@ -15,10 +15,11 @@ type NotificationFilter = 'ALL' | NotificationPriority;
   templateUrl: './notifications.html',
   styleUrl: './notifications.css',
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent implements OnInit, OnDestroy {
   private readonly notificationService = inject(NotificationService);
   private readonly expenseService = inject(ExpenseService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly refreshSubscription = new Subscription();
 
   public notifications: AppNotification[] = [];
   public selectedNotification: AppNotification | null = null;
@@ -37,6 +38,11 @@ export class NotificationsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.loadNotifications();
+    this.refreshSubscription.add(timer(3000, 3000).subscribe(() => this.loadNotifications(true)));
+  }
+
+  public ngOnDestroy(): void {
+    this.refreshSubscription.unsubscribe();
   }
 
   public get unreadCount(): number {
@@ -67,22 +73,36 @@ export class NotificationsComponent implements OnInit {
     return this.extractRecommendation(this.selectedNotification.poruka);
   }
 
-  public loadNotifications(): void {
-    this.isLoading = true;
+  public loadNotifications(silent = false): void {
+    if (!silent) {
+      this.isLoading = true;
+    }
+
     this.errorMessage = '';
 
     this.notificationService.getNotifications()
       .pipe(finalize(() => {
-        this.isLoading = false;
+        if (!silent) {
+          this.isLoading = false;
+        }
+
         this.cdr.detectChanges();
       }))
       .subscribe({
         next: (notifications) => {
+          const selectedId = this.selectedNotification?.id;
           this.notifications = notifications;
-          this.selectedNotification = notifications[0] || null;
+          this.selectedNotification =
+            notifications.find((notification) => notification.id === selectedId) ||
+            notifications[0] ||
+            null;
         },
         error: (error) => {
           console.error(error);
+          if (silent) {
+            return;
+          }
+
           this.errorMessage = this.getErrorMessage(error);
           this.notifications = [];
           this.selectedNotification = null;
