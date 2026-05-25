@@ -10,5 +10,7 @@
 - **Deploy AI servisa**: U početku je bilo poteškoća. Deploy nije uspješno odrađen nakon prvih pokušaja, no problem je, nakon kratkog vremena, zahvaljujući prije svega dobroj komunikaciji i saradnji, prevaziđen.
 
 ## Šta treba promijeniti
+Proces deploymenta AI servisa: Potrebno je bolje dokumentovati proces deploymenta kako bi se izbjegle poteškoće u budućim sprintovima.
 
 ## Koje konkretne akcije tim uvodi u narednom sprintu
+Nastaviti s praksom pravovremene isporuke koda – Tim treba zadržati disciplinu završavanja funkcionalnosti unutar predviđenog roka, čime se osigurava dovoljno vremena za testiranje i eventualne iteracije prije kraja sprinta
