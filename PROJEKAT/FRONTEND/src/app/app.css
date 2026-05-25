@@ -115,6 +115,10 @@
   text-decoration: none;
 }
 
+.side-nav a {
+  position: relative;
+}
+
 .sidebar-admin-link {
   margin-top: auto;
   color: #1769ff;
@@ -143,6 +147,21 @@
   color: currentColor;
   font-size: 13px;
   font-weight: 900;
+}
+
+.notification-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  margin-left: auto;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #d92d20;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .workspace {

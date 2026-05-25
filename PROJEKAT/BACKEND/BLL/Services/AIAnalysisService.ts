@@ -313,7 +313,8 @@ export class AIAnalysisService {
         throw new Error(`AI servis je vratio status ${response.status}.`);
       }
 
-      return await response.json() as ExpenseAnalysisResult;
+      const analysis = await response.json() as ExpenseAnalysisResult;
+      return this.applyRequiredBudgetRule(analysis, expense, context);
     } catch (_error) {
       return this.fallbackExpenseAnalysis(expense, context);
     }
@@ -355,6 +356,11 @@ export class AIAnalysisService {
     // consumption until they are reviewed, otherwise the same invoice can create a
     // false budget-exceeded anomaly.
     const budget = context?.budget;
+    const missingBudgetFinding = this.getMissingBudgetFinding(expense, context, duplicateFinding);
+    if (missingBudgetFinding) {
+      findings.push(missingBudgetFinding);
+    }
+
     if (!duplicateFinding && budget && Number.isFinite(Number(budget.planiraniIznos))) {
       const planned = Number(budget.planiraniIznos);
       const spentBefore = Number(budget.potrosenoPrijeTroska || 0);
@@ -409,6 +415,48 @@ export class AIAnalysisService {
 
   private isAnomalyFinding(finding: ExpenseAnalysisFinding): boolean {
     return finding.type !== "POTENCIJALNI_DUPLIKAT";
+  }
+
+  private getMissingBudgetFinding(
+    expense: any,
+    context: any,
+    duplicateFinding?: ExpenseAnalysisFinding | null
+  ): ExpenseAnalysisFinding | null {
+    if (duplicateFinding || !Object.prototype.hasOwnProperty.call(context || {}, "budget") || context?.budget) {
+      return null;
+    }
+
+    return {
+      type: "BUDGET_NOT_DEFINED",
+      severity: "HIGH",
+      message: "Za odabrani odjel, kategoriju i datum troska ne postoji odobren budzet.",
+      evidence: {
+        odjelId: expense?.odjelId,
+        kategorijaId: expense?.kategorijaId,
+        datum: expense?.datum,
+      },
+    };
+  }
+
+  private applyRequiredBudgetRule(analysis: ExpenseAnalysisResult, expense: any, context: any): ExpenseAnalysisResult {
+    const findings = Array.isArray(analysis?.findings) ? analysis.findings : [];
+    const duplicateFinding = findings.find((finding) => finding?.type === "POTENCIJALNI_DUPLIKAT");
+    const missingBudgetFinding = this.getMissingBudgetFinding(expense, context, duplicateFinding);
+
+    if (!missingBudgetFinding || findings.some((finding) => finding?.type === missingBudgetFinding.type)) {
+      return analysis;
+    }
+
+    const nextFindings = [...findings, missingBudgetFinding];
+    return {
+      ...analysis,
+      status: "ANOMALIJA",
+      severity: "HIGH",
+      riskScore: Math.max(Number(analysis?.riskScore || 0), 0.6),
+      findings: nextFindings,
+      explanation: nextFindings.map((finding) => finding.message).join(" "),
+      recommendedAction: "Provjeriti trosak i definisati/odobriti budzet prije dalje obrade.",
+    };
   }
 }
 
