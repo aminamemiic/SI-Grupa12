@@ -7,18 +7,23 @@ Sprint 9
 
 ## Sprint cilj
 
-Implementirati napredni modul za poređenje finansijskih podataka i predviđanje/projekciju potrošnje budžeta. Korisnicima (glavnim računovođama i finansijskim direktorima) omogućiti jednostavan checkbox odabir više zapisa troškova direktno iz Data Overview tabele radi side-by-side poređenja. Razviti vizuelne komponente za poređenje po kategorijama, odjelima i vremenskim periodima, kao i naprednu analizu odstupanja budžeta i stvarnih troškova (Variance Analysis) sa grafičkim progress bar-ovima i detekcijom prekomjerne potrošnje. Na backend sloju razviti matematički algoritam linearne ekstrapolacije za predviđanje potrošnje do kraja tekućeg mjeseca na osnovu dnevne brzine trošenja.
+Implementirati cjelokupan napredni modul za poređenje finansijskih podataka, predviđanje/projekciju potrošnje budžeta te pametne AI mehanizme za kontrolu i validaciju troškova. Korisnicima omogućiti checkbox selekciju troškova iz Data Overview tabele za tabelarni side-by-side prikaz razlika po kategorijama i odjelima. Na backendu razviti formulu linearne projekcije budžeta na osnovu brzine trošenja tekućeg mjeseca. Dodatno, integrisati AI modul za automatsko predlaganje kategorija na osnovu naziva troška, uvesti klijentsku real-time pred-validaciju forme za unos (koja u pozadini prepoznaje anomalije, duplikate i prekoracenja budžeta prije spašavanja), te zatvoriti kompletan radni tok odlučivanja i rješavanja potencijalnih duplih troškova direktno kroz interfejs notifikacija.
 
 ---
 
 ## Ključne stavke koje tim želi završiti
-- Razvoj checkbox funkcionalnosti u Data Overview tabeli za selekciju pojedinačnih troškova (`US-29`).
-- Implementacija Angular komponente `selected-expense-comparison` za uporedni tabelarni prikaz selektovanih troškova sa vizuelnim isticanjem razlika (`US-30`).
-- Implementacija Angular komponente `planned-actual-comparison` za vizuelno poređenje planiranih i stvarnih troškova (Variance Analysis) sa dinamičkim progress bar-ovima i crvenim indikatorima prekoračenja (`US-31`).
-- Razvoj backend servisa u `BudgetService.getBudgetProjection` koji računa dnevnu brzinu trošenja u tekućem mjesecu, projektovanu mjesečnu potrošnju i projektovano krajnje stanje budžeta (`US-36`).
+- Razvoj checkbox funkcionalnosti u Data Overview tabeli za selekciju pojedinačnih troškova
+- Implementacija Angular komponente `selected-expense-comparison` za uporedni side-by-side tabelarni prikaz selektovanih troškova s isticanjem razlika
+- Implementacija Angular komponente `planned-actual-comparison` za vizuelno poređenje planiranih i stvarnih troškova (Variance Analysis) sa dinamičkim progress bar-ovima i crvenim indikatorima prekoračenja
+- Razvoj backend servisa u `BudgetService.getBudgetProjection` i endpointa `/api/budzeti/:id/projekcija` koji računa dnevnu brzinu trošenja, projektovanu mjesečnu potrošnju i projektovano krajnje stanje budžeta
+- Integracija AI sugestije kategorije na frontendu i backendu (`/api/troskovi/category-suggestion`) na osnovu unesenog naziva i opisa troška
+- Implementacija klijentske real-time pred-validacije na formi troškova (`/api/troskovi/validate`) koja na osnovu unosa (sa 500ms debounce) poziva AI analizu i prikazuje upozorenja o anomalijama (Z-score, IQR, duplikati, prekoračenja) prije spašavanja
+- Razvoj radnog toka za rješavanje potencijalno duplih troškova na frontendu i backendu (endpoints za odobravanje/spašavanje i brisanje iz modula notifikacija)
 - Izrada prateće dokumentacije za Sprint 9 (Sprint Goal, Product Backlog, Sprint Backlog, Decision Log, AI Usage Log, Testing Proof, Sprint Review i Sprint Retrospective).
 
 ---
 
 ## Rizici i zavisnosti
-Glavni rizik u Sprintu 9 bio je ispravno rukovanje datumskim zonama i pretečenim danima u tekućem mjesecu prilikom kalkulacije dnevne brzine trošenja, posebno prvih dana u mjesecu (izbjegavanje dijeljenja sa nulom). Također, održavanje selekcije checkbox-ova tokom navigacije, filtriranja ili paginacije u Angularu zahtijevalo je pažljivo upravljanje lokalnim stanjem komponente kako se selektovani podaci ne bi gubili. Integracija i testiranje ovih dinamičkih kalkulacija na backendu zavise od stabilnosti baze podataka i ispravnosti unesenih datuma.
+- **Rizik opterećenja servera**: Real-time validacija forme troškova pri svakoj izmjeni može uzrokovati prevelik broj API zahtjeva ako se debounce mehanizam (postavljen na 500ms) ne ponaša ispravno.
+- **Upravljanje stanjem**: Selekcija checkbox-ova se mora održati stabilnom tokom filtriranja, pretrage i navigacije na Data Overview tabelama bez gubljenja označenih stavki.
+
