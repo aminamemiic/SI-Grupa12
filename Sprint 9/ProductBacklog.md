@@ -1,9 +1,9 @@
 ## Sprint 9
 
 > Izmjene u odnosu na Sprint 8:
-> - Stavke 26 (Odabir podataka za poređenje), 27 (Poređenje po kategorijama i odjelima), 28 (Poređenje planiranih i stvarnih troškova) i 29 (Predviđanje potrošnje do kraja perioda) su u potpunosti implementirane i označene kao "Done".
-> - Funkcionalnosti poređenja podataka (stavka 18) su dodatno unificirane i proširene naprednim klijentskim uporednim prikazima na frontendu.
-> - Preostale AI i tehničke stavke (AI analiza anomalija, generisanje upozorenja, integracija OCR i Redis) prenesene su u backlog za naredne faze.
+> - Stavke 17 (AI analiza) i 19 (Generisanje upozorenja) su uspješno završene kroz razvoj AI sugestije kategorije, real-time pred-validacije forme za unos troška s instantnim ispisom upozorenja o anomalijama/odstupanjima, te cjelokupnog workflow-a rješavanja duplikata.
+> - Nove stavke 26 (Odabir podataka za poređenje), 27 (Poređenje po kategorijama i odjelima), 28 (Poređenje planiranih i stvarnih troškova) i 29 (Predviđanje potrošnje do kraja perioda) su u potpunosti implementirane i označene kao "Done".
+> - Sve funkcionalnosti poređenja i pametnih finansijskih projekcija su integrisane sa ulogama Keycloak autentifikacije i RBAC middleware-om.
 
 | ID | Naziv stavke | Tip | Prioritet | Status | Procjena složenosti | Opis |
 |:---|:---|:---|:---|:---|:---|:---|
@@ -23,9 +23,9 @@
 | 14 | Planiranje budžeta | Feature | High | Done | 3 | Kreiranje, pregled, uređivanje, odobravanje i odbijanje budžeta. Implementirano ranije u Sprintu 7. |
 | 15 | Pregled podataka | Feature | High | Done | 5 | Pregled liste troškova i osnovnih detalja zapisa za odgovorne korisnike. Završeno u Sprintu 7. |
 | 16 | Uvoz podataka | Feature | Medium | Done | 13 | Uvoz troškova iz CSV, XLS i XLSX fajlova, preview, obrada, validacija, potvrda upisa i historija uvoza. Završeno u Sprintu 7. |
-| 17 | AI analiza | Feature | Medium | To do | 13 | AI analiza troškova, trendova, budžetskih odstupanja i neuobičajenih obrazaca potrošnje. |
+| 17 | AI analiza | Feature | Medium | Done | 13 | AI prijedlog optimalne kategorije pri unosu troška i klijentska real-time pred-validacija forme unosa s detekcijom anomalija (Z-score, IQR, duplikati, prekoračenja) prije spašavanja. |
 | 18 | Poređenje podataka | Feature | Medium | Done | 5 | Ručno poređenje podataka po kategorijama i poređenje stvarnih troškova u odnosu na planirane budžete kroz modul izvještaja s prikazom iskoristivosti budžeta. Prošireno u Sprintu 9. |
-| 19 | Generisanje upozorenja | Feature | Medium | To do | 3 | Generisanje upozorenja i sažetaka na osnovu analize i uočenih anomalija. |
+| 19 | Generisanje upozorenja | Feature | Medium | Done | 3 | Generisanje real-time upozorenja o odstupanjima na formi, slanje notifikacija o duplikatima i interaktivno rješavanje/odlučivanje o potencijalno duplim troškovima. |
 | 20 | Izvještaj | Feature | Medium | Done | 3 | Generisanje i export sažetih i detaljnih izvještaja o troškovima u XLSX, CSV i PDF formatima. |
 | 21 | Evidencija komentara | Feature | Low | To do | 2 | Dodavanje i pregled komentara odgovornih osoba uz troškove. |
 | 22 | Integracija OCR biblioteke | Technical Task | Medium | To do | 8 | Povezivanje OCR alata sa backend kodom. |
