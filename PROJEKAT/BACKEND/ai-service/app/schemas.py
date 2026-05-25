@@ -15,9 +15,17 @@ class ExpenseCheckRequest(BaseModel):
 
 
 class CategorySuggestionRequest(BaseModel):
-    naziv: str
+    naziv: str = Field(min_length=1, max_length=200)
     opis: str | None = None
     dobavljac: str | None = None
+    categories: list[dict[str, Any]] = Field(default_factory=list)
+
+
+class CategorySuggestionResponse(BaseModel):
+    categoryId: str | None = None
+    categoryName: str | None = None
+    confidence: float
+    reason: str
 
 
 class BudgetForecastRequest(BaseModel):

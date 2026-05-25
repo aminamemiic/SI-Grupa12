@@ -20,6 +20,9 @@ export class BudgetPlanningComponent implements OnInit {
 
   public budgets: Budget[] = [];
   public selectedBudget: Budget | null = null;
+  public selectedBudgetProjection: any = null;
+  public isProjectionLoading = false;
+  public projectionErrorMessage = '';
   public referenceData: BudgetReferenceData = { kategorije: [], odjeli: [], projekti: [] };
   public isLoading = false;
   public isSaving = false;
@@ -70,7 +73,7 @@ export class BudgetPlanningComponent implements OnInit {
     this.budgetService.getBudgets().subscribe({
       next: (budgets) => {
         this.budgets = budgets;
-        this.selectedBudget = budgets[0] || null;
+        this.selectBudget(budgets[0] || null);
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -180,7 +183,7 @@ export class BudgetPlanningComponent implements OnInit {
           this.successMessage = 'Budžet je uspješno sačuvan.';
         }
 
-        this.selectedBudget = savedBudget;
+        this.selectBudget(savedBudget);
         this.closeForm(false);
         this.isSaving = false;
         this.cdr.detectChanges();
@@ -203,8 +206,34 @@ export class BudgetPlanningComponent implements OnInit {
     this.budgetForm.markAsPristine();
   }
 
-  public selectBudget(budget: Budget): void {
+  public selectBudget(budget: Budget | null): void {
     this.selectedBudget = budget;
+    if (budget) {
+      this.loadBudgetProjection(budget.id.toString());
+    } else {
+      this.selectedBudgetProjection = null;
+    }
+  }
+
+  public loadBudgetProjection(budgetId: string): void {
+    this.isProjectionLoading = true;
+    this.projectionErrorMessage = '';
+    this.selectedBudgetProjection = null;
+    this.cdr.detectChanges();
+
+    this.budgetService.getBudgetProjection(budgetId).subscribe({
+      next: (projection) => {
+        this.selectedBudgetProjection = projection;
+        this.isProjectionLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Greška pri dohvatu projekcije:', error);
+        this.projectionErrorMessage = 'Neuspješno učitavanje projekcije budžeta.';
+        this.isProjectionLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   public approveBudget(budget: Budget): void {

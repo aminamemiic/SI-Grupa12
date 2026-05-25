@@ -9,6 +9,7 @@ const mockBudgetRepository = {
   updateStatus: jest.fn(),
   existsDuplicate: jest.fn(),
   getUserIdFromAuth: jest.fn(),
+  getBudgetSpentStats: jest.fn(),
 };
 
 jest.mock("../DAL/Repositories/BudgetRepository", () => ({
@@ -533,6 +534,121 @@ describe("BudgetService", () => {
         service.updateBudgetStatus("1", "ODOBREN", undefined)
       ).rejects.toThrow("Nije moguce evidentirati korisnika koji odobrava budzet.");
       expect(mockBudgetRepository.updateStatus).not.toHaveBeenCalled();
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────────
+  // getBudgetProjection
+  // ─────────────────────────────────────────────────────────────
+
+  describe("getBudgetProjection", () => {
+    const now = new Date();
+    const currentDay = now.getDate();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+
+    test("treba izračunati projekciju budžeta sa pozitivnim krajnjim stanjem", async () => {
+      mockBudgetRepository.getBudgetSpentStats.mockResolvedValue({
+        planiraniIznos: 100000,
+        potrosenoPrijeOvogMjeseca: 34000,
+        potrosenoUovomMjesecu: 8000,
+      });
+
+      const result = await service.getBudgetProjection("budget-1");
+
+      expect(result.budgetId).toBe("budget-1");
+      expect(result.planiraniIznos).toBe(100000);
+      expect(result.potrosenoPrijeOvogMjeseca).toBe(34000);
+      expect(result.potrosenoUovomMjesecu).toBe(8000);
+
+      // Dnevna brzina = 8000 / currentDay
+      const expectedDailyRate = 8000 / currentDay;
+      expect(result.dnevnaBrzinaTrosenja).toBeCloseTo(expectedDailyRate, 2);
+
+      // Projektovana potrošnja za mjesec = dnevna brzina * dani u mjesecu
+      const expectedProjectedMonth = expectedDailyRate * daysInMonth;
+      expect(result.projektovanaPotrosnjaZaMjesec).toBeCloseTo(expectedProjectedMonth, 2);
+
+      // Krajnje stanje = 100000 - 34000 - projektovana potrošnja
+      const expectedFinalBalance = 100000 - 34000 - expectedProjectedMonth;
+      expect(result.projektovanoKrajnjeStanje).toBeCloseTo(expectedFinalBalance, 2);
+
+      expect(mockBudgetRepository.getBudgetSpentStats).toHaveBeenCalledWith("budget-1");
+    });
+
+    test("treba izračunati negativno krajnje stanje kada je potrošnja previsoka", async () => {
+      mockBudgetRepository.getBudgetSpentStats.mockResolvedValue({
+        planiraniIznos: 15000,
+        potrosenoPrijeOvogMjeseca: 5000,
+        potrosenoUovomMjesecu: 12000,
+      });
+
+      const result = await service.getBudgetProjection("budget-2");
+
+      expect(result.budgetId).toBe("budget-2");
+      expect(result.planiraniIznos).toBe(15000);
+
+      const expectedDailyRate = 12000 / currentDay;
+      const expectedProjectedMonth = expectedDailyRate * daysInMonth;
+      const expectedFinalBalance = 15000 - 5000 - expectedProjectedMonth;
+
+      expect(result.projektovanoKrajnjeStanje).toBeCloseTo(expectedFinalBalance, 2);
+      // Ovo bi trebalo biti negativno (probijanje budžeta)
+      expect(result.projektovanoKrajnjeStanje).toBeLessThan(0);
+    });
+
+    test("treba vratiti nulu za dnevnu brzinu trošenja ako je potrošnja nula", async () => {
+      mockBudgetRepository.getBudgetSpentStats.mockResolvedValue({
+        planiraniIznos: 50000,
+        potrosenoPrijeOvogMjeseca: 0,
+        potrosenoUovomMjesecu: 0,
+      });
+
+      const result = await service.getBudgetProjection("budget-3");
+
+      expect(result.dnevnaBrzinaTrosenja).toBe(0);
+      expect(result.projektovanaPotrosnjaZaMjesec).toBe(0);
+      // Krajnje stanje = planirani iznos jer nema potrošnje
+      expect(result.projektovanoKrajnjeStanje).toBe(50000);
+    });
+
+    test("treba proslijediti budgetId repozitoriju", async () => {
+      mockBudgetRepository.getBudgetSpentStats.mockResolvedValue({
+        planiraniIznos: 10000,
+        potrosenoPrijeOvogMjeseca: 0,
+        potrosenoUovomMjesecu: 0,
+      });
+
+      await service.getBudgetProjection("my-uuid-123");
+
+      expect(mockBudgetRepository.getBudgetSpentStats).toHaveBeenCalledWith("my-uuid-123");
+    });
+
+    test("treba baciti grešku ako budžet ne postoji u repozitoriju", async () => {
+      mockBudgetRepository.getBudgetSpentStats.mockRejectedValue(
+        new Error("Budzet ne postoji.")
+      );
+
+      await expect(service.getBudgetProjection("nepostojeci-id")).rejects.toThrow(
+        "Budzet ne postoji."
+      );
+    });
+
+    test("treba vratiti sve potrebne ključeve u odgovoru", async () => {
+      mockBudgetRepository.getBudgetSpentStats.mockResolvedValue({
+        planiraniIznos: 20000,
+        potrosenoPrijeOvogMjeseca: 3000,
+        potrosenoUovomMjesecu: 1500,
+      });
+
+      const result = await service.getBudgetProjection("budget-keys");
+
+      expect(result).toHaveProperty("budgetId");
+      expect(result).toHaveProperty("planiraniIznos");
+      expect(result).toHaveProperty("potrosenoPrijeOvogMjeseca");
+      expect(result).toHaveProperty("potrosenoUovomMjesecu");
+      expect(result).toHaveProperty("dnevnaBrzinaTrosenja");
+      expect(result).toHaveProperty("projektovanaPotrosnjaZaMjesec");
+      expect(result).toHaveProperty("projektovanoKrajnjeStanje");
     });
   });
 });

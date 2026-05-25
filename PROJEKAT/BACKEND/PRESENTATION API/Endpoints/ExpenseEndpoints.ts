@@ -39,6 +39,14 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
       console.error("Greška pri validaciji troška:", error);
       return res.status(400).json({
         message: error.message || "Greška pri validaciji troška.",
+  app.post("/api/troskovi/category-suggestion", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
+    try {
+      const suggestion = await expenseService.suggestCategory(req.body);
+      return res.status(200).json(suggestion);
+    } catch (error: any) {
+      console.error("Greska pri AI prijedlogu kategorije:", error);
+      return res.status(400).json({
+        message: error.message || "Greska pri AI prijedlogu kategorije.",
       });
     }
   });

@@ -20,4 +20,5 @@ export interface IExpenseService {
     validationErrors: string[];
     warnings: Array<{ type: string; message: string; severity: "LOW" | "MEDIUM" | "HIGH" }>;
   }>;
+  suggestCategory(payload: any): Promise<any>;
 }

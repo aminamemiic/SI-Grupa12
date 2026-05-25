@@ -132,6 +132,22 @@ textarea {
   cursor: pointer;
 }
 
+.category-suggestion-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.btn-ai-suggestion {
+  min-width: 118px;
+  white-space: nowrap;
+  background: #155eef;
+}
+
+.ai-suggestion-message {
+  color: #05603a;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
@@ -290,6 +306,10 @@ th {
 
 @media (max-width: 900px) {
   .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-suggestion-row {
     grid-template-columns: 1fr;
   }
 

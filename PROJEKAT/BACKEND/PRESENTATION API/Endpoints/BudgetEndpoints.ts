@@ -57,6 +57,24 @@ function registerBudgetEndpoints(app: any, authService: IAuthService, _logger?: 
     }
   );
 
+  app.get(
+    "/api/budzeti/:id/projekcija",
+    authService.requireAuthentication,
+    authService.requireRole(...viewRoles),
+    async (req: any, res: any) => {
+      try {
+        const projection = await budgetService.getBudgetProjection(req.params.id);
+        return res.status(200).json(projection);
+      } catch (error: any) {
+        console.error("Greska pri dohvatu projekcije budzeta:", error);
+        if (error.message === "Budzet ne postoji.") {
+          return res.status(404).json({ message: "Budzet ne postoji." });
+        }
+        return res.status(500).json({ message: "Greska pri dohvatu projekcije budzeta." });
+      }
+    }
+  );
+
   app.post(
     "/api/budzeti",
     authService.requireAuthentication,

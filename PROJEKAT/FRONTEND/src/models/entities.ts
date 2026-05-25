@@ -52,6 +52,13 @@ export interface ExpenseReferenceData {
   dobavljaci: ReferenceItem[];
 }
 
+export interface ExpenseCategorySuggestion {
+  categoryId: string | number | null;
+  categoryName: string | null;
+  confidence: number;
+  reason: string;
+}
+
 export interface Budget {
   id: string | number;
   naziv: string;

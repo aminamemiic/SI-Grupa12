@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   CreateExpenseRequest,
   Expense,
+  ExpenseCategorySuggestion,
   ExpenseReferenceData,
 } from '../models/entities';
 import { environment } from '../environments/environment';
@@ -67,5 +68,7 @@ export class ExpenseService {
   // ─────────────────────────────────────────────────────────────
   validateExpenseBeforeCreation(payload: CreateExpenseRequest): Observable<ValidationResult> {
     return this.http.post<ValidationResult>(`${this.apiUrl}/validate`, payload, this.getAuthOptions());
+  suggestCategory(payload: { naziv: string; opis?: string | null; dobavljac?: string | null }): Observable<ExpenseCategorySuggestion> {
+    return this.http.post<ExpenseCategorySuggestion>(`${this.apiUrl}/category-suggestion`, payload, this.getAuthOptions());
   }
 }

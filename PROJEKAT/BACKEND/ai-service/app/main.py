@@ -8,11 +8,13 @@ from app.schemas import (
     AnalysisStartResponse,
     BudgetForecastRequest,
     CategorySuggestionRequest,
+    CategorySuggestionResponse,
     ExpenseCheckRequest,
     HealthResponse,
 )
 from app.services.analysis_service import AnalysisService
 from app.services.anomaly_service import AnomalyService
+from app.services.category_service import CategoryService
 
 
 app = FastAPI(
@@ -23,6 +25,7 @@ app = FastAPI(
 
 analysis_service = AnalysisService()
 anomaly_service = AnomalyService()
+category_service = CategoryService()
 
 
 @app.on_event("startup")
@@ -40,9 +43,14 @@ def expense_check(payload: ExpenseCheckRequest) -> dict:
     return anomaly_service.analyze_expense(payload.expense, payload.context)
 
 
-@app.post("/ai/category-suggestion", status_code=status.HTTP_501_NOT_IMPLEMENTED)
-def category_suggestion(_payload: CategorySuggestionRequest) -> dict[str, str]:
-    return {"message": "Category suggestion endpoint is ready for implementation."}
+@app.post("/ai/category-suggestion", response_model=CategorySuggestionResponse)
+def category_suggestion(payload: CategorySuggestionRequest) -> dict:
+    return category_service.suggest_category(
+        naziv=payload.naziv,
+        opis=payload.opis,
+        dobavljac=payload.dobavljac,
+        categories=payload.categories,
+    )
 
 
 @app.post("/ai/budget-forecast", status_code=status.HTTP_501_NOT_IMPLEMENTED)
