@@ -19,7 +19,7 @@ Implementirati cjelokupan napredni modul za poređenje finansijskih podataka, pr
 - Integracija AI sugestije kategorije na frontendu i backendu (`/api/troskovi/category-suggestion`) na osnovu unesenog naziva i opisa troška
 - Implementacija klijentske real-time pred-validacije na formi troškova (`/api/troskovi/validate`) koja na osnovu unosa (sa 500ms debounce) poziva AI analizu i prikazuje upozorenja o anomalijama (Z-score, IQR, duplikati, prekoračenja) prije spašavanja
 - Razvoj radnog toka za rješavanje potencijalno duplih troškova na frontendu i backendu (endpoints za odobravanje/spašavanje i brisanje iz modula notifikacija)
-- Izrada prateće dokumentacije za Sprint 9 (Sprint Goal, Product Backlog, Sprint Backlog, Decision Log, AI Usage Log, Testing Proof, Sprint Review i Sprint Retrospective).
+- Izrada prateće dokumentacije za Sprint 9 (Sprint Goal, Product Backlog, Sprint Backlog, Decision Log, AI Usage Log, Testing Proof i Sprint Retrospective).
 
 ---
 
