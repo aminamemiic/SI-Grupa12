@@ -180,7 +180,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   saveExpense(): void {
     this.successMessage = '';
     this.errorMessage = '';
-    this.categorySuggestionMessage = '';
     this.validationWarnings = [];
     this.validationErrors = [];
     this.hasValidationWarnings = false;
@@ -356,7 +355,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     this.expenseForm.reset();
     this.successMessage = '';
     this.errorMessage = '';
-    this.categorySuggestionMessage = '';
     this.validationWarnings = [];
     this.validationErrors = [];
     this.hasValidationWarnings = false;
