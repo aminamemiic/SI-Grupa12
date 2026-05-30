@@ -129,6 +129,111 @@ describe("AIAnalysisService category suggestion", () => {
 // fallbackDatabaseAnalysis – unit testovi
 // ─────────────────────────────────────────────────────────────────────────────
 
+describe("AIAnalysisService supplier growth and assistant", () => {
+  let svc: any;
+
+  beforeEach(() => {
+    svc = new AIAnalysisService("http://noop");
+  });
+
+  const reportData = {
+    summary: { totalAmount: 18000, budgetTotal: 20000 },
+    breakdowns: {
+      byCategory: [{ label: "Oprema", total: 12000 }],
+      byDepartment: [{ label: "IT", total: 15000 }],
+    },
+    expenses: [
+      { id: "1", datum: "2026-04-05", iznos: 1000, dobavljacId: "dell", dobavljacNaziv: "Dell", kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+      { id: "2", datum: "2026-05-05", iznos: 2000, dobavljacId: "dell", dobavljacNaziv: "Dell", kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+      { id: "3", datum: "2026-04-08", iznos: 1000, dobavljacId: "hp", dobavljacNaziv: "HP", kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+      { id: "4", datum: "2026-05-08", iznos: 1300, dobavljacId: "hp", dobavljacNaziv: "HP", kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+      { id: "5", datum: "2026-05-12", iznos: 7000, dobavljacId: "lenovo", dobavljacNaziv: "Lenovo", kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+    ],
+  };
+
+  test("getTopGrowingSuppliers racuna rast ispravno", () => {
+    const result = svc.getTopGrowingSuppliers(reportData);
+    const dell = result.suppliers.find((supplier: any) => supplier.supplierName === "Dell");
+
+    expect(dell.currentAmount).toBe(2000);
+    expect(dell.previousAmount).toBe(1000);
+    expect(dell.growthPercentage).toBe(100);
+    expect(dell.status).toBe("growth");
+    expect(dell.riskLevel).toBe("HIGH");
+  });
+
+  test("getTopGrowingSuppliers ne dijeli nulom kada previousAmount iznosi 0", () => {
+    const result = svc.getTopGrowingSuppliers(reportData);
+    const lenovo = result.suppliers.find((supplier: any) => supplier.supplierName === "Lenovo");
+
+    expect(lenovo.previousAmount).toBe(0);
+    expect(lenovo.growthPercentage).toBeNull();
+    expect(lenovo.status).toBe("new_spending");
+    expect(lenovo.riskLevel).toBe("HIGH");
+  });
+
+  test("getTopGrowingSuppliers sortira dobavljace po rastu i nove po trenutnom iznosu", () => {
+    const result = svc.getTopGrowingSuppliers(reportData);
+
+    expect(result.suppliers[0].supplierName).toBe("Lenovo");
+    expect(result.suppliers[1].supplierName).toBe("Dell");
+    expect(result.suppliers[2].supplierName).toBe("HP");
+  });
+
+  test("askAssistant vraca odgovor za pitanje o dobavljacima", () => {
+    const result = svc.askAssistant("Koji dobavljac ima najveci rast?", reportData, []);
+
+    expect(result.intent).toBe("SUPPLIER_GROWTH");
+    expect(result.answer).toContain("Lenovo");
+    expect(result.data.suppliers).toHaveLength(3);
+  });
+
+  test("pitanje koji trosak je najveci vraca LARGEST_EXPENSE", () => {
+    const result = svc.askAssistant("koji trosak je najveci", reportData, []);
+
+    expect(result.intent).toBe("LARGEST_EXPENSE");
+    expect(result.answer).toContain("Lenovo");
+    expect(result.answer).toContain("7.000");
+  });
+
+  test("pitanje koji trošak je najveći radi sa dijakritikom", () => {
+    const result = svc.askAssistant("koji trošak je najveći", reportData, []);
+
+    expect(result.intent).toBe("LARGEST_EXPENSE");
+    expect(result.answer).toContain("Lenovo");
+  });
+
+  test("pitanje kojih je 5 najvećih troškova vraca TOP_EXPENSES", () => {
+    const result = svc.askAssistant("kojih je 5 najvećih troškova", reportData, []);
+
+    expect(result.intent).toBe("TOP_EXPENSES");
+    expect(result.data.expenses).toHaveLength(5);
+    expect(result.answer).toContain("1.");
+  });
+
+  test("pitanje kome smo najviše platili vraca MOST_EXPENSIVE_SUPPLIER", () => {
+    const result = svc.askAssistant("kome smo najviše platili", reportData, []);
+
+    expect(result.intent).toBe("MOST_EXPENSIVE_SUPPLIER");
+    expect(result.answer).toContain("Lenovo");
+  });
+
+  test("pitanje koliko je ostalo budžeta vraca BUDGET_REMAINING", () => {
+    const result = svc.askAssistant("koliko je ostalo budžeta", reportData, []);
+
+    expect(result.intent).toBe("BUDGET_REMAINING");
+    expect(result.data.remaining).toBe(2000);
+  });
+
+  test("nepoznato pitanje vraca help odgovor sa primjerima", () => {
+    const result = svc.askAssistant("Kakvo je vrijeme danas?", reportData, []);
+
+    expect(result.intent).toBe("HELP");
+    expect(result.answer).toContain("Mogu odgovoriti");
+    expect(result.answer).toContain("Koji trosak je najveci?");
+  });
+});
+
 describe("AIAnalysisService – fallbackDatabaseAnalysis", () => {
   let svc: any;
 
