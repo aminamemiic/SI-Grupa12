@@ -2,329 +2,237 @@ export {};
 const express = require("express");
 const request = require("supertest");
 
-const mockExpenseService = {
-  getAllExpenses: jest.fn(),
+const mockBudgetService = {
+  getAllBudgets: jest.fn(),
+  getBudgetById: jest.fn(),
   getReferenceData: jest.fn(),
-  createExpense: jest.fn(),
-  updateExpense: jest.fn(),
-  deleteExpense: jest.fn(),
+  createBudget: jest.fn(),
+  updateBudget: jest.fn(),
+  updateBudgetStatus: jest.fn(),
+  getBudgetProjection: jest.fn(),
+  vratiNaDoradu: jest.fn(),
+  submitujDoradu: jest.fn(),
+  getKomentari: jest.fn(),
 };
 
-jest.mock("../BLL/Services/ExpenseService", () => ({
-  ExpenseService: jest.fn().mockImplementation(() => mockExpenseService),
+jest.mock("../BLL/Services/BudgetService", () => ({
+  BudgetService: jest.fn().mockImplementation(() => mockBudgetService),
 }));
 
-const { registerExpenseEndpoints } = require("../PRESENTATION API/Endpoints/ExpenseEndpoints");
+const { registerBudgetEndpoints } = require("../PRESENTATION API/Endpoints/BudgetEndpoints");
 
-describe("ExpenseEndpoints – integracioni testovi", () => {
+describe("BudgetEndpoints – integracioni testovi", () => {
   let app: any;
 
   const authService = {
-    verifyBearerToken: jest.fn((_req: any, _res: any, next: any) => next()),
     requireAuthentication: jest.fn((req: any, _res: any, next: any) => {
-      req.user = { sub: "test-user", roles: ["admin"] };
+      const roleHeader = req.headers["x-test-role"] || "admin";
+      const subHeader = req.headers["x-test-sub"] || "user-1";
+      req.user = { sub: subHeader, roles: [roleHeader] };
       next();
     }),
-    requireRole: jest.fn(
-      () => (_req: any, _res: any, next: any) => next()
-    ),
-    refreshSession: jest.fn(),
+    requireRole: jest.fn((...allowedRoles: string[]) => (req: any, res: any, next: any) => {
+      const roles = req.user?.roles || [];
+      const hasRole = roles.some((role: string) => allowedRoles.includes(role));
+
+      if (!hasRole) {
+        return res.status(403).json({ error: "Nemate dozvolu za ovaj resurs." });
+      }
+
+      return next();
+    }),
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
     app = express();
     app.use(express.json());
-    registerExpenseEndpoints(app, authService);
+    registerBudgetEndpoints(app, authService);
   });
 
-  // ─────────────────────────────────────────────────────────────
-  // GET /api/troskovi
-  // ─────────────────────────────────────────────────────────────
+  test("PATCH /api/budzeti/:id/vrati-na-doradu treba vratiti 200 za finansijskog direktora s validnim komentarom", async () => {
+    const updatedBudget = { id: "b1", statusOdobrenja: "na_doradi" };
+    mockBudgetService.vratiNaDoradu.mockResolvedValue(updatedBudget);
 
-  describe("GET /api/troskovi", () => {
-    test("treba vratiti sve troškove s HTTP 200", async () => {
-      const expenses = [
-        { id: 1, naziv: "Gorivo", iznos: 50 },
-        { id: 2, naziv: "Internet", iznos: 80 },
-      ];
-      mockExpenseService.getAllExpenses.mockResolvedValue(expenses);
+    const response = await request(app)
+      .patch("/api/budzeti/b1/vrati-na-doradu")
+      .set("x-test-role", "finansijski_direktor")
+      .set("x-test-sub", "fd-1")
+      .send({ komentar: "Budžet treba dopuniti novim obrazloženjem." });
 
-      const response = await request(app).get("/api/troskovi");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(expenses);
-      expect(mockExpenseService.getAllExpenses).toHaveBeenCalledTimes(1);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      budzet: updatedBudget,
+      poruka: "Budžet je vraćen na doradu.",
     });
-
-    test("treba vratiti praznu listu ako nema troškova", async () => {
-      mockExpenseService.getAllExpenses.mockResolvedValue([]);
-
-      const response = await request(app).get("/api/troskovi");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([]);
-    });
-
-    test("treba vratiti HTTP 500 ako servis baci grešku", async () => {
-      mockExpenseService.getAllExpenses.mockRejectedValue(
-        new Error("Database error")
-      );
-
-      const response = await request(app).get("/api/troskovi");
-
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({
-        message: "Greška pri dohvatu troškova.",
-      });
-    });
+    expect(mockBudgetService.vratiNaDoradu).toHaveBeenCalledWith(
+      "b1",
+      "Budžet treba dopuniti novim obrazloženjem.",
+      expect.objectContaining({ sub: "fd-1" })
+    );
   });
 
-  // ─────────────────────────────────────────────────────────────
-  // GET /api/troskovi/reference-data
-  // ─────────────────────────────────────────────────────────────
+  test("PATCH /api/budzeti/:id/vrati-na-doradu treba vratiti 403 za glavnog računovođu", async () => {
+    const response = await request(app)
+      .patch("/api/budzeti/b1/vrati-na-doradu")
+      .set("x-test-role", "glavni_racunovodja")
+      .send({ komentar: "Komentar" });
 
-  describe("GET /api/troskovi/reference-data", () => {
-    test("treba vratiti referentne podatke s HTTP 200", async () => {
-      const referenceData = {
-        kategorije: [{ id: 1, naziv: "Putni troškovi" }],
-        odjeli: [{ id: 1, naziv: "Finansije" }],
-        valute: [{ id: 1, oznaka: "BAM" }],
-      };
-      mockExpenseService.getReferenceData.mockResolvedValue(referenceData);
+    expect(response.status).toBe(403);
+    expect(response.body).toEqual({ error: "Nemate dozvolu za ovaj resurs." });
+    expect(mockBudgetService.vratiNaDoradu).not.toHaveBeenCalled();
+  });
 
-      const response = await request(app).get("/api/troskovi/reference-data");
+  test("PATCH /api/budzeti/:id/vrati-na-doradu treba vratiti 400 s praznim komentarom", async () => {
+    mockBudgetService.vratiNaDoradu.mockRejectedValue(
+      new Error("Komentar je obavezan pri povratu budžeta na doradu.")
+    );
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(referenceData);
-      expect(mockExpenseService.getReferenceData).toHaveBeenCalledTimes(1);
-    });
+    const response = await request(app)
+      .patch("/api/budzeti/b1/vrati-na-doradu")
+      .set("x-test-role", "finansijski_direktor")
+      .send({ komentar: "   " });
 
-    test("treba vratiti HTTP 500 ako servis baci grešku", async () => {
-      mockExpenseService.getReferenceData.mockRejectedValue(
-        new Error("Database error")
-      );
-
-      const response = await request(app).get("/api/troskovi/reference-data");
-
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({
-        message: "Greška pri dohvatu referentnih podataka.",
-      });
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      message: "Komentar je obavezan pri povratu budžeta na doradu.",
     });
   });
 
-  // ─────────────────────────────────────────────────────────────
-  // POST /api/troskovi
-  // ─────────────────────────────────────────────────────────────
+  test("PATCH /api/budzeti/:id/submituj-doradu treba vratiti 200 za kreator budžeta", async () => {
+    const updatedBudget = { id: "b1", statusOdobrenja: "na_cekanju" };
+    mockBudgetService.submitujDoradu.mockResolvedValue(updatedBudget);
 
-  describe("POST /api/troskovi", () => {
-    const validPayload = {
-      naziv: "Kancelarijski materijal",
-      iznos: 120,
-      datum: "2026-04-30",
-      kategorijaId: 1,
-      odjelId: 2,
-      valutaId: 1,
-    };
+    const response = await request(app)
+      .patch("/api/budzeti/b1/submituj-doradu")
+      .set("x-test-role", "glavni_racunovodja")
+      .set("x-test-sub", "creator-1")
+      .send({});
 
-    test("treba kreirati trošak i vratiti HTTP 201", async () => {
-      const createdExpense = { id: 15, ...validPayload };
-      mockExpenseService.createExpense.mockResolvedValue(createdExpense);
-
-      const response = await request(app)
-        .post("/api/troskovi")
-        .send(validPayload);
-
-      expect(response.status).toBe(201);
-      expect(response.body).toEqual(createdExpense);
-      expect(mockExpenseService.createExpense).toHaveBeenCalledWith(
-        validPayload,
-        expect.objectContaining({ sub: "test-user" })
-      );
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      budzet: updatedBudget,
+      poruka: "Budžet je ponovo poslan na odobravanje.",
     });
+    expect(mockBudgetService.submitujDoradu).toHaveBeenCalledWith(
+      "b1",
+      expect.objectContaining({ sub: "creator-1" })
+    );
+  });
 
-    test("treba pozivati requireAuthentication middleware (RBAC)", async () => {
-      mockExpenseService.createExpense.mockResolvedValue({ id: 1, ...validPayload });
+  test("PATCH /api/budzeti/:id/submituj-doradu treba vratiti 400 ako budžet nije u statusu na_doradi", async () => {
+    mockBudgetService.submitujDoradu.mockRejectedValue(
+      new Error("Budžet mora biti u statusu 'na_doradi' da bi se mogao submitovati.")
+    );
 
-      await request(app).post("/api/troskovi").send(validPayload);
+    const response = await request(app)
+      .patch("/api/budzeti/b1/submituj-doradu")
+      .set("x-test-role", "glavni_racunovodja")
+      .set("x-test-sub", "creator-1")
+      .send({});
 
-      expect(authService.requireAuthentication).toHaveBeenCalled();
-    });
-
-    test("treba pozivati requireRole middleware s ispravnim rolama (RBAC)", async () => {
-      mockExpenseService.createExpense.mockResolvedValue({ id: 1, ...validPayload });
-
-      await request(app).post("/api/troskovi").send(validPayload);
-
-      expect(authService.requireRole).toHaveBeenCalledWith(
-        "admin",
-        "administrativni_radnik",
-        "administrativni_zaposlenik"
-      );
-    });
-
-    test("treba vratiti HTTP 400 s porukom greške ako servis odbaci neispravne podatke", async () => {
-      mockExpenseService.createExpense.mockRejectedValue(
-        new Error("Naziv troška je obavezan.")
-      );
-
-      const response = await request(app)
-        .post("/api/troskovi")
-        .send({ naziv: "", iznos: -20 });
-
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({
-        message: "Naziv troška je obavezan.",
-      });
-    });
-
-    test("treba vratiti generičku poruku ako greška nema message", async () => {
-      mockExpenseService.createExpense.mockRejectedValue({});
-
-      const response = await request(app)
-        .post("/api/troskovi")
-        .send(validPayload);
-
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Greška pri kreiranju troška.");
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      message: "Budžet mora biti u statusu 'na_doradi' da bi se mogao submitovati.",
     });
   });
 
-  // ─────────────────────────────────────────────────────────────
-  // PUT /api/troskovi
-  // ─────────────────────────────────────────────────────────────
+  test("GET /api/budzeti/:id/komentari treba vratiti listu komentara", async () => {
+    const comments = [
+      {
+        id: 1,
+        budzetId: "b1",
+        autorId: "fd-1",
+        autorIme: "Amra Direktorica",
+        komentar: "Potrebna dopuna.",
+        tip: "povrat_na_doradu",
+        kreiranoAt: "2026-05-31T10:00:00.000Z",
+      },
+    ];
+    mockBudgetService.getKomentari.mockResolvedValue(comments);
 
-  describe("PUT /api/troskovi/:id", () => {
-    const validPayload = {
-      naziv: "Ažurirani trošak",
-      iznos: 200,
-      datum: "2026-05-01",
-      kategorijaId: 1,
-      odjelId: 2,
-      valutaId: 1,
-    };
+    const response = await request(app)
+      .get("/api/budzeti/b1/komentari")
+      .set("x-test-role", "glavni_racunovodja");
 
-    test("treba ažurirati trošak i vratiti HTTP 200", async () => {
-      const updated = { id: "1", ...validPayload };
-      mockExpenseService.updateExpense.mockResolvedValue(updated);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(comments);
+    expect(mockBudgetService.getKomentari).toHaveBeenCalledWith("b1");
+  });
 
-      const response = await request(app)
-        .put("/api/troskovi/1")
-        .send({ ...validPayload, id: "1" });
+  test("PATCH /api/budzeti/:id/vrati-na-doradu treba vratiti 404 ako budzet ne postoji", async () => {
+    mockBudgetService.vratiNaDoradu.mockRejectedValue(new Error("Budzet ne postoji."));
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(updated);
-      expect(mockExpenseService.updateExpense).toHaveBeenCalledWith(
-        "1",
-        expect.objectContaining(validPayload)
-      );
-    });
+    const response = await request(app)
+      .patch("/api/budzeti/missing/vrati-na-doradu")
+      .set("x-test-role", "finansijski_direktor")
+      .send({ komentar: "Komentar" });
 
-    test("treba pozivati requireAuthentication middleware (RBAC)", async () => {
-      mockExpenseService.updateExpense.mockResolvedValue({ id: "1", ...validPayload });
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ message: "Budzet ne postoji." });
+  });
 
-      await request(app).put("/api/troskovi/1").send({ ...validPayload, id: "1" });
+  test("PATCH /api/budzeti/:id/vrati-na-doradu treba vratiti 400 za genericku gresku", async () => {
+    mockBudgetService.vratiNaDoradu.mockRejectedValue({});
 
-      expect(authService.requireAuthentication).toHaveBeenCalled();
-    });
+    const response = await request(app)
+      .patch("/api/budzeti/b1/vrati-na-doradu")
+      .set("x-test-role", "finansijski_direktor")
+      .send({ komentar: "Komentar" });
 
-    test("treba pozivati requireRole middleware s ispravnim rolama (RBAC)", async () => {
-      mockExpenseService.updateExpense.mockResolvedValue({ id: "1", ...validPayload });
-
-      await request(app).put("/api/troskovi/1").send({ ...validPayload, id: "1" });
-
-      expect(authService.requireRole).toHaveBeenCalledWith(
-        "admin",
-        "administrativni_radnik",
-        "administrativni_zaposlenik"
-      );
-    });
-
-    test("treba vratiti HTTP 400 ako trošak ne postoji", async () => {
-      mockExpenseService.updateExpense.mockRejectedValue(
-        new Error("Trošak ne postoji.")
-      );
-
-      const response = await request(app)
-        .put("/api/troskovi/99")
-        .send({ ...validPayload, id: "99" });
-
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({ message: "Trošak ne postoji." });
-    });
-
-    test("treba vratiti HTTP 400 ako je trošak zaključan", async () => {
-      mockExpenseService.updateExpense.mockRejectedValue(
-        new Error("Zaključani troškovi se ne mogu mijenjati.")
-      );
-
-      const response = await request(app)
-        .put("/api/troskovi/1")
-        .send({ ...validPayload, id: "1" });
-
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({
-        message: "Zaključani troškovi se ne mogu mijenjati.",
-      });
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      message: "Greska pri povratu budzeta na doradu.",
     });
   });
 
-  // ─────────────────────────────────────────────────────────────
-  // DELETE /api/troskovi/:id
-  // ─────────────────────────────────────────────────────────────
+  test("PATCH /api/budzeti/:id/submituj-doradu treba vratiti 404 ako budzet ne postoji", async () => {
+    mockBudgetService.submitujDoradu.mockRejectedValue(new Error("Budzet ne postoji."));
 
-  describe("DELETE /api/troskovi/:id", () => {
-    test("treba obrisati trošak i vratiti HTTP 204 bez tijela", async () => {
-      mockExpenseService.deleteExpense.mockResolvedValue(undefined);
+    const response = await request(app)
+      .patch("/api/budzeti/missing/submituj-doradu")
+      .set("x-test-role", "glavni_racunovodja")
+      .set("x-test-sub", "creator-1")
+      .send({});
 
-      const response = await request(app).delete("/api/troskovi/1");
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ message: "Budzet ne postoji." });
+  });
 
-      expect(response.status).toBe(204);
-      expect(response.body).toEqual({});
-      expect(mockExpenseService.deleteExpense).toHaveBeenCalledWith("1");
+  test("PATCH /api/budzeti/:id/submituj-doradu treba vratiti 400 za genericku gresku", async () => {
+    mockBudgetService.submitujDoradu.mockRejectedValue({});
+
+    const response = await request(app)
+      .patch("/api/budzeti/b1/submituj-doradu")
+      .set("x-test-role", "glavni_racunovodja")
+      .set("x-test-sub", "creator-1")
+      .send({});
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      message: "Greska pri slanju budzeta na doradu.",
     });
+  });
 
-    test("treba pozivati requireAuthentication middleware (RBAC)", async () => {
-      mockExpenseService.deleteExpense.mockResolvedValue(undefined);
+  test("GET /api/budzeti/:id/komentari treba vratiti 404 kada budzet ne postoji", async () => {
+    mockBudgetService.getKomentari.mockRejectedValue(new Error("Budzet ne postoji."));
 
-      await request(app).delete("/api/troskovi/1");
+    const response = await request(app)
+      .get("/api/budzeti/missing/komentari")
+      .set("x-test-role", "glavni_racunovodja");
 
-      expect(authService.requireAuthentication).toHaveBeenCalled();
-    });
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ message: "Budzet ne postoji." });
+  });
 
-    test("treba pozivati requireRole middleware s ispravnim rolama (RBAC)", async () => {
-      mockExpenseService.deleteExpense.mockResolvedValue(undefined);
+  test("GET /api/budzeti/:id/komentari treba vratiti 500 za genericku gresku", async () => {
+    mockBudgetService.getKomentari.mockRejectedValue({});
 
-      await request(app).delete("/api/troskovi/1");
+    const response = await request(app)
+      .get("/api/budzeti/missing/komentari")
+      .set("x-test-role", "glavni_racunovodja");
 
-      expect(authService.requireRole).toHaveBeenCalledWith(
-        "admin",
-        "administrativni_radnik",
-        "administrativni_zaposlenik"
-      );
-    });
-
-    test("treba vratiti HTTP 400 ako je trošak zaključan", async () => {
-      mockExpenseService.deleteExpense.mockRejectedValue(
-        new Error("Zaključani troškovi se ne mogu brisati.")
-      );
-
-      const response = await request(app).delete("/api/troskovi/1");
-
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({
-        message: "Zaključani troškovi se ne mogu brisati.",
-      });
-    });
-
-    test("treba vratiti generičku poruku ako greška nema message", async () => {
-      mockExpenseService.deleteExpense.mockRejectedValue({});
-
-      const response = await request(app).delete("/api/troskovi/1");
-
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Greška pri brisanju troška.");
-    });
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({ message: "Greska pri dohvatu komentara budzeta." });
   });
 });

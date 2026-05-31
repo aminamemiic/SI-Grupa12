@@ -6,9 +6,13 @@ const mockNotificationRepository = {
   createForUsersIfAbsent: jest.fn(),
   getUserIdFromAuth: jest.fn(),
   getByUserId: jest.fn(),
+  getAllNotifications: jest.fn(),
   getUnreadCountByUserId: jest.fn(),
+  getUnreadCount: jest.fn(),
   markAsRead: jest.fn(),
+  markAsReadById: jest.fn(),
   markActionHandledByExpenseId: jest.fn(),
+  hasRole: jest.fn(),
 };
 
 jest.mock("../DAL/Repositories/NotificationRepository", () => ({
@@ -23,6 +27,7 @@ describe("NotificationService", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     service = new NotificationService();
+    mockNotificationRepository.hasRole.mockReturnValue(false);
   });
 
   test("treba kreirati notifikaciju za glavne racunovodje sa sazetkom anomalije", async () => {
@@ -61,6 +66,17 @@ describe("NotificationService", () => {
     expect(mockNotificationRepository.getByUserId).toHaveBeenCalledWith("user-1");
   });
 
+  test("finansijski direktor treba vidjeti sve notifikacije", async () => {
+    mockNotificationRepository.hasRole.mockReturnValue(true);
+    mockNotificationRepository.getAllNotifications.mockResolvedValue([{ id: "notif-1" }, { id: "notif-2" }]);
+
+    const result = await service.getNotificationsForUser({ sub: "fd-1" });
+
+    expect(result).toEqual([{ id: "notif-1" }, { id: "notif-2" }]);
+    expect(mockNotificationRepository.getAllNotifications).toHaveBeenCalled();
+    expect(mockNotificationRepository.getUserIdFromAuth).not.toHaveBeenCalled();
+  });
+
   test("treba oznaciti notifikaciju kao procitanu", async () => {
     mockNotificationRepository.getUserIdFromAuth.mockResolvedValue("user-1");
     mockNotificationRepository.markAsRead.mockResolvedValue({ id: "notif-1", procitano: true });
@@ -71,6 +87,17 @@ describe("NotificationService", () => {
     expect(mockNotificationRepository.markAsRead).toHaveBeenCalledWith("notif-1", "user-1");
   });
 
+  test("finansijski direktor moze oznaciti bilo koju notifikaciju kao procitanu", async () => {
+    mockNotificationRepository.hasRole.mockReturnValue(true);
+    mockNotificationRepository.markAsReadById.mockResolvedValue({ id: "notif-1", procitano: true });
+
+    const result = await service.markAsRead("notif-1", { sub: "fd-1" });
+
+    expect(result.procitano).toBe(true);
+    expect(mockNotificationRepository.markAsReadById).toHaveBeenCalledWith("notif-1");
+    expect(mockNotificationRepository.getUserIdFromAuth).not.toHaveBeenCalled();
+  });
+
   test("getNotificationsForUser baca gresku kada nema userId", async () => {
     mockNotificationRepository.getUserIdFromAuth.mockResolvedValue(null);
     await expect(service.getNotificationsForUser({})).rejects.toThrow("Nije moguce dohvatiti korisnika za notifikacije.");
@@ -79,6 +106,15 @@ describe("NotificationService", () => {
   test("getUnreadCountForUser baca gresku kada nema userId", async () => {
     mockNotificationRepository.getUserIdFromAuth.mockResolvedValue(null);
     await expect(service.getUnreadCountForUser({})).rejects.toThrow("Nije moguce dohvatiti korisnika za notifikacije.");
+  });
+
+  test("finansijski direktor dobija ukupan broj neprocitanih notifikacija", async () => {
+    mockNotificationRepository.hasRole.mockReturnValue(true);
+    mockNotificationRepository.getUnreadCount.mockResolvedValue(11);
+
+    await expect(service.getUnreadCountForUser({ sub: "fd-1" })).resolves.toBe(11);
+    expect(mockNotificationRepository.getUnreadCount).toHaveBeenCalled();
+    expect(mockNotificationRepository.getUserIdFromAuth).not.toHaveBeenCalled();
   });
 
   test("markAsRead baca gresku kada id nije proslijedjen", async () => {
@@ -121,6 +157,24 @@ describe("NotificationService", () => {
     );
   });
 
+  test("treba kreirati info notifikaciju kada je budzet vracen na doradu", async () => {
+    mockNotificationRepository.createForUsers.mockResolvedValue([{ id: "notif-budget-return" }]);
+
+    await service.createBudgetReturnedToRevisionNotification(
+      { id: "b-1", naziv: "Budzet Q1", kreiraoKorisnikId: "creator-1" },
+      "Potrebna je korekcija."
+    );
+
+    expect(mockNotificationRepository.createForUsers).toHaveBeenCalledWith(
+      ["creator-1"],
+      expect.objectContaining({
+        naslov: 'Budzet "Budzet Q1" vracen je na doradu',
+        prioritet: "LOW",
+        tipNotifikacije: "budzet_vracen_na_doradu",
+      })
+    );
+  });
+
   test("treba kreirati deduplicirano upozorenje za izostali periodicni trosak", async () => {
     mockNotificationRepository.getRecipientsForAnomalyNotifications.mockResolvedValue([{ id: "user-1" }]);
     mockNotificationRepository.createForUsersIfAbsent.mockResolvedValue([{ id: "notif-recurring" }]);
@@ -141,6 +195,24 @@ describe("NotificationService", () => {
         naslov: "Izostao periodicni trosak: Internet usluge (06.2026)",
         tipNotifikacije: "IZOSTAO_PERIODICNI_TROSAK",
         poruka: expect.stringContaining("120.00 BAM"),
+      })
+    );
+  });
+
+  test("treba kreirati info notifikaciju kada je budzet ponovo poslan na odobravanje", async () => {
+    mockNotificationRepository.createForUsers.mockResolvedValue([{ id: "notif-budget-revised" }]);
+
+    await service.createBudgetRevisedNotification(
+      { id: "b-1", naziv: "Budzet Q1" },
+      "fd-1"
+    );
+
+    expect(mockNotificationRepository.createForUsers).toHaveBeenCalledWith(
+      ["fd-1"],
+      expect.objectContaining({
+        naslov: 'Budzet "Budzet Q1" je doradjen',
+        prioritet: "LOW",
+        tipNotifikacije: "budzet_doradjen",
       })
     );
   });

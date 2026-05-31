@@ -139,6 +139,18 @@ describe("ExpenseService", () => {
       expect(mockExpenseRepository.create).toHaveBeenCalledTimes(1);
     });
 
+    test("treba nastaviti kreiranje i kada AI analiza baci gresku", async () => {
+      const createdExpense = { id: 15, ...validPayload };
+      mockExpenseRepository.create.mockResolvedValue(createdExpense);
+      (mockExpenseRepository as any).getAiAnalysisContext = jest.fn().mockResolvedValue({});
+      service.aiAnalysisService.analyzeExpense = jest.fn().mockRejectedValue(new Error("AI down"));
+
+      const result = await service.createExpense(validPayload);
+
+      expect(result).toEqual(createdExpense);
+      expect(mockExpenseRepository.create).toHaveBeenCalledWith(validPayload, undefined);
+    });
+
     test("treba proslijediti authUser repozitoriju pri kreiranju", async () => {
       const createdExpense = { id: 11, ...validPayload };
       const authUser = { sub: "user-123", roles: ["admin"] };

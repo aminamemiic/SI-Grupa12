@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, HostListener, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthGuardService } from '../../../middleware/middleware.authguard';
-import { Budget, BudgetReferenceData, CreateBudgetRequest } from '../../../models/entities';
+import { Budget, BudzetKomentar, BudgetReferenceData, CreateBudgetRequest } from '../../../models/entities';
 import { BudgetService } from '../../../services/budget.service';
+import { VratiNaDoraduDialogComponent } from './vrati-na-doradu-dialog/vrati-na-doradu-dialog.component';
 
 @Component({
   selector: 'app-budget-planning',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, VratiNaDoraduDialogComponent],
   templateUrl: './budget-planning.html',
   styleUrl: './budget-planning.css',
 })
@@ -21,13 +22,18 @@ export class BudgetPlanningComponent implements OnInit {
   public budgets: Budget[] = [];
   public selectedBudget: Budget | null = null;
   public selectedBudgetProjection: any = null;
+  public selectedBudgetComments: BudzetKomentar[] = [];
   public isProjectionLoading = false;
+  public isCommentsLoading = false;
   public projectionErrorMessage = '';
   public referenceData: BudgetReferenceData = { kategorije: [], odjeli: [], projekti: [] };
   public isLoading = false;
   public isSaving = false;
   public showForm = false;
+  public showVratiNaDoraduDialog = false;
+  public showCommentHistory = false;
   public editingBudgetId: string | null = null;
+  public budgetForRevision: Budget | null = null;
   public successMessage = '';
   public errorMessage = '';
 
@@ -54,8 +60,24 @@ export class BudgetPlanningComponent implements OnInit {
   return this.authService.hasAnyRole(['admin', 'finansijski_direktor']);
 }
 
+  public get canReviewBudgets(): boolean {
+    return this.authService.hasAnyRole(['admin', 'glavni_racunovodja', 'finansijski_direktor']);
+  }
+
+  public get canSubmitRevisedBudgets(): boolean {
+    return this.authService.hasAnyRole(['glavni_racunovodja']);
+  }
+
+  public get canReturnBudgetsToRevision(): boolean {
+    return this.authService.hasAnyRole(['finansijski_direktor']);
+  }
+
   public get hasUnsavedChanges(): boolean {
     return this.showForm && this.budgetForm.dirty;
+  }
+
+  public get lastFinancialDirectorComment(): BudzetKomentar | null {
+    return this.selectedBudgetComments.find((comment) => comment.tip === 'povrat_na_doradu') || null;
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -79,7 +101,7 @@ export class BudgetPlanningComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = this.getErrorMessage(error, 'Greška pri dohvatu budžeta.');
+        this.errorMessage = this.getErrorMessage(error, 'Greska pri dohvatu budzeta.');
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -94,7 +116,7 @@ export class BudgetPlanningComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = this.getErrorMessage(error, 'Greška pri dohvatu podataka za formu.');
+        this.errorMessage = this.getErrorMessage(error, 'Greska pri dohvatu podataka za formu.');
         this.cdr.detectChanges();
       },
     });
@@ -115,8 +137,8 @@ export class BudgetPlanningComponent implements OnInit {
   public editBudget(budget: Budget): void {
   if (!this.canEditBudgets) return;
 
-  if (budget.statusOdobrenja === 'ODOBREN') {
-    this.errorMessage = 'Odobren budžet se ne može uređivati.';
+  if (['na_cekanju', 'odobren', 'odbijen'].includes(this.normalizeBudgetStatus(budget.statusOdobrenja))) {
+    this.errorMessage = 'Odobren budzet se ne moze uredjivati.';
     return;
   }
 
@@ -148,7 +170,7 @@ export class BudgetPlanningComponent implements OnInit {
     if (this.budgetForm.invalid || this.hasInvalidPeriod() || !this.hasSelectedCategory()) {
       this.budgetForm.markAllAsTouched();
       if (this.hasInvalidPeriod()) {
-        this.errorMessage = 'Datum završetka ne može biti prije datuma početka.';
+        this.errorMessage = 'Datum zavrsetka ne moze biti prije datuma pocetka.';
       } else if (!this.hasSelectedCategory()) {
         this.errorMessage = 'Odaberite barem jednu kategoriju.';
       } else {
@@ -177,10 +199,10 @@ export class BudgetPlanningComponent implements OnInit {
       next: (savedBudget) => {
         if (this.editingBudgetId) {
           this.budgets = this.budgets.map((budget) => budget.id === savedBudget.id ? savedBudget : budget);
-          this.successMessage = 'Budžet je uspješno ažuriran.';
+          this.successMessage = 'Budzet je uspjesno azuriran.';
         } else {
           this.budgets = [savedBudget, ...this.budgets];
-          this.successMessage = 'Budžet je uspješno sačuvan.';
+          this.successMessage = 'Budzet je uspjesno sacuvan.';
         }
 
         this.selectBudget(savedBudget);
@@ -190,7 +212,7 @@ export class BudgetPlanningComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        this.errorMessage = this.getErrorMessage(error, 'Greška pri spremanju budžeta.');
+        this.errorMessage = this.getErrorMessage(error, 'Greska pri spremanju budzeta.');
         this.isSaving = false;
         this.cdr.detectChanges();
       },
@@ -208,10 +230,13 @@ export class BudgetPlanningComponent implements OnInit {
 
   public selectBudget(budget: Budget | null): void {
     this.selectedBudget = budget;
+    this.showCommentHistory = false;
     if (budget) {
       this.loadBudgetProjection(budget.id.toString());
+      this.loadBudgetComments(budget.id.toString());
     } else {
       this.selectedBudgetProjection = null;
+      this.selectedBudgetComments = [];
     }
   }
 
@@ -228,17 +253,34 @@ export class BudgetPlanningComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Greška pri dohvatu projekcije:', error);
-        this.projectionErrorMessage = 'Neuspješno učitavanje projekcije budžeta.';
+        console.error('Greska pri dohvatu projekcije:', error);
+        this.projectionErrorMessage = 'Neuspjesno ucitavanje projekcije budzeta.';
         this.isProjectionLoading = false;
         this.cdr.detectChanges();
       }
     });
   }
 
+  public loadBudgetComments(budgetId: string): void {
+    this.isCommentsLoading = true;
+    this.budgetService.getKomentari(budgetId).subscribe({
+      next: (comments) => {
+        this.selectedBudgetComments = comments;
+        this.isCommentsLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Greska pri dohvatu komentara:', error);
+        this.selectedBudgetComments = [];
+        this.isCommentsLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
   public approveBudget(budget: Budget): void {
   if (!this.canApproveBudgets) {
-    this.errorMessage = 'Nemate pravo za odobravanje budžeta.';
+    this.errorMessage = 'Nemate pravo za odobravanje budzeta.';
     return;
   }
 
@@ -247,11 +289,107 @@ export class BudgetPlanningComponent implements OnInit {
 
 public rejectBudget(budget: Budget): void {
   if (!this.canApproveBudgets) {
-    this.errorMessage = 'Nemate pravo za odbijanje budžeta.';
+    this.errorMessage = 'Nemate pravo za odbijanje budzeta.';
     return;
   }
 
   this.updateBudgetStatus(budget, 'ODBIJEN');
+}
+
+  public openVratiNaDoraduDialog(budget: Budget): void {
+  if (!this.canReturnBudgetsToRevision) {
+    this.errorMessage = 'Nemate pravo za povrat budzeta na doradu.';
+    return;
+  }
+
+  this.successMessage = '';
+  this.errorMessage = '';
+  this.budgetForRevision = budget;
+  this.showVratiNaDoraduDialog = true;
+}
+
+public handleVratiNaDoraduDialogClosed(result: { komentar: string } | null): void {
+  this.showVratiNaDoraduDialog = false;
+
+  const budget = this.budgetForRevision;
+  this.budgetForRevision = null;
+
+  if (!result || !budget) {
+    return;
+  }
+
+  this.vratiNaDoradu(budget, result.komentar);
+}
+
+public vratiNaDoradu(budget: Budget, komentar: string): void {
+  if (!this.canReturnBudgetsToRevision) {
+    this.errorMessage = 'Nemate pravo za povrat budzeta na doradu.';
+    return;
+  }
+
+  this.successMessage = '';
+  this.errorMessage = '';
+
+  this.budgetService.vratiNaDoradu(budget.id.toString(), komentar).subscribe({
+    next: (response) => {
+      const updatedBudget = response?.budzet || response;
+      this.budgets = this.budgets.map((item) =>
+        item.id === updatedBudget.id ? updatedBudget : item
+      );
+
+      if (this.selectedBudget?.id === updatedBudget.id) {
+        this.selectedBudget = updatedBudget;
+        this.selectedBudgetComments = [];
+        this.loadBudgetComments(updatedBudget.id.toString());
+        this.loadBudgetProjection(updatedBudget.id.toString());
+      }
+
+      this.successMessage = 'Budzet je vracen na doradu.';
+      this.cdr.detectChanges();
+    },
+    error: (error) => {
+      console.error(error);
+      this.errorMessage = this.getErrorMessage(error, 'Greska pri povratu budzeta na doradu.');
+      this.cdr.detectChanges();
+    },
+  });
+}
+
+public submitujDoradu(budget: Budget | null): void {
+  if (!budget) {
+    return;
+  }
+
+  if (!this.authService.hasAnyRole(['glavni_racunovodja'])) {
+    this.errorMessage = 'Nemate pravo za slanje dorade.';
+    return;
+  }
+
+  this.successMessage = '';
+  this.errorMessage = '';
+
+  this.budgetService.submitujDoradu(budget.id.toString()).subscribe({
+    next: (response) => {
+      const updatedBudget = response?.budzet || response;
+      this.budgets = this.budgets.map((item) =>
+        item.id === updatedBudget.id ? updatedBudget : item
+      );
+
+      if (this.selectedBudget?.id === updatedBudget.id) {
+        this.selectedBudget = updatedBudget;
+        this.loadBudgetComments(updatedBudget.id.toString());
+        this.loadBudgetProjection(updatedBudget.id.toString());
+      }
+
+      this.successMessage = 'Budzet je ponovo poslan na odobravanje.';
+      this.cdr.detectChanges();
+    },
+    error: (error) => {
+      console.error(error);
+      this.errorMessage = this.getErrorMessage(error, 'Greska pri slanju dorade.');
+      this.cdr.detectChanges();
+    },
+  });
 }
 
 private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN'): void {
@@ -270,8 +408,8 @@ private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN
 
       this.successMessage =
         statusOdobrenja === 'ODOBREN'
-          ? 'Budžet je uspješno odobren.'
-          : 'Budžet je odbijen.';
+          ? 'Budzet je uspjesno odobren.'
+          : 'Budzet je odbijen.';
 
       this.cdr.detectChanges();
     },
@@ -279,7 +417,7 @@ private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN
       console.error(error);
       this.errorMessage = this.getErrorMessage(
         error,
-        'Greška pri promjeni statusa budžeta.'
+        'Greska pri promjeni statusa budzeta.'
       );
       this.cdr.detectChanges();
     },
@@ -338,9 +476,77 @@ private updateBudgetStatus(budget: Budget, statusOdobrenja: 'ODOBREN' | 'ODBIJEN
     return item.naziv || item.naziv_projekta || item.nazivProjekta || item.id;
   }
 
+  public getStatusBadge(status: string | undefined): { label: string; color: string; icon: string } {
+    const normalized = this.normalizeBudgetStatus(status);
+
+    switch (normalized) {
+      case 'na_doradi':
+        return { label: 'Na doradi', color: 'warn', icon: 'ti-pencil' };
+      case 'na_cekanju':
+        return { label: 'Na cekanju', color: 'accent', icon: 'ti-time' };
+      case 'odobren':
+        return { label: 'Odobren', color: 'success', icon: 'ti-check' };
+      case 'odbijen':
+        return { label: 'Odbijen', color: 'danger', icon: 'ti-close' };
+      case 'nacrt':
+      default:
+        return { label: 'Nacrt', color: 'secondary', icon: 'ti-file' };
+    }
+  }
+
+  public getCommentBadge(commentType: BudzetKomentar['tip']): { label: string; className: string } {
+    switch (commentType) {
+      case 'povrat_na_doradu':
+        return { label: 'Povrat na doradu', className: 'badge-warning' };
+      case 'ispravka':
+        return { label: 'Ispravka', className: 'badge-info' };
+      case 'odobravanje':
+        return { label: 'Odobravanje', className: 'badge-success' };
+      case 'odbijanje':
+        return { label: 'Odbijanje', className: 'badge-danger' };
+      default:
+        return { label: commentType, className: 'badge-neutral' };
+    }
+  }
+
+  public formatCommentDate(value: string): string {
+    if (!value) {
+      return '-';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    const formattedDate = new Intl.DateTimeFormat('bs-BA', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(date);
+
+    return formattedDate.replace(',', '');
+  }
+
+  public hasBudgetInStatus(budget: Budget | null, status: string): boolean {
+    return this.normalizeBudgetStatus(budget?.statusOdobrenja) === status;
+  }
+
+  public isBudgetLockedForEditing(budget: Budget | null): boolean {
+    const status = this.normalizeBudgetStatus(budget?.statusOdobrenja);
+    return ['na_cekanju', 'odobren', 'odbijen'].includes(status);
+  }
+
+  public toggleCommentHistory(): void {
+    this.showCommentHistory = !this.showCommentHistory;
+  }
+
   private confirmDiscardChanges(): boolean {
     if (!this.hasUnsavedChanges) return true;
-    return window.confirm('Imate nespremljene izmjene. Želite li nastaviti bez spremanja?');
+    return window.confirm('Imate nespremljene izmjene. Zelite li nastaviti bez spremanja?');
   }
 
   private getErrorMessage(error: any, fallback: string): string {
@@ -380,5 +586,9 @@ get filteredBudgets() {
 
     const [, year, month, day] = match;
     return `${day}.${month}.${year}`;
+  }
+
+  private normalizeBudgetStatus(status: string | undefined | null): string {
+    return String(status || '').toLowerCase().trim();
   }
 }

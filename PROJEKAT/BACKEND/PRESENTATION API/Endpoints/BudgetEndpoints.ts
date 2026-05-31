@@ -106,32 +106,105 @@ function registerBudgetEndpoints(app: any, authService: IAuthService, _logger?: 
   );
 
   app.patch(
-  "/api/budzeti/:id/status",
-  authService.requireAuthentication,
-  authService.requireRole(...approvalRoles),
-  async (req: any, res: any) => {
-    try {
-      const updatedBudget = await budgetService.updateBudgetStatus(
-        req.params.id,
-        req.body.statusOdobrenja,
-        req.user
-      );
+    "/api/budzeti/:id/status",
+    authService.requireAuthentication,
+    authService.requireRole(...approvalRoles),
+    async (req: any, res: any) => {
+      try {
+        const updatedBudget = await budgetService.updateBudgetStatus(
+          req.params.id,
+          req.body.statusOdobrenja,
+          req.user
+        );
 
-      return res.status(200).json(updatedBudget);
-    } catch (error: any) {
-      console.error("Greska pri promjeni statusa budzeta:", error);
+        return res.status(200).json(updatedBudget);
+      } catch (error: any) {
+        console.error("Greska pri promjeni statusa budzeta:", error);
 
-      if (error.message === "Budzet ne postoji.") {
-        return res.status(404).json({ message: error.message });
+        if (error.message === "Budzet ne postoji.") {
+          return res.status(404).json({ message: error.message });
+        }
+
+        return res.status(400).json({
+          message: error.message || "Greska pri promjeni statusa budzeta.",
+        });
       }
-
-      return res.status(400).json({
-        message: error.message || "Greska pri promjeni statusa budzeta.",
-      });
     }
-  }
-);
+  );
+
+  app.patch(
+    "/api/budzeti/:id/vrati-na-doradu",
+    authService.requireAuthentication,
+    authService.requireRole("finansijski_direktor"),
+    async (req: any, res: any) => {
+      try {
+        const updatedBudget = await budgetService.vratiNaDoradu(
+          req.params.id,
+          req.body?.komentar,
+          req.user
+        );
+
+        return res.status(200).json({
+          budzet: updatedBudget,
+          poruka: "Budžet je vraćen na doradu.",
+        });
+      } catch (error: any) {
+        console.error("Greska pri povratu budzeta na doradu:", error);
+
+        if (error.message === "Budzet ne postoji.") {
+          return res.status(404).json({ message: error.message });
+        }
+
+        return res.status(400).json({
+          message: error.message || "Greska pri povratu budzeta na doradu.",
+        });
+      }
+    }
+  );
+
+  app.patch(
+    "/api/budzeti/:id/submituj-doradu",
+    authService.requireAuthentication,
+    authService.requireRole("glavni_racunovodja"),
+    async (req: any, res: any) => {
+      try {
+        const updatedBudget = await budgetService.submitujDoradu(req.params.id, req.user);
+
+        return res.status(200).json({
+          budzet: updatedBudget,
+          poruka: "Budžet je ponovo poslan na odobravanje.",
+        });
+      } catch (error: any) {
+        console.error("Greska pri slanju budzeta na doradu:", error);
+
+        if (error.message === "Budzet ne postoji.") {
+          return res.status(404).json({ message: error.message });
+        }
+
+        return res.status(400).json({
+          message: error.message || "Greska pri slanju budzeta na doradu.",
+        });
+      }
+    }
+  );
+
+  app.get(
+    "/api/budzeti/:id/komentari",
+    authService.requireAuthentication,
+    authService.requireRole("finansijski_direktor", "glavni_racunovodja"),
+    async (req: any, res: any) => {
+      try {
+        const komentari = await budgetService.getKomentari(req.params.id);
+        return res.status(200).json(komentari);
+      } catch (error: any) {
+        console.error("Greska pri dohvatu komentara budzeta:", error);
+        if (error.message === "Budzet ne postoji.") {
+          return res.status(404).json({ message: error.message });
+        }
+        return res.status(500).json({ message: "Greska pri dohvatu komentara budzeta." });
+      }
+    }
+  );
 }
 
 module.exports = { registerBudgetEndpoints };
-

@@ -70,6 +70,7 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
   app.put("/api/troskovi/:id", authService.requireAuthentication, authService.requireRole("admin", "administrativni_radnik", "administrativni_zaposlenik"), async (req: any, res: any) => {
     try {
       const id = req.params.id || req.body.id || req.query.id;
+      /* istanbul ignore next -- route param :id is required by the route */
       if (!id) {
         return res.status(400).json({ message: "ID troška je obavezan." });
       }
@@ -99,6 +100,7 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
   app.delete("/api/troskovi/:id/duplikat", authService.requireAuthentication, authService.requireRole("admin", "glavni_racunovodja"), async (req: any, res: any) => {
     try {
       const id = req.params.id || req.query.id || req.body.id;
+      /* istanbul ignore next -- route param :id is required by the route */
       const result = await expenseService.resolvePotentialDuplicate(id, "DELETE");
       return res.status(200).json(result);
     } catch (error: any) {

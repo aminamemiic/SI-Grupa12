@@ -13,34 +13,51 @@ class BudgetRepository {
     };
   }
 
-async getAll() {
-  const result = await db.query(`
-    SELECT
-      b.id,
-      b.naziv,
-      b.planirani_iznos AS "planiraniIznos",
-      b.datum_pocetka AS "datumPocetka",
-      b.datum_zavrsetka AS "datumZavrsetka",
-      b.odjel_id AS "odjelId",
-      o.naziv AS odjel,
-      b.projekat_id AS "projekatId",
-      p.naziv_projekta AS projekat,
-      b.verzija_budzeta AS "verzijaBudzeta",
-      b.status_odobrenja AS "statusOdobrenja",
-      b.odobrio_korisnik_id AS "odobrioKorisnikId",
-      COALESCE(json_agg(k.naziv ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS kategorije,
-      COALESCE(json_agg(k.id ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS "kategorijaIds"
-    FROM budzeti b
-    JOIN odjeli o ON o.id = b.odjel_id
-    LEFT JOIN projekti p ON p.id = b.projekat_id
-    LEFT JOIN budzet_kategorije bk ON bk.budzet_id = b.id
-    LEFT JOIN kategorije k ON k.id = bk.kategorija_id
-    GROUP BY b.id, o.naziv, p.naziv_projekta
-    ORDER BY b.datum_pocetka DESC, b.naziv ASC;
-  `);
+  private mapComment(row: any) {
+    if (!row) {
+      return row;
+    }
 
-  return result.rows.map((row: any) => this.mapBudget(row));
-}
+    return {
+      ...row,
+      budzetId: row.budzetId || row.budzet_id,
+      autorId: row.autorId || row.autor_id,
+      autorIme: row.autorIme || row.autor_ime,
+      komentar: row.komentar,
+      tip: row.tip,
+      kreiranoAt: row.kreiranoAt || row.kreirano_at,
+    };
+  }
+
+  async getAll() {
+    const result = await db.query(`
+      SELECT
+        b.id,
+        b.naziv,
+        b.planirani_iznos AS "planiraniIznos",
+        b.datum_pocetka AS "datumPocetka",
+        b.datum_zavrsetka AS "datumZavrsetka",
+        b.odjel_id AS "odjelId",
+        o.naziv AS odjel,
+        b.projekat_id AS "projekatId",
+        p.naziv_projekta AS projekat,
+        b.verzija_budzeta AS "verzijaBudzeta",
+        b.status_odobrenja AS "statusOdobrenja",
+        b.odobrio_korisnik_id AS "odobrioKorisnikId",
+        b.kreirao_korisnik_id AS "kreiraoKorisnikId",
+        COALESCE(json_agg(k.naziv ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS kategorije,
+        COALESCE(json_agg(k.id ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS "kategorijaIds"
+      FROM budzeti b
+      JOIN odjeli o ON o.id = b.odjel_id
+      LEFT JOIN projekti p ON p.id = b.projekat_id
+      LEFT JOIN budzet_kategorije bk ON bk.budzet_id = b.id
+      LEFT JOIN kategorije k ON k.id = bk.kategorija_id
+      GROUP BY b.id, o.naziv, p.naziv_projekta
+      ORDER BY b.datum_pocetka DESC, b.naziv ASC;
+    `);
+
+    return result.rows.map((row: any) => this.mapBudget(row));
+  }
 
   async getById(id: string) {
     const result = await db.query(
@@ -58,6 +75,7 @@ async getAll() {
         b.verzija_budzeta AS "verzijaBudzeta",
         b.status_odobrenja AS "statusOdobrenja",
         b.odobrio_korisnik_id AS "odobrioKorisnikId",
+        b.kreirao_korisnik_id AS "kreiraoKorisnikId",
         COALESCE(json_agg(k.naziv ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS kategorije,
         COALESCE(json_agg(k.id ORDER BY k.naziv) FILTER (WHERE k.id IS NOT NULL), '[]'::json) AS "kategorijaIds"
       FROM budzeti b
@@ -110,7 +128,7 @@ async getAll() {
     return result.rowCount > 0;
   }
 
-  async create(budget: any) {
+  async create(budget: any, createdById?: string | null) {
     const client = await db.connect();
 
     try {
@@ -124,9 +142,10 @@ async getAll() {
           datum_pocetka,
           datum_zavrsetka,
           odjel_id,
-          projekat_id
+          projekat_id,
+          kreirao_korisnik_id
         )
-        VALUES ($1, $2, $3, $4, $5, $6)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING id;
         `,
         [
@@ -136,6 +155,7 @@ async getAll() {
           budget.datumZavrsetka,
           budget.odjelId,
           budget.projekatId || null,
+          createdById || null,
         ]
       );
 
@@ -153,69 +173,170 @@ async getAll() {
   }
 
   async update(id: string, budget: any) {
-  const client = await db.connect();
+    const client = await db.connect();
 
-  try {
-    await client.query("BEGIN");
+    try {
+      await client.query("BEGIN");
 
-    const updateResult = await client.query(
+      const updateResult = await client.query(
+        `
+        UPDATE budzeti
+        SET
+          naziv = $1,
+          planirani_iznos = $2,
+          datum_pocetka = $3,
+          datum_zavrsetka = $4,
+          odjel_id = $5,
+          projekat_id = $6,
+          verzija_budzeta = verzija_budzeta + 1
+        WHERE id = $7;
+        `,
+        [
+          budget.naziv,
+          budget.planiraniIznos,
+          budget.datumPocetka,
+          budget.datumZavrsetka,
+          budget.odjelId,
+          budget.projekatId || null,
+          id,
+        ]
+      );
+
+      if (updateResult.rowCount === 0) {
+        throw new Error("Budzet ne postoji.");
+      }
+
+      await this.replaceCategories(client, id, budget.kategorijaIds);
+      await client.query("COMMIT");
+
+      return this.getById(id);
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async updateStatus(id: string, statusOdobrenja: string, odobrioKorisnikId: string | null) {
+    const result = await db.query(
       `
       UPDATE budzeti
       SET
-        naziv = $1,
-        planirani_iznos = $2,
-        datum_pocetka = $3,
-        datum_zavrsetka = $4,
-        odjel_id = $5,
-        projekat_id = $6,
-        verzija_budzeta = verzija_budzeta + 1
-      WHERE id = $7;
+        status_odobrenja = $1,
+        odobrio_korisnik_id = $2
+      WHERE id = $3
+      RETURNING id;
       `,
-      [
-        budget.naziv,
-        budget.planiraniIznos,
-        budget.datumPocetka,
-        budget.datumZavrsetka,
-        budget.odjelId,
-        budget.projekatId || null,
-        id,
-      ]
+      [statusOdobrenja, odobrioKorisnikId, id]
     );
 
-    if (updateResult.rowCount === 0) {
+    if (result.rowCount === 0) {
       throw new Error("Budzet ne postoji.");
     }
 
-    await this.replaceCategories(client, id, budget.kategorijaIds);
-    await client.query("COMMIT");
-
     return this.getById(id);
-  } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
-  } finally {
-    client.release();
-  }
-}
-async updateStatus(id: string, statusOdobrenja: string, odobrioKorisnikId: string | null) {
-  const result = await db.query(
-    `
-    UPDATE budzeti
-    SET
-      status_odobrenja = $1,
-      odobrio_korisnik_id = $2
-    WHERE id = $3
-    RETURNING id;
-    `,
-    [statusOdobrenja, odobrioKorisnikId, id]
-  );
-
-  if (result.rowCount === 0) {
-    throw new Error("Budzet ne postoji.");
   }
 
-  return this.getById(id);
-}
+  async vratiNaDoradu(budzetId: number | string, autorId: string, autorIme: string, komentar: string) {
+    const client = await db.connect();
+
+    try {
+      await client.query("BEGIN");
+
+      const updateResult = await client.query(
+        `
+        UPDATE budzeti
+        SET
+          status_odobrenja = $1,
+          odobrio_korisnik_id = $2
+        WHERE id = $3
+        RETURNING id;
+        `,
+        ["na_doradi", autorId, budzetId]
+      );
+
+      if (updateResult.rowCount === 0) {
+        throw new Error("Budzet ne postoji.");
+      }
+
+      await client.query(
+        `
+        INSERT INTO budzet_komentari (
+          budzet_id,
+          autor_id,
+          autor_ime,
+          komentar,
+          tip
+        )
+        VALUES ($1, $2, $3, $4, $5);
+        `,
+        [budzetId, autorId, autorIme, komentar, "povrat_na_doradu"]
+      );
+
+      await client.query("COMMIT");
+
+      return this.getById(String(budzetId));
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async getKomentari(budzetId: number | string) {
+    const result = await db.query(
+      `
+      SELECT
+        id,
+        budzet_id AS "budzetId",
+        autor_id AS "autorId",
+        autor_ime AS "autorIme",
+        komentar,
+        tip,
+        kreirano_at AS "kreiranoAt"
+      FROM budzet_komentari
+      WHERE budzet_id = $1
+      ORDER BY kreirano_at DESC, id DESC;
+      `,
+      [budzetId]
+    );
+
+    return result.rows.map((row: any) => this.mapComment(row));
+  }
+
+  async dodajKomentar(
+    budzetId: number | string,
+    autorId: string,
+    autorIme: string,
+    komentar: string,
+    tip: string
+  ) {
+    const result = await db.query(
+      `
+      INSERT INTO budzet_komentari (
+        budzet_id,
+        autor_id,
+        autor_ime,
+        komentar,
+        tip
+      )
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING
+        id,
+        budzet_id AS "budzetId",
+        autor_id AS "autorId",
+        autor_ime AS "autorIme",
+        komentar,
+        tip,
+        kreirano_at AS "kreiranoAt";
+      `,
+      [budzetId, autorId, autorIme, komentar, tip]
+    );
+
+    return this.mapComment(result.rows[0]);
+  }
 
   private async replaceCategories(client: any, budgetId: string, categoryIds: string[]) {
     await client.query("DELETE FROM budzet_kategorije WHERE budzet_id = $1;", [budgetId]);
@@ -228,7 +349,7 @@ async updateStatus(id: string, statusOdobrenja: string, odobrioKorisnikId: strin
     }
   }
 
-    private normalizeRole(role: string): string {
+  private normalizeRole(role: string): string {
     return role
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -375,10 +496,9 @@ async updateStatus(id: string, statusOdobrenja: string, odobrioKorisnikId: strin
     return {
       planiraniIznos: Number(row.planiraniIznos),
       potrosenoPrijeOvogMjeseca: Number(row.potrosenoPrijeOvogMjeseca),
-      potrosenoUovomMjesecu: Number(row.potrosenoUovomMjesecu)
+      potrosenoUovomMjesecu: Number(row.potrosenoUovomMjesecu),
     };
   }
 }
 
 module.exports = { BudgetRepository };
-

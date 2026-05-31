@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Budget, BudgetReferenceData, CreateBudgetRequest } from '../models/entities';
+import { Budget, BudzetKomentar, BudgetReferenceData, CreateBudgetRequest } from '../models/entities';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -45,6 +45,29 @@ updateBudgetStatus(id: string, statusOdobrenja: "ODOBREN" | "ODBIJEN"): Observab
     this.getAuthOptions()
   );
 }
+
+  vratiNaDoradu(budzetId: number | string, komentar: string): Observable<any> {
+    return this.http.patch<any>(
+      `${this.apiUrl}/${budzetId}/vrati-na-doradu`,
+      { komentar },
+      this.getAuthOptions()
+    );
+  }
+
+  submitujDoradu(budzetId: number | string): Observable<any> {
+    return this.http.patch<any>(
+      `${this.apiUrl}/${budzetId}/submituj-doradu`,
+      {},
+      this.getAuthOptions()
+    );
+  }
+
+  getKomentari(budzetId: number | string): Observable<BudzetKomentar[]> {
+    return this.http.get<BudzetKomentar[]>(
+      `${this.apiUrl}/${budzetId}/komentari`,
+      this.getAuthOptions()
+    );
+  }
   getReferenceData(): Observable<BudgetReferenceData> {
     return this.http.get<BudgetReferenceData>(`${this.apiUrl}/reference-data`, this.getAuthOptions());
   }

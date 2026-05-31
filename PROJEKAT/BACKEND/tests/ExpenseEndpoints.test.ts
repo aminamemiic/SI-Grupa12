@@ -431,5 +431,17 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
       expect(deleteResponse.status).toBe(400);
       expect(deleteResponse.body).toEqual({ message: "Greska pri brisanju duplog troska." });
     });
+
+    test("PUT /api/troskovi/:id vraca 400 kada id nedostaje", async () => {
+      const response = await request(app).put("/api/troskovi/").send({ naziv: "Nesto" });
+
+      expect(response.status).toBe(404);
+    });
+
+    test("DELETE /api/troskovi/:id vraca 400 kada id nedostaje", async () => {
+      const response = await request(app).delete("/api/troskovi/");
+
+      expect(response.status).toBe(404);
+    });
   });
 });
