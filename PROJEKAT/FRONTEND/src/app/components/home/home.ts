@@ -5,6 +5,14 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { AuthGuardService } from '../../../middleware/middleware.authguard';
 import { CreateExpenseRequest, Expense, ExpenseReferenceData } from '../../../models/entities';
+import {
+  AiAnalysisService,
+  CostSuggestionsResponse,
+  ExecutiveSummaryResponse,
+  MissingRecurringExpensesResponse,
+  SupplierRiskResponse,
+  TopGrowingSupplier,
+} from '../../../services/ai-analysis.service';
 import { ExpenseService } from '../../../services/expense.service';
 
 type ExpenseBreakdown = {
@@ -25,6 +33,7 @@ export class HomeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthGuardService);
   private readonly expenseService = inject(ExpenseService);
+  private readonly aiAnalysisService = inject(AiAnalysisService);
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -49,6 +58,40 @@ export class HomeComponent implements OnInit {
   public dashboardError = '';
   public editingExpense: Expense | null = null;
   public expenseToDelete: Expense | null = null;
+  public assistantQuestion = '';
+  public assistantAnswer = '';
+  public assistantSource: 'gemini' | 'fallback' | '' = '';
+  public isAssistantLoading = false;
+  public assistantError = '';
+  public suggestedQuestions = [
+    'Koji trošak je najveći?',
+    'Kojih je 5 najvećih troškova?',
+    'Koja kategorija najviše troši?',
+    'Kome smo najviše platili?',
+    'Koliko je ostalo budžeta?',
+    'Koja je najveća anomalija?',
+    'Da li troškovi rastu ili padaju?',
+    'Koji dobavljač ima najveći rast?',
+  ];
+  public showAllSuggestedQuestions = false;
+  public topGrowingSuppliers: TopGrowingSupplier[] = [];
+  public isLoadingSuppliers = false;
+  public suppliersError = '';
+  public executiveSummary: ExecutiveSummaryResponse['summary'] = [];
+  public isLoadingExecutiveSummary = false;
+  public executiveSummaryError = '';
+  public costSuggestions: CostSuggestionsResponse['suggestions'] = [];
+  public isLoadingCostSuggestions = false;
+  public costSuggestionsError = '';
+  public missingRecurringExpenses: MissingRecurringExpensesResponse['missingRecurringExpenses'] = [];
+  public isLoadingMissingRecurring = false;
+  public missingRecurringError = '';
+  public supplierRisks: SupplierRiskResponse['risks'] = [];
+  public isLoadingSupplierRisks = false;
+  public supplierRisksError = '';
+  public anomalyExplanationById: Record<string, string> = {};
+  public anomalyExplanationSeverityById: Record<string, string> = {};
+  public loadingAnomalyExplanationId: string | number | null = null;
 
   public editForm = this.fb.group({
     naziv: ['', [Validators.required, Validators.maxLength(200)]],
@@ -66,10 +109,22 @@ export class HomeComponent implements OnInit {
     this.authService.authState$.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.loadDashboardExpenses();
+        if (this.canOpenAiAnalysis) {
+          this.loadTopGrowingSuppliers();
+          this.loadExecutiveSummary();
+          this.loadCostSuggestions();
+          this.loadMissingRecurringExpenses();
+          this.loadSupplierRisks();
+        }
         return;
       }
 
       this.expenses = [];
+      this.topGrowingSuppliers = [];
+      this.executiveSummary = [];
+      this.costSuggestions = [];
+      this.missingRecurringExpenses = [];
+      this.supplierRisks = [];
       this.isLoadingExpenses = false;
       this.cdr.detectChanges();
     });
@@ -104,8 +159,16 @@ export class HomeComponent implements OnInit {
     return this.authService.hasAnyRole(this.reportRoles);
   }
 
+  public get canOpenAiAnalysis(): boolean {
+    return this.authService.hasAnyRole(this.reportRoles);
+  }
+
   public get isAdmin(): boolean {
     return this.authService.hasAnyRole(['admin']);
+  }
+
+  public get visibleSuggestedQuestions(): string[] {
+    return this.showAllSuggestedQuestions ? this.suggestedQuestions : this.suggestedQuestions.slice(0, 4);
   }
 
   public get totalAmount(): number {
@@ -164,6 +227,159 @@ export class HomeComponent implements OnInit {
       error: (error) => {
         console.error(error);
         this.dashboardError = 'Greška pri dohvatu podataka za uređivanje troškova.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public askAssistant(): void {
+    if (!this.canOpenAiAnalysis) {
+      this.assistantError = 'AI analiza je dostupna samo ovlaštenim finansijskim ulogama.';
+      return;
+    }
+
+    const question = this.assistantQuestion.trim();
+    this.assistantError = '';
+    this.assistantAnswer = '';
+    this.assistantSource = '';
+
+    if (!question) {
+      this.assistantError = 'Unesite pitanje za AI asistenta.';
+      return;
+    }
+
+    this.isAssistantLoading = true;
+    this.aiAnalysisService.askAssistant(question).subscribe({
+      next: (response) => {
+        this.assistantAnswer = response.answer;
+        this.assistantSource = response.source || '';
+        this.isAssistantLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.assistantError = error?.error?.message || 'Greška pri komunikaciji sa AI asistentom.';
+        this.isAssistantLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public askSuggestedQuestion(question: string): void {
+    this.assistantQuestion = question;
+    this.askAssistant();
+  }
+
+  public loadTopGrowingSuppliers(): void {
+    this.isLoadingSuppliers = true;
+    this.suppliersError = '';
+
+    this.aiAnalysisService.getTopGrowingSuppliers().subscribe({
+      next: (response) => {
+        this.topGrowingSuppliers = response.suppliers || [];
+        this.isLoadingSuppliers = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.suppliersError = 'Greška pri dohvatu dobavljača.';
+        this.isLoadingSuppliers = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public loadExecutiveSummary(): void {
+    this.isLoadingExecutiveSummary = true;
+    this.executiveSummaryError = '';
+
+    this.aiAnalysisService.getExecutiveSummary().subscribe({
+      next: (response) => {
+        this.executiveSummary = response.summary || [];
+        this.isLoadingExecutiveSummary = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.executiveSummaryError = 'Greška pri dohvatu AI sažetka.';
+        this.isLoadingExecutiveSummary = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public loadCostSuggestions(): void {
+    this.isLoadingCostSuggestions = true;
+    this.costSuggestionsError = '';
+
+    this.aiAnalysisService.getCostSuggestions().subscribe({
+      next: (response) => {
+        this.costSuggestions = response.suggestions || [];
+        this.isLoadingCostSuggestions = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.costSuggestionsError = 'Greška pri dohvatu AI preporuka.';
+        this.isLoadingCostSuggestions = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public loadMissingRecurringExpenses(): void {
+    this.isLoadingMissingRecurring = true;
+    this.missingRecurringError = '';
+
+    this.aiAnalysisService.getMissingRecurringExpenses().subscribe({
+      next: (response) => {
+        this.missingRecurringExpenses = response.missingRecurringExpenses || [];
+        this.isLoadingMissingRecurring = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.missingRecurringError = 'Greška pri dohvatu zaboravljenih troškova.';
+        this.isLoadingMissingRecurring = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public loadSupplierRisks(): void {
+    this.isLoadingSupplierRisks = true;
+    this.supplierRisksError = '';
+
+    this.aiAnalysisService.getSupplierRisk().subscribe({
+      next: (response) => {
+        this.supplierRisks = response.risks || [];
+        this.isLoadingSupplierRisks = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.supplierRisksError = 'Greška pri dohvatu rizika dobavljača.';
+        this.isLoadingSupplierRisks = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public explainAnomaly(expense: Expense): void {
+    this.loadingAnomalyExplanationId = expense.id;
+
+    this.aiAnalysisService.explainAnomaly(expense.id).subscribe({
+      next: (response) => {
+        const key = expense.id.toString();
+        this.anomalyExplanationById[key] = response.explanation;
+        this.anomalyExplanationSeverityById[key] = response.severity;
+        this.loadingAnomalyExplanationId = null;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.anomalyExplanationById[expense.id.toString()] = 'Greška pri dohvatu objašnjenja anomalije.';
+        this.loadingAnomalyExplanationId = null;
         this.cdr.detectChanges();
       },
     });

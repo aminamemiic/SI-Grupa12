@@ -21,6 +21,7 @@ const { registerBudgetEndpoints } = require("../PRESENTATION API/Endpoints/Budge
 
 describe("BudgetEndpoints dodatna pokrivenost", () => {
   let app: any;
+  let consoleErrorSpy: jest.SpyInstance;
 
   const authService = {
     requireAuthentication: jest.fn((req: any, _res: any, next: any) => {
@@ -32,9 +33,14 @@ describe("BudgetEndpoints dodatna pokrivenost", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
     app = express();
     app.use(express.json());
     registerBudgetEndpoints(app, authService);
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
   test("GET /api/budzeti vraca budzete", async () => {

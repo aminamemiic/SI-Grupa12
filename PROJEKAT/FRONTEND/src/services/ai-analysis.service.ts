@@ -34,9 +34,56 @@ export interface DatabaseAnalysisResult {
   sazetak: string;
 }
 
+export interface AssistantResponse {
+  answer: string;
+  source: 'gemini' | 'fallback';
+  intent: string;
+  data: unknown;
+}
+
+export interface TopGrowingSupplier {
+  supplierId: string | null;
+  supplierName: string;
+  currentAmount: number;
+  previousAmount: number;
+  growthPercentage: number | null;
+  status: 'growth' | 'decline' | 'stable' | 'new_spending';
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+}
+
+export interface TopGrowingSuppliersResponse {
+  suppliers: TopGrowingSupplier[];
+}
+
+export interface ExecutiveSummaryResponse {
+  summary: Array<{ type: 'INFO' | 'WARNING' | 'SUCCESS'; message: string }>;
+}
+
+export interface CostSuggestionsResponse {
+  suggestions: Array<{ title: string; description: string; estimatedImpact: string }>;
+}
+
+export interface MissingRecurringExpensesResponse {
+  missingRecurringExpenses: Array<{
+    expenseName: string;
+    lastSeenDate: string;
+    averageAmount: number;
+    recommendation: string;
+  }>;
+}
+
+export interface SupplierRiskResponse {
+  risks: Array<{ supplierName: string; sharePercentage: number; riskLevel: string; message: string }>;
+}
+
+export interface AnomalyExplanationResponse {
+  explanation: string;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH';
+}
+
 @Injectable({ providedIn: 'root' })
 export class AiAnalysisService {
-  private readonly apiUrl = `${environment.apiUrl}/ai/analize/baza`;
+  private readonly apiBaseUrl = `${environment.apiUrl}/ai`;
   private readonly accessTokenKey = 'kc_access_token';
 
   constructor(private http: HttpClient) {}
@@ -54,6 +101,34 @@ export class AiAnalysisService {
   }
 
   runDatabaseAnalysis(): Observable<DatabaseAnalysisResult> {
-    return this.http.post<DatabaseAnalysisResult>(this.apiUrl, {}, this.getAuthOptions());
+    return this.http.post<DatabaseAnalysisResult>(`${this.apiBaseUrl}/analize/baza`, {}, this.getAuthOptions());
+  }
+
+  askAssistant(question: string): Observable<AssistantResponse> {
+    return this.http.post<AssistantResponse>(`${this.apiBaseUrl}/asistent/pitaj`, { question }, this.getAuthOptions());
+  }
+
+  getTopGrowingSuppliers(): Observable<TopGrowingSuppliersResponse> {
+    return this.http.get<TopGrowingSuppliersResponse>(`${this.apiBaseUrl}/dobavljaci/rast`, this.getAuthOptions());
+  }
+
+  getExecutiveSummary(): Observable<ExecutiveSummaryResponse> {
+    return this.http.get<ExecutiveSummaryResponse>(`${this.apiBaseUrl}/executive-summary`, this.getAuthOptions());
+  }
+
+  getCostSuggestions(): Observable<CostSuggestionsResponse> {
+    return this.http.get<CostSuggestionsResponse>(`${this.apiBaseUrl}/cost-suggestions`, this.getAuthOptions());
+  }
+
+  getMissingRecurringExpenses(): Observable<MissingRecurringExpensesResponse> {
+    return this.http.get<MissingRecurringExpensesResponse>(`${this.apiBaseUrl}/missing-recurring-expenses`, this.getAuthOptions());
+  }
+
+  getSupplierRisk(): Observable<SupplierRiskResponse> {
+    return this.http.get<SupplierRiskResponse>(`${this.apiBaseUrl}/supplier-risk`, this.getAuthOptions());
+  }
+
+  explainAnomaly(expenseId: string | number): Observable<AnomalyExplanationResponse> {
+    return this.http.get<AnomalyExplanationResponse>(`${this.apiBaseUrl}/anomaly-explanation/${expenseId}`, this.getAuthOptions());
   }
 }

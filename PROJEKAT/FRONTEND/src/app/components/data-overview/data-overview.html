@@ -335,17 +335,19 @@
         <div class="date-filter-group">
           <label>Period od:</label>
           <input
-            type="date"
-            [value]="budgetFilterPeriodOd"
-            (change)="budgetFilterPeriodOd = $any($event.target).value" />
+            type="text"
+            [value]="toDisplayDate(budgetFilterPeriodOd)"
+            placeholder="DD.MM.YYYY"
+            (input)="onBudgetFilterDateChange($any($event.target).value, 'from')" />
         </div>
 
         <div class="date-filter-group">
           <label>Period do:</label>
           <input
-            type="date"
-            [value]="budgetFilterPeriodDo"
-            (change)="budgetFilterPeriodDo = $any($event.target).value" />
+            type="text"
+            [value]="toDisplayDate(budgetFilterPeriodDo)"
+            placeholder="DD.MM.YYYY"
+            (input)="onBudgetFilterDateChange($any($event.target).value, 'to')" />
         </div>
 
         <button

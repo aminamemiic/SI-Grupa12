@@ -131,32 +131,190 @@
       }
     </article>
 
-    
+  </section>
 
-    <aside class="assistant-column">
+  @if (canOpenAiAnalysis) {
+  <section class="ai-analysis-section" aria-label="AI analiza">
+    <div class="ai-section-heading">
+      <div>
+        <p class="eyebrow">AI analiza</p>
+        <h2>Pametni pregled troškova</h2>
+      </div>
+      <span>Automatski uvidi iz postojećih podataka</span>
+    </div>
+
+    <div class="ai-layout">
       <article class="panel assistant-panel">
         <div class="panel-heading">
           <h2>AI asistent</h2>
           <span>Beta</span>
         </div>
-        <div class="empty-state compact">
-          <strong>Asistent nije povezan.</strong>
-          <p>Preporuke će se prikazati nakon implementacije AI asistenta.</p>
+        <div class="assistant-form">
+          <input
+            type="text"
+            [value]="assistantQuestion"
+            (input)="assistantQuestion = $any($event.target).value"
+            (keyup.enter)="askAssistant()"
+            placeholder="Postavi pitanje AI asistentu..."
+          />
+          <button type="button" class="primary-action" (click)="askAssistant()" [disabled]="isAssistantLoading">
+            Pitaj
+          </button>
         </div>
-        <div class="assistant-input">Postavi pitanje AI asistentu...</div>
+
+        @if (isAssistantLoading) {
+          <p class="assistant-loading">AI asistent analizira podatke...</p>
+        }
+
+        @if (assistantError) {
+          <p class="inline-error">{{ assistantError }}</p>
+        }
+
+        @if (assistantAnswer) {
+          <div class="assistant-answer">
+            {{ assistantAnswer }}
+          </div>
+        } @else if (!isAssistantLoading) {
+          <div class="empty-state compact">
+            <strong>Postavite pitanje o troškovima.</strong>
+            <p>Asistent koristi postojeće izvještaje, budžete, dobavljače i anomalije.</p>
+          </div>
+        }
+
+        <div class="suggested-questions">
+          @for (question of visibleSuggestedQuestions; track question) {
+            <button type="button" (click)="askSuggestedQuestion(question)">{{ question }}</button>
+          }
+          <button type="button" (click)="showAllSuggestedQuestions = !showAllSuggestedQuestions">
+            {{ showAllSuggestedQuestions ? 'Manje pitanja' : 'Još pitanja' }}
+          </button>
+        </div>
       </article>
 
-      <article class="panel suppliers-panel">
-        <div class="panel-heading">
-          <h2>Dobavljači sa najvećim rastom</h2>
-        </div>
-        <div class="empty-state compact">
-          <strong>Nema dobavljača za prikaz.</strong>
-          <p>Podaci o dobavljačima još nisu dostupni na nadzornoj ploči.</p>
-        </div>
-      </article>
-    </aside>
+      <div class="ai-card-grid">
+        <article class="panel suppliers-panel">
+          <div class="panel-heading">
+            <h2>Dobavljači sa najvećim rastom</h2>
+          </div>
+          @if (isLoadingSuppliers) {
+            <p class="assistant-loading">Učitavanje dobavljača...</p>
+          } @else if (suppliersError) {
+            <p class="inline-error">{{ suppliersError }}</p>
+          } @else if (topGrowingSuppliers.length === 0) {
+            <div class="empty-state compact">
+              <strong>Nema dobavljača za prikaz.</strong>
+            </div>
+          } @else {
+            <div class="supplier-list">
+              @for (supplier of topGrowingSuppliers; track supplier.supplierId || supplier.supplierName) {
+                <div class="supplier-row">
+                  <div>
+                    <strong>{{ supplier.supplierName }}</strong>
+                    <small>
+                      {{ supplier.currentAmount | number: '1.2-2' }} KM sada ·
+                      {{ supplier.previousAmount | number: '1.2-2' }} KM ranije
+                    </small>
+                  </div>
+                  <div class="supplier-growth">
+                    @if (supplier.status === 'new_spending') {
+                      <span>Novi trošak</span>
+                    } @else {
+                      <span>{{ supplier.growthPercentage | number: '1.0-2' }}%</span>
+                    }
+                    <b [class.high-risk]="supplier.riskLevel === 'HIGH'" [class.medium-risk]="supplier.riskLevel === 'MEDIUM'">
+                      {{ supplier.riskLevel }}
+                    </b>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (supplierRisks.length > 0) {
+            <div class="supplier-risk-list">
+              @for (risk of supplierRisks; track risk.supplierName + risk.message) {
+                <p><strong>{{ risk.riskLevel }}</strong> {{ risk.message }}</p>
+              }
+            </div>
+          }
+        </article>
+
+        <article class="panel summary-panel">
+          <div class="panel-heading">
+            <h2>AI Executive Summary</h2>
+          </div>
+          @if (isLoadingExecutiveSummary) {
+            <p class="assistant-loading">Učitavanje sažetka...</p>
+          } @else if (executiveSummaryError) {
+            <p class="inline-error">{{ executiveSummaryError }}</p>
+          } @else if (executiveSummary.length === 0) {
+            <div class="empty-state compact">
+              <strong>Nema sažetka za prikaz.</strong>
+            </div>
+          } @else {
+            <div class="summary-list">
+              @for (item of executiveSummary; track item.message) {
+                <p [class.warning-summary]="item.type === 'WARNING'" [class.success-summary]="item.type === 'SUCCESS'">
+                  {{ item.message }}
+                </p>
+              }
+            </div>
+          }
+        </article>
+
+        <article class="panel suggestions-panel">
+          <div class="panel-heading">
+            <h2>AI Preporuke</h2>
+          </div>
+          @if (isLoadingCostSuggestions) {
+            <p class="assistant-loading">Učitavanje preporuka...</p>
+          } @else if (costSuggestionsError) {
+            <p class="inline-error">{{ costSuggestionsError }}</p>
+          } @else {
+            <div class="suggestion-list">
+              @for (suggestion of costSuggestions; track suggestion.title) {
+                <div class="suggestion-item">
+                  <strong>{{ suggestion.title }}</strong>
+                  <p>{{ suggestion.description }}</p>
+                  <small>{{ suggestion.estimatedImpact }}</small>
+                </div>
+              }
+            </div>
+          }
+        </article>
+
+        <article class="panel missing-panel">
+          <div class="panel-heading stacked-heading">
+            <div>
+              <h2>Periodični troškovi za provjeru</h2>
+              <small>Računi koji su se ranije ponavljali, a sada nisu evidentirani.</small>
+            </div>
+          </div>
+          @if (isLoadingMissingRecurring) {
+            <p class="assistant-loading">Provjera periodičnih troškova...</p>
+          } @else if (missingRecurringError) {
+            <p class="inline-error">{{ missingRecurringError }}</p>
+          } @else if (missingRecurringExpenses.length === 0) {
+            <div class="empty-state compact">
+              <strong>Nema periodičnih troškova za provjeru.</strong>
+              <p>Sistem nije pronašao redovne račune koji nedostaju u trenutnom periodu.</p>
+            </div>
+          } @else {
+            <div class="missing-list">
+              @for (expense of missingRecurringExpenses; track expense.expenseName) {
+                <div class="suggestion-item">
+                  <strong>{{ expense.expenseName }}</strong>
+                  <p>Zadnji put evidentirano: {{ expense.lastSeenDate || '-' }}</p>
+                  <small>Prosjek {{ expense.averageAmount | number: '1.2-2' }} KM · {{ expense.recommendation }}</small>
+                </div>
+              }
+            </div>
+          }
+        </article>
+      </div>
+    </div>
   </section>
+  }
 
   @if (editingExpense) {
     <div class="modal-overlay">

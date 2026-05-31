@@ -341,6 +341,21 @@ export class DataOverviewComponent implements OnInit {
     return this.formatValue(row?.[fieldName]);
   }
 
+  public onBudgetFilterDateChange(value: string, fieldName: 'from' | 'to'): void {
+    const isoDate = this.toIsoDate(value);
+    if (fieldName === 'from') {
+      this.budgetFilterPeriodOd = isoDate;
+      return;
+    }
+
+    this.budgetFilterPeriodDo = isoDate;
+  }
+
+  public toDisplayDate(value: string): string {
+    const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
+  }
+
   private normalizeOverview(overview: DataOverview | null | undefined): DataOverview {
     const empty = this.getEmptyOverview();
 
@@ -423,6 +438,17 @@ export class DataOverviewComponent implements OnInit {
     const year = date.getFullYear();
 
     return `${day}.${month}.${year}`;
+  }
+
+  private toIsoDate(value: string): string {
+    const trimmed = String(value || '').trim();
+    const displayMatch = trimmed.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/);
+    if (displayMatch) {
+      const [, day, month, year] = displayMatch;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+
+    return trimmed.match(/^\d{4}-\d{2}-\d{2}$/) ? trimmed : '';
   }
 
   sectionSearch: string = '';

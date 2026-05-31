@@ -10,11 +10,11 @@
   <div class="date-row">
     <label>
       Datum od
-      <input type="date" [value]="dateFrom" (change)="dateFromChange.emit($any($event.target).value)" />
+      <input type="text" [value]="toDisplayDate(dateFrom)" placeholder="DD.MM.YYYY" (input)="onDisplayDateChange($any($event.target).value, 'from')" />
     </label>
     <label>
       Datum do
-      <input type="date" [value]="dateTo" (change)="dateToChange.emit($any($event.target).value)" />
+      <input type="text" [value]="toDisplayDate(dateTo)" placeholder="DD.MM.YYYY" (input)="onDisplayDateChange($any($event.target).value, 'to')" />
     </label>
   </div>
 
