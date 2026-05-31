@@ -7,6 +7,7 @@ const request = require("supertest");
 
 const mockAIAnalysisService = {
   analyzeFullDatabase: jest.fn(),
+  askAssistantWithGemini: jest.fn(),
 };
 
 const mockReportService = {

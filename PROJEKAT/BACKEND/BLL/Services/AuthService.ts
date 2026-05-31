@@ -159,6 +159,12 @@ export class AuthService implements IAuthService {
   };
 
   public requireAuthentication = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith("Bearer ")) {
+      this.verifyBearerToken(req, res, next);
+      return;
+    }
+
     const sessionRequest = req as AuthenticatedRequest & { session?: any };
     const sessionUser = sessionRequest.session?.user as JwtPayload | undefined;
 

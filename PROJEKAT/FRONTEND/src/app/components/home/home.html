@@ -133,6 +133,7 @@
 
   </section>
 
+  @if (canOpenAiAnalysis) {
   <section class="ai-analysis-section" aria-label="AI analiza">
     <div class="ai-section-heading">
       <div>
@@ -170,7 +171,9 @@
         }
 
         @if (assistantAnswer) {
-          <div class="assistant-answer">{{ assistantAnswer }}</div>
+          <div class="assistant-answer">
+            {{ assistantAnswer }}
+          </div>
         } @else if (!isAssistantLoading) {
           <div class="empty-state compact">
             <strong>Postavite pitanje o troškovima.</strong>
@@ -311,6 +314,7 @@
       </div>
     </div>
   </section>
+  }
 
   @if (editingExpense) {
     <div class="modal-overlay">

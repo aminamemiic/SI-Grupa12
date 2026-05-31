@@ -60,6 +60,7 @@ export class HomeComponent implements OnInit {
   public expenseToDelete: Expense | null = null;
   public assistantQuestion = '';
   public assistantAnswer = '';
+  public assistantSource: 'gemini' | 'fallback' | '' = '';
   public isAssistantLoading = false;
   public assistantError = '';
   public suggestedQuestions = [
@@ -108,11 +109,13 @@ export class HomeComponent implements OnInit {
     this.authService.authState$.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.loadDashboardExpenses();
-        this.loadTopGrowingSuppliers();
-        this.loadExecutiveSummary();
-        this.loadCostSuggestions();
-        this.loadMissingRecurringExpenses();
-        this.loadSupplierRisks();
+        if (this.canOpenAiAnalysis) {
+          this.loadTopGrowingSuppliers();
+          this.loadExecutiveSummary();
+          this.loadCostSuggestions();
+          this.loadMissingRecurringExpenses();
+          this.loadSupplierRisks();
+        }
         return;
       }
 
@@ -153,6 +156,10 @@ export class HomeComponent implements OnInit {
   }
 
   public get canOpenReports(): boolean {
+    return this.authService.hasAnyRole(this.reportRoles);
+  }
+
+  public get canOpenAiAnalysis(): boolean {
     return this.authService.hasAnyRole(this.reportRoles);
   }
 
@@ -226,9 +233,15 @@ export class HomeComponent implements OnInit {
   }
 
   public askAssistant(): void {
+    if (!this.canOpenAiAnalysis) {
+      this.assistantError = 'AI analiza je dostupna samo ovlaštenim finansijskim ulogama.';
+      return;
+    }
+
     const question = this.assistantQuestion.trim();
     this.assistantError = '';
     this.assistantAnswer = '';
+    this.assistantSource = '';
 
     if (!question) {
       this.assistantError = 'Unesite pitanje za AI asistenta.';
@@ -239,6 +252,7 @@ export class HomeComponent implements OnInit {
     this.aiAnalysisService.askAssistant(question).subscribe({
       next: (response) => {
         this.assistantAnswer = response.answer;
+        this.assistantSource = response.source || '';
         this.isAssistantLoading = false;
         this.cdr.detectChanges();
       },

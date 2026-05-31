@@ -31,12 +31,12 @@
   <div class="category-compare-grid">
     <div class="date-filter-group">
       <label>Datum od</label>
-      <input type="date" [value]="dateFrom" (change)="dateFromChange.emit($any($event.target).value)" />
+      <input type="text" [value]="toDisplayDate(dateFrom)" placeholder="DD.MM.YYYY" (input)="onDisplayDateChange($any($event.target).value, 'from')" />
     </div>
 
     <div class="date-filter-group">
       <label>Datum do</label>
-      <input type="date" [value]="dateTo" (change)="dateToChange.emit($any($event.target).value)" />
+      <input type="text" [value]="toDisplayDate(dateTo)" placeholder="DD.MM.YYYY" (input)="onDisplayDateChange($any($event.target).value, 'to')" />
     </div>
   </div>
 

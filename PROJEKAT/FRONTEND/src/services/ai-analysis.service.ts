@@ -36,6 +36,7 @@ export interface DatabaseAnalysisResult {
 
 export interface AssistantResponse {
   answer: string;
+  source: 'gemini' | 'fallback';
   intent: string;
   data: unknown;
 }

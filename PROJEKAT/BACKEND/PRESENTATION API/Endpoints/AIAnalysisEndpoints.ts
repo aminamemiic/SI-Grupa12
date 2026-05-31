@@ -74,7 +74,7 @@ function registerAIAnalysisEndpoints(app: any, authService: IAuthService, _logge
 
         const reportData = await reportService.getExpenseReport({});
         const budgetData = await budgetService.getAllBudgets();
-        return res.status(200).json(aiAnalysisService.askAssistant(question, reportData, budgetData));
+        return res.status(200).json(await aiAnalysisService.askAssistantWithGemini(question, reportData, budgetData));
       } catch (error: any) {
         if (_logger) _logger("ERROR", "Greska pri AI asistentu", error);
         return res.status(500).json({ message: error?.message || "Greska pri AI asistentu." });

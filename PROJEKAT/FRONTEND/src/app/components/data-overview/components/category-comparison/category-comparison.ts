@@ -222,6 +222,21 @@ export class CategoryComparisonComponent {
     this.comparisonModeChange.emit('category');
   }
 
+  public onDisplayDateChange(value: string, fieldName: 'from' | 'to'): void {
+    const isoDate = this.toIsoDate(value);
+    if (fieldName === 'from') {
+      this.dateFromChange.emit(isoDate);
+      return;
+    }
+
+    this.dateToChange.emit(isoDate);
+  }
+
+  public toDisplayDate(value: string): string {
+    const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
+  }
+
   public isHighestRow(row: CategoryComparisonRow): boolean {
     return this.highestCategoryAmount !== null && row.totalAmountBam === this.highestCategoryAmount;
   }
@@ -278,12 +293,23 @@ export class CategoryComparisonComponent {
   }
 
   private getExpensePeriodName(expense: DataOverviewExpense): string {
-    const date = new Date(expense.datum);
-    if (Number.isNaN(date.getTime())) {
+    const match = String(expense.datum || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) {
       return 'Nepoznat period';
     }
 
-    return `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    return `${match[3]}.${match[2]}.${match[1]}`;
+  }
+
+  private toIsoDate(value: string): string {
+    const trimmed = String(value || '').trim();
+    const displayMatch = trimmed.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/);
+    if (displayMatch) {
+      const [, day, month, year] = displayMatch;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+
+    return trimmed.match(/^\d{4}-\d{2}-\d{2}$/) ? trimmed : '';
   }
 
 }

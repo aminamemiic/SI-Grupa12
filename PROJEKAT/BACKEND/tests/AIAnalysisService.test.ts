@@ -232,6 +232,35 @@ describe("AIAnalysisService supplier growth and assistant", () => {
     expect(result.answer).toContain("Mogu odgovoriti");
     expect(result.answer).toContain("Koji trosak je najveci?");
   });
+
+  test("askAssistantWithGemini bez GEMINI_API_KEY vraca fallback odgovor", async () => {
+    const result = await svc.askAssistantWithGemini("koji trosak je najveci", reportData, []);
+
+    expect(result.source).toBe("fallback");
+    expect(result.intent).toBe("LARGEST_EXPENSE");
+  });
+
+  test("askAssistantWithGemini vraca fallback ako Gemini poziv baci gresku", async () => {
+    const previousKey = process.env.GEMINI_API_KEY;
+    process.env.GEMINI_API_KEY = "test-key";
+    svc.geminiClient = {
+      models: {
+        generateContent: jest.fn().mockRejectedValue(new Error("Gemini down")),
+      },
+    };
+
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const result = await svc.askAssistantWithGemini("kome smo najvise platili", reportData, []);
+
+    expect(result.source).toBe("fallback");
+    expect(result.intent).toBe("MOST_EXPENSIVE_SUPPLIER");
+    consoleSpy.mockRestore();
+    if (previousKey === undefined) {
+      delete process.env.GEMINI_API_KEY;
+    } else {
+      process.env.GEMINI_API_KEY = previousKey;
+    }
+  });
 });
 
 describe("AIAnalysisService – fallbackDatabaseAnalysis", () => {

@@ -67,9 +67,11 @@ type TopGrowingSupplier = {
 
 export class AIAnalysisService {
   private readonly aiServiceUrl: string;
+  private geminiClient: any | null | undefined;
 
   constructor(aiServiceUrl = process.env.AI_SERVICE_URL || "http://localhost:8000") {
     this.aiServiceUrl = aiServiceUrl.replace(/\/+$/, "");
+    this.geminiClient = undefined;
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -826,7 +828,7 @@ export class AIAnalysisService {
       const category = largestExpense?.kategorijaNaziv || largestExpense?.kategorija || "nije navedena";
       const supplier = largestExpense?.dobavljacNaziv || largestExpense?.dobavljac || "nije naveden";
       const department = largestExpense?.odjelNaziv || largestExpense?.odjel || "nije naveden";
-      const date = largestExpense?.datum || "datum nije naveden";
+      const date = this.formatDisplayDate(largestExpense?.datum) || "datum nije naveden";
 
       return {
         intent: "LARGEST_EXPENSE",
@@ -1033,6 +1035,53 @@ export class AIAnalysisService {
     };
   }
 
+  async askAssistantWithGemini(question: string, reportData: any, budgetData: any): Promise<{ answer: string; source: "gemini" | "fallback"; intent: string; data: any }> {
+    const contextData = this.buildAssistantContextData(reportData, budgetData);
+
+    const ai = await this.getGeminiClient();
+
+    if (ai) {
+      try {
+        const prompt = `
+Ti si finansijski AI asistent za aplikaciju za pracenje troskova.
+Odgovaraj kratko, jasno i na bosanskom jeziku.
+Koristi samo podatke koje dobijes u kontekstu.
+Ako nema dovoljno podataka, reci da nema dovoljno podataka.
+Ne izmisljaj brojeve, dobavljace, kategorije ili budzete.
+
+Pitanje korisnika:
+${question}
+
+Podaci iz sistema:
+${JSON.stringify(contextData)}
+`;
+
+        const response = await ai.models.generateContent({
+          model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+          contents: prompt,
+        });
+
+        const answer = typeof response.text === "string" ? response.text.trim() : "";
+        if (answer) {
+          return {
+            answer,
+            source: "gemini",
+            intent: "GEMINI",
+            data: contextData,
+          };
+        }
+      } catch (error) {
+        console.error("Gemini error:", error);
+      }
+    }
+
+    const fallback = this.askAssistant(question, reportData, budgetData);
+    return {
+      ...fallback,
+      source: "fallback",
+    };
+  }
+
   getExecutiveSummary(reportData: any, budgetData: any): { summary: Array<{ type: "INFO" | "WARNING" | "SUCCESS"; message: string }> } {
     const analysis = this.fallbackDatabaseAnalysis(reportData, budgetData);
     const suppliers = this.getTopGrowingSuppliers(reportData).suppliers;
@@ -1100,7 +1149,7 @@ export class AIAnalysisService {
     return {
       severity,
       explanation: average > 0
-        ? `Trosak iznosi ${this.formatAmount(amount)} KM. Prosjek kategorije ${category} iznosi ${this.formatAmount(average)} KM, a medijan ${this.formatAmount(median)} KM. Trosak je ${Math.max(0, aboveAveragePercent)}% veci od prosjeka.${duplicateText}`
+          ? `Trosak iznosi ${this.formatAmount(amount)} KM. Prosjek kategorije ${category} iznosi ${this.formatAmount(average)} KM, a medijan ${this.formatAmount(median)} KM. Trosak je ${Math.max(0, aboveAveragePercent)}% veci od prosjeka.${duplicateText}`
         : `Trosak iznosi ${this.formatAmount(amount)} KM. Nema dovoljno slicnih troskova za pouzdano poredjenje.${duplicateText}`,
     };
   }
@@ -1167,7 +1216,7 @@ export class AIAnalysisService {
       .filter((group) => !group.months.includes(currentMonth))
       .map((group) => ({
         expenseName: group.expenseName,
-        lastSeenDate: group.lastSeenDate,
+          lastSeenDate: this.formatDisplayDate(group.lastSeenDate) || group.lastSeenDate,
         averageAmount: this.round(group.averageAmount),
         recommendation: "Provjeriti da li racun jos nije unesen.",
       }))
@@ -1227,6 +1276,97 @@ export class AIAnalysisService {
 
   private getReportExpenses(reportData: any): any[] {
     return this.extractExpenses(reportData);
+  }
+
+  private buildAssistantContextData(reportData: any, budgetData: any): any {
+    const expenses = this.extractExpenses(reportData);
+    const totalAmount = this.getTotalAmount(reportData, expenses);
+    const topExpenses = [...expenses]
+      .sort((a, b) => Number(b.iznos || 0) - Number(a.iznos || 0))
+      .slice(0, 10)
+      .map((expense) => ({
+        id: expense.id ?? null,
+        naziv: expense.naziv || "Bez naziva",
+        iznos: this.round(Number(expense.iznos || 0)),
+        datum: this.formatDisplayDate(expense.datum),
+        kategorija: expense.kategorijaNaziv || expense.kategorija || null,
+        odjel: expense.odjelNaziv || expense.odjel || null,
+        dobavljac: expense.dobavljacNaziv || expense.dobavljac || null,
+        statusValidacije: expense.statusValidacije || null,
+        sharePercentage: totalAmount > 0 ? this.round((Number(expense.iznos || 0) / totalAmount) * 100) : 0,
+      }));
+
+    const anomalies = expenses
+      .filter((expense) => ["ANOMALIJA", "POTENCIJALNI_DUPLIKAT"].includes(String(expense.statusValidacije || "")))
+      .sort((a, b) => Number(b.iznos || 0) - Number(a.iznos || 0))
+      .slice(0, 10)
+      .map((expense) => ({
+        id: expense.id ?? null,
+        naziv: expense.naziv || "Bez naziva",
+        iznos: this.round(Number(expense.iznos || 0)),
+        datum: this.formatDisplayDate(expense.datum),
+        statusValidacije: expense.statusValidacije || null,
+        kategorija: expense.kategorijaNaziv || expense.kategorija || null,
+        dobavljac: expense.dobavljacNaziv || expense.dobavljac || null,
+      }));
+
+    const budgets = Array.isArray(budgetData) ? budgetData : [];
+    const budgetSummary = {
+      count: budgets.length,
+      total: this.round(this.getBudgetTotal(budgetData)),
+      topBudgets: budgets
+        .map((budget: any) => ({
+          naziv: budget.naziv || null,
+          planiraniIznos: this.round(Number(budget.planiraniIznos || budget.planirani_iznos || 0)),
+          datumPocetka: this.formatDisplayDate(budget.datumPocetka || budget.datum_pocetka),
+          datumZavrsetka: this.formatDisplayDate(budget.datumZavrsetka || budget.datum_zavrsetka),
+          odjel: budget.odjelNaziv || budget.odjel || null,
+          statusOdobrenja: budget.statusOdobrenja || null,
+        }))
+        .sort((a: any, b: any) => b.planiraniIznos - a.planiraniIznos)
+        .slice(0, 10),
+    };
+
+    return {
+      summary: {
+        totalExpenses: Number(reportData?.summary?.totalExpenses || expenses.length),
+        totalAmount: this.round(totalAmount),
+        averageAmount: this.round(Number(reportData?.summary?.averageAmount || (expenses.length ? totalAmount / expenses.length : 0))),
+        budgetTotal: this.round(Number(reportData?.summary?.budgetTotal || budgetSummary.total)),
+        budgetUtilizationPercent: reportData?.summary?.budgetUtilizationPercent ?? null,
+        topCategory: reportData?.summary?.topCategory || null,
+        topDepartment: reportData?.summary?.topDepartment || null,
+      },
+      topExpenses,
+      categories: Array.isArray(reportData?.breakdowns?.byCategory)
+        ? reportData.breakdowns.byCategory.slice(0, 10)
+        : this.buildAssistantBreakdown(expenses, "kategorijaNaziv", "kategorija").slice(0, 10),
+      departments: Array.isArray(reportData?.breakdowns?.byDepartment)
+        ? reportData.breakdowns.byDepartment.slice(0, 10)
+        : this.buildAssistantBreakdown(expenses, "odjelNaziv", "odjel").slice(0, 10),
+      suppliers: {
+        topBySpend: this.buildAssistantBreakdown(expenses, "dobavljacNaziv", "dobavljac").slice(0, 10),
+        topGrowing: this.getTopGrowingSuppliers(reportData).suppliers,
+        dependencyRisks: this.getSupplierDependencyRisk(reportData).risks,
+      },
+      budgets: budgetSummary,
+      anomalies,
+      missingRecurringExpenses: this.detectMissingRecurringExpenses(reportData).missingRecurringExpenses,
+    };
+  }
+
+  private async getGeminiClient(): Promise<any | null> {
+    if (!process.env.GEMINI_API_KEY) {
+      return null;
+    }
+
+    if (this.geminiClient !== undefined) {
+      return this.geminiClient;
+    }
+
+    const { GoogleGenAI } = await import("@google/genai");
+    this.geminiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    return this.geminiClient;
   }
 
   private getCurrentAndPreviousMonthKeys(expenses: any[]): { currentMonth: string | null; previousMonth: string | null } {
@@ -1423,6 +1563,13 @@ export class AIAnalysisService {
 
   private formatAmount(value: number): string {
     return this.round(value).toLocaleString("bs-BA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  private formatDisplayDate(value: unknown): string | null {
+    if (!value) return null;
+    const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return String(value);
+    return `${match[3]}.${match[2]}.${match[1]}`;
   }
 
 }
