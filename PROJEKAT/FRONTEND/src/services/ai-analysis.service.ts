@@ -68,6 +68,7 @@ export interface MissingRecurringExpensesResponse {
     expenseName: string;
     lastSeenDate: string;
     averageAmount: number;
+    expectedMonth: string;
     recommendation: string;
   }>;
 }

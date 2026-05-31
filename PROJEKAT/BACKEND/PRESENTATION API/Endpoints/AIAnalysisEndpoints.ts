@@ -3,11 +3,13 @@ import type { IAuthService } from "../../BLL/Interfaces/IAuthService";
 const { AIAnalysisService } = require("../../BLL/Services/AIAnalysisService");
 const { ReportService } = require("../../BLL/Services/ReportService");
 const { BudgetService } = require("../../BLL/Services/BudgetService");
+const { NotificationService } = require("../../BLL/Services/NotificationService");
 
 function registerAIAnalysisEndpoints(app: any, authService: IAuthService, _logger?: any) {
   const aiAnalysisService = new AIAnalysisService();
   const reportService = new ReportService();
   const budgetService = new BudgetService();
+  const notificationService = new NotificationService();
 
   const allowedRoles = ["admin", "glavni_racunovodja", "finansijski_direktor"];
 
@@ -136,7 +138,9 @@ function registerAIAnalysisEndpoints(app: any, authService: IAuthService, _logge
     async (_req: any, res: any) => {
       try {
         const reportData = await reportService.getExpenseReport({});
-        return res.status(200).json(aiAnalysisService.detectMissingRecurringExpenses(reportData));
+        const result = aiAnalysisService.detectMissingRecurringExpenses(reportData);
+        await notificationService.createMissingRecurringExpenseNotifications(result.missingRecurringExpenses);
+        return res.status(200).json(result);
       } catch (error: any) {
         if (_logger) _logger("ERROR", "Greska pri detekciji zaboravljenih troskova", error);
         return res.status(500).json({ message: error?.message || "Greska pri detekciji zaboravljenih troskova." });

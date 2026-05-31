@@ -55,29 +55,33 @@ describe("AIAnalysisService fallback logic", () => {
 
 describe("AIAnalysisService category suggestion", () => {
   let svc: any;
+  let previousKey: string | undefined;
   let fetchSpy: jest.SpyInstance;
 
   beforeEach(() => {
     svc = new AIAnalysisService("http://ai-service.test/");
+    previousKey = process.env.GEMINI_API_KEY;
+    process.env.GEMINI_API_KEY = "test-key";
     fetchSpy = jest.spyOn(global, "fetch" as any);
   });
 
   afterEach(() => {
     fetchSpy.mockRestore();
+    if (previousKey === undefined) {
+      delete process.env.GEMINI_API_KEY;
+    } else {
+      process.env.GEMINI_API_KEY = previousKey;
+    }
   });
 
-  test("salje zahtjev AI servisu i vraca prijedlog kategorije", async () => {
+  test("salje zahtjev Gemini API-ju i vraca postojecu kategoriju", async () => {
     const suggestion = {
       categoryId: "kat-1",
-      categoryName: "Oprema",
       confidence: 0.84,
       reason: "Laptop pripada opremi.",
     };
-
-    fetchSpy.mockResolvedValue({
-      ok: true,
-      json: jest.fn().mockResolvedValue(suggestion),
-    } as any);
+    const generateContent = jest.fn().mockResolvedValue({ text: JSON.stringify(suggestion) });
+    svc.geminiClient = { models: { generateContent } };
 
     const payload = {
       naziv: "Laptop Lenovo",
@@ -86,42 +90,185 @@ describe("AIAnalysisService category suggestion", () => {
 
     const result = await svc.suggestExpenseCategory(payload);
 
-    expect(result).toEqual(suggestion);
+    expect(result).toEqual({ ...suggestion, categoryName: "Oprema" });
+    expect(generateContent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        model: "gemini-2.5-flash",
+        contents: expect.stringContaining("Laptop Lenovo"),
+        config: expect.objectContaining({
+          responseMimeType: "application/json",
+          responseSchema: expect.objectContaining({
+            properties: expect.objectContaining({
+              categoryId: expect.objectContaining({ enum: ["kat-1"] }),
+            }),
+          }),
+        }),
+      })
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  test("koristi Python fallback ako Gemini kategorija nije medju dostupnim opcijama", async () => {
+    svc.geminiClient = {
+      models: {
+        generateContent: jest.fn().mockResolvedValue({
+          text: JSON.stringify({ categoryId: "izmisljena", confidence: 0.9, reason: "Pogresna kategorija." }),
+        }),
+      },
+    };
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        categoryId: "kat-1",
+        categoryName: "Pogresan naziv",
+        confidence: 0.72,
+        reason: "Python fallback je prepoznao opremu.",
+      }),
+    } as any);
+
+    const result = await svc.suggestExpenseCategory({
+      naziv: "Laptop",
+      categories: [{ id: "kat-1", naziv: "Oprema" }],
+    });
+
+    expect(result).toEqual({
+      categoryId: "kat-1",
+      categoryName: "Oprema",
+      confidence: 0.72,
+      reason: "Python fallback je prepoznao opremu.",
+    });
     expect(fetchSpy).toHaveBeenCalledWith(
       "http://ai-service.test/ai/category-suggestion",
       expect.objectContaining({
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
       })
     );
   });
 
-  test("vraca kontrolisanu poruku kada AI servis vrati neuspjesan status", async () => {
-    fetchSpy.mockResolvedValue({
-      ok: false,
-      status: 503,
-      json: jest.fn(),
-    } as any);
+  test("vraca kontrolisanu poruku kada Gemini i Python poziv puknu", async () => {
+    svc.geminiClient = {
+      models: {
+        generateContent: jest.fn().mockRejectedValue(new Error("Gemini down")),
+      },
+    };
+    fetchSpy.mockRejectedValue(new Error("Python down"));
 
-    const result = await svc.suggestExpenseCategory({ naziv: "Laptop" });
-
-    expect(result).toEqual({
-      categoryId: null,
-      categoryName: null,
-      confidence: 0,
-      reason: "AI servis trenutno nije dostupan za prijedlog kategorije.",
+    const result = await svc.suggestExpenseCategory({
+      naziv: "Laptop",
+      categories: [{ id: "kat-1", naziv: "Oprema" }],
     });
-  });
-
-  test("vraca kontrolisanu poruku kada poziv AI servisa pukne", async () => {
-    fetchSpy.mockRejectedValue(new Error("network down"));
-
-    const result = await svc.suggestExpenseCategory({ naziv: "Laptop" });
 
     expect(result.categoryId).toBeNull();
     expect(result.confidence).toBe(0);
-    expect(result.reason).toBe("AI servis trenutno nije dostupan za prijedlog kategorije.");
+    expect(result.reason).toBe("Gemini API i Python AI servis trenutno nisu dostupni za prijedlog kategorije.");
+  });
+
+  test("koristi Python fallback bez Gemini API kljuca", async () => {
+    delete process.env.GEMINI_API_KEY;
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        categoryId: "kat-1",
+        confidence: 0.63,
+        reason: "Python fallback radi bez Gemini kljuca.",
+      }),
+    } as any);
+
+    const result = await svc.suggestExpenseCategory({
+      naziv: "Laptop",
+      categories: [{ id: "kat-1", naziv: "Oprema" }],
+    });
+
+    expect(result.categoryId).toBe("kat-1");
+    expect(result.categoryName).toBe("Oprema");
+    expect(result.reason).toContain("Python fallback");
+  });
+
+  test("koristi Python fallback kada Gemini ne vrati validan JSON", async () => {
+    svc.geminiClient = {
+      models: {
+        generateContent: jest.fn().mockResolvedValue({ text: "nije-json" }),
+      },
+    };
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        categoryId: "kat-1",
+        confidence: 0.58,
+        reason: "",
+      }),
+    } as any);
+
+    const result = await svc.suggestExpenseCategory({
+      naziv: "Laptop",
+      categories: [{ id: "kat-1", naziv: "Oprema" }],
+    });
+
+    expect(result.categoryId).toBe("kat-1");
+    expect(result.reason).toContain("Python AI servis je odabrao");
+  });
+
+  test("ne zove Gemini ako nema dostupnih kategorija", async () => {
+    const generateContent = jest.fn();
+    svc.geminiClient = { models: { generateContent } };
+
+    const result = await svc.suggestExpenseCategory({ naziv: "Laptop", categories: [] });
+
+    expect(result.categoryId).toBeNull();
+    expect(result.reason).toContain("Nema dostupnih kategorija");
+    expect(generateContent).not.toHaveBeenCalled();
+  });
+
+  test("normalizuje Gemini confidence i koristi fallback obrazlozenje", async () => {
+    svc.geminiClient = {
+      models: {
+        generateContent: jest.fn().mockResolvedValue({
+          text: "```json\n{\"categoryId\":\"kat-1\",\"confidence\":4,\"reason\":\"\"}\n```",
+        }),
+      },
+    };
+
+    const result = await svc.suggestExpenseCategory({
+      naziv: "Laptop",
+      categories: [{ id: "kat-1", naziv: "Oprema" }],
+    });
+
+    expect(result.confidence).toBe(1);
+    expect(result.reason).toContain("najprikladniju dostupnu kategoriju");
+  });
+
+  test("vraca kontrolisanu poruku kada Python fallback vrati neuspjesan status", async () => {
+    delete process.env.GEMINI_API_KEY;
+    fetchSpy.mockResolvedValue({ ok: false, status: 503 } as any);
+
+    const result = await svc.suggestExpenseCategory({
+      naziv: "Laptop",
+      categories: [{ id: "kat-1", naziv: "Oprema" }],
+    });
+
+    expect(result.categoryId).toBeNull();
+    expect(result.reason).toContain("Gemini API i Python AI servis");
+  });
+
+  test("odbija Python fallback kategoriju koja nije medju dostupnim opcijama", async () => {
+    delete process.env.GEMINI_API_KEY;
+    fetchSpy.mockResolvedValue({
+      ok: true,
+      json: jest.fn().mockResolvedValue({
+        categoryId: "izmisljena",
+        confidence: 0.99,
+        reason: "Pogresna kategorija.",
+      }),
+    } as any);
+
+    const result = await svc.suggestExpenseCategory({
+      naziv: "Laptop",
+      categories: [{ id: "kat-1", naziv: "Oprema" }],
+    });
+
+    expect(result.categoryId).toBeNull();
+    expect(result.reason).toContain("nije pronasao pouzdan prijedlog");
   });
 });
 
@@ -509,10 +656,40 @@ describe("AIAnalysisService dashboard AI helpers", () => {
   });
 
   test("detectMissingRecurringExpenses pronalazi redovan trosak koji nedostaje u trenutnom mjesecu", () => {
-    const result = svc.detectMissingRecurringExpenses(helperReport);
+    const result = svc.detectMissingRecurringExpenses(helperReport, new Date(2026, 3, 15));
 
-    expect(result.missingRecurringExpenses.some((item: any) => item.expenseName.includes("internet usluge"))).toBe(true);
+    expect(result.missingRecurringExpenses.some((item: any) => item.expenseName.toLowerCase().includes("internet usluge"))).toBe(true);
     expect(result.missingRecurringExpenses[0].lastSeenDate).toMatch(/^\d{2}\.\d{2}\.\d{4}$/);
+    expect(result.missingRecurringExpenses[0].expectedMonth).toBe("04.2026");
+  });
+
+  test("detectMissingRecurringExpenses koristi kalendarski mjesec i kada u njemu jos nema unosa", () => {
+    const result = svc.detectMissingRecurringExpenses({
+      expenses: [
+        { naziv: "Zakup prostora", datum: "2026-03-01", iznos: 900 },
+        { naziv: "Zakup prostora", datum: "2026-04-01", iznos: 900 },
+        { naziv: "Zakup prostora", datum: "2026-05-01", iznos: 900 },
+      ],
+    }, new Date(2026, 5, 10));
+
+    expect(result.missingRecurringExpenses).toEqual([
+      expect.objectContaining({
+        expenseName: "Zakup prostora",
+        expectedMonth: "06.2026",
+      }),
+    ]);
+  });
+
+  test("detectMissingRecurringExpenses ne prijavljuje davno ugasen periodicni trosak", () => {
+    const result = svc.detectMissingRecurringExpenses({
+      expenses: [
+        { naziv: "Stara pretplata", datum: "2026-01-01", iznos: 25 },
+        { naziv: "Stara pretplata", datum: "2026-02-01", iznos: 25 },
+        { naziv: "Stara pretplata", datum: "2026-03-01", iznos: 25 },
+      ],
+    }, new Date(2026, 6, 10));
+
+    expect(result.missingRecurringExpenses).toHaveLength(0);
   });
 
   test("getSupplierDependencyRisk detektuje dobavljaca sa preko 50 posto kategorije", () => {
@@ -603,7 +780,7 @@ describe("AIAnalysisService dashboard AI helpers", () => {
         { naziv: "Internet", datum: "2026-04-01", iznos: 100 },
         { naziv: "Internet", datum: "2026-05-01", iznos: 100 },
       ],
-    }).missingRecurringExpenses).toHaveLength(0);
+    }, new Date(2026, 4, 10)).missingRecurringExpenses).toHaveLength(0);
   });
 
   test("getSupplierDependencyRisk vraca prazno bez dobavljaca i pokriva total 0", () => {

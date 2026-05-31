@@ -124,6 +124,110 @@ h2 {
   font-weight: 700;
 }
 
+.budget-overview {
+  display: grid;
+  gap: 14px;
+}
+
+.budget-heading {
+  margin-bottom: 0;
+}
+
+.budget-heading .eyebrow {
+  margin-bottom: 4px;
+  color: #027a48;
+}
+
+.budget-status {
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.budget-status.healthy {
+  color: #027a48;
+  background: #ecfdf3;
+}
+
+.budget-status.warning {
+  color: #b54708;
+  background: #fffaeb;
+}
+
+.budget-status.critical {
+  color: #b42318;
+  background: #fef3f2;
+}
+
+.budget-status.neutral {
+  color: #475467;
+  background: #f2f4f7;
+}
+
+.budget-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid #e3e9f2;
+  border-radius: 8px;
+  background: #e3e9f2;
+}
+
+.budget-kpi-grid article {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 14px;
+  background: #ffffff;
+}
+
+.budget-kpi-grid span,
+.budget-kpi-grid small {
+  color: #667085;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.budget-kpi-grid strong {
+  color: #101828;
+  font-size: 20px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.budget-kpi-grid .negative-value {
+  color: #b42318;
+}
+
+.budget-progress {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eef2f6;
+}
+
+.budget-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #12b76a;
+  transition: width 180ms ease;
+}
+
+.budget-progress-fill.warning {
+  background: #f79009;
+}
+
+.budget-progress-fill.critical {
+  background: #f04438;
+}
+
+.budget-progress-fill.neutral {
+  background: #98a2b3;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -534,6 +638,7 @@ h2 {
   }
 
   .metric-grid,
+  .budget-kpi-grid,
   .dashboard-grid,
   .ai-layout,
   .ai-card-grid {

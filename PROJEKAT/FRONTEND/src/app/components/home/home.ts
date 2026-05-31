@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { AuthGuardService } from '../../../middleware/middleware.authguard';
-import { CreateExpenseRequest, Expense, ExpenseReferenceData } from '../../../models/entities';
+import { CreateExpenseRequest, Expense, ExpenseReferenceData, ExpenseReportSummary } from '../../../models/entities';
 import {
   AiAnalysisService,
   CostSuggestionsResponse,
@@ -14,6 +14,7 @@ import {
   TopGrowingSupplier,
 } from '../../../services/ai-analysis.service';
 import { ExpenseService } from '../../../services/expense.service';
+import { ReportService } from '../../../services/report.service';
 
 type ExpenseBreakdown = {
   label: string;
@@ -33,6 +34,7 @@ export class HomeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthGuardService);
   private readonly expenseService = inject(ExpenseService);
+  private readonly reportService = inject(ReportService);
   private readonly aiAnalysisService = inject(AiAnalysisService);
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -56,6 +58,9 @@ export class HomeComponent implements OnInit {
   public isSavingExpense = false;
   public dashboardMessage = '';
   public dashboardError = '';
+  public budgetSummary: ExpenseReportSummary | null = null;
+  public isLoadingBudgetSummary = false;
+  public budgetSummaryError = '';
   public editingExpense: Expense | null = null;
   public expenseToDelete: Expense | null = null;
   public assistantQuestion = '';
@@ -109,6 +114,9 @@ export class HomeComponent implements OnInit {
     this.authService.authState$.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.loadDashboardExpenses();
+        if (this.canOpenReports) {
+          this.loadBudgetSummary();
+        }
         if (this.canOpenAiAnalysis) {
           this.loadTopGrowingSuppliers();
           this.loadExecutiveSummary();
@@ -120,6 +128,7 @@ export class HomeComponent implements OnInit {
       }
 
       this.expenses = [];
+      this.budgetSummary = null;
       this.topGrowingSuppliers = [];
       this.executiveSummary = [];
       this.costSuggestions = [];
@@ -199,6 +208,48 @@ export class HomeComponent implements OnInit {
     return this.departmentBreakdown[0]?.label || '-';
   }
 
+  public get budgetRemainingAmount(): number {
+    return Number(this.budgetSummary?.budgetTotal || 0) - Number(this.budgetSummary?.totalAmount || 0);
+  }
+
+  public get budgetUtilizationPercentage(): number | null {
+    return this.budgetSummary?.budgetUtilizationPercent ?? null;
+  }
+
+  public get budgetProgressPercentage(): number {
+    return Math.min(Math.max(this.budgetUtilizationPercentage || 0, 0), 100);
+  }
+
+  public get budgetStatusLabel(): string {
+    const utilization = this.budgetUtilizationPercentage;
+    if (utilization === null) {
+      return 'Budzet nije definisan';
+    }
+
+    if (utilization > 100) {
+      return 'Budzet je prekoracen';
+    }
+
+    if (utilization >= 90) {
+      return 'Blizu limita';
+    }
+
+    return 'U granicama budzeta';
+  }
+
+  public get budgetStatusClass(): string {
+    const utilization = this.budgetUtilizationPercentage;
+    if (utilization === null) {
+      return 'neutral';
+    }
+
+    if (utilization > 100) {
+      return 'critical';
+    }
+
+    return utilization >= 90 ? 'warning' : 'healthy';
+  }
+
   public loadDashboardExpenses(): void {
     this.isLoadingExpenses = true;
     this.dashboardError = '';
@@ -213,6 +264,26 @@ export class HomeComponent implements OnInit {
         console.error(error);
         this.dashboardError = 'Greška pri dohvatu troškova.';
         this.isLoadingExpenses = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  public loadBudgetSummary(): void {
+    this.isLoadingBudgetSummary = true;
+    this.budgetSummaryError = '';
+
+    this.reportService.getExpenseReport({ tipIzvjestaja: 'sazeti' }).subscribe({
+      next: (report) => {
+        this.budgetSummary = report.summary;
+        this.isLoadingBudgetSummary = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(error);
+        this.budgetSummary = null;
+        this.budgetSummaryError = 'Greska pri dohvatu pregleda budzeta.';
+        this.isLoadingBudgetSummary = false;
         this.cdr.detectChanges();
       },
     });

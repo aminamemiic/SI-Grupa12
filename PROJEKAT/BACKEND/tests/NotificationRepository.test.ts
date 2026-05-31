@@ -130,6 +130,29 @@ describe("NotificationRepository internals and DB calls", () => {
     expect(AppDB.db.query.mock.calls[0][1]).toEqual(["A", "P", "LOW", "u1", "AI_ANOMALIJA", null, null]);
   });
 
+  test("createForUsersIfAbsent preskace korisnike koji vec imaju istu notifikaciju", async () => {
+    AppDB.db.query.mockResolvedValueOnce({ rows: [{ korisnikId: "u1" }] });
+    jest.spyOn(repo, "createForUsers").mockResolvedValue([{ id: "n2" }]);
+
+    const result = await repo.createForUsersIfAbsent(["u1", "u2"], {
+      naslov: "Izostao periodicni trosak: Internet (06.2026)",
+      poruka: "Provjera.",
+      prioritet: "MEDIUM",
+      tipNotifikacije: "IZOSTAO_PERIODICNI_TROSAK",
+    });
+
+    expect(result).toEqual([{ id: "n2" }]);
+    expect(repo.createForUsers).toHaveBeenCalledWith(
+      ["u2"],
+      expect.objectContaining({ tipNotifikacije: "IZOSTAO_PERIODICNI_TROSAK" })
+    );
+  });
+
+  test("createForUsersIfAbsent ne pristupa bazi bez korisnika", async () => {
+    await expect(repo.createForUsersIfAbsent([], { naslov: "A" })).resolves.toEqual([]);
+    expect(AppDB.db.query).not.toHaveBeenCalled();
+  });
+
   test("getByUserId vraca notifikacije korisnika", async () => {
     AppDB.db.query.mockResolvedValueOnce({
       rows: [

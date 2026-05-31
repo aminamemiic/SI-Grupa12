@@ -76,6 +76,53 @@
     </article>
   </section>
 
+  @if (canOpenReports) {
+    <section class="panel budget-overview" aria-label="Stanje budzeta">
+      <div class="panel-heading budget-heading">
+        <div>
+          <p class="eyebrow">Budzet</p>
+          <h2>Stanje budzeta na jednom mjestu</h2>
+        </div>
+        @if (budgetSummary) {
+          <span class="budget-status" [class]="budgetStatusClass">{{ budgetStatusLabel }}</span>
+        }
+      </div>
+
+      @if (isLoadingBudgetSummary) {
+        <p class="assistant-loading">Ucitavanje budzetskih metrika...</p>
+      } @else if (budgetSummaryError) {
+        <p class="inline-error">{{ budgetSummaryError }}</p>
+      } @else if (budgetSummary; as summary) {
+        <div class="budget-kpi-grid">
+          <article>
+            <span>Planirani budzet</span>
+            <strong>{{ summary.budgetTotal | number: '1.2-2' }} KM</strong>
+            <small>{{ summary.budgetCount }} evidentiranih budzeta</small>
+          </article>
+          <article>
+            <span>Evidentirani troskovi</span>
+            <strong>{{ summary.totalAmount | number: '1.2-2' }} KM</strong>
+            <small>{{ summary.totalExpenses }} zapisa</small>
+          </article>
+          <article>
+            <span>Preostalo</span>
+            <strong [class.negative-value]="budgetRemainingAmount < 0">{{ budgetRemainingAmount | number: '1.2-2' }} KM</strong>
+            <small>Planirano minus evidentirano</small>
+          </article>
+          <article>
+            <span>Iskoristenost budzeta</span>
+            <strong>{{ budgetUtilizationPercentage === null ? '-' : (budgetUtilizationPercentage | number: '1.1-1') + '%' }}</strong>
+            <small>{{ budgetStatusLabel }}</small>
+          </article>
+        </div>
+
+        <div class="budget-progress" role="progressbar" aria-label="Iskoristenost budzeta" [attr.aria-valuenow]="budgetUtilizationPercentage || 0" aria-valuemin="0" aria-valuemax="100">
+          <span class="budget-progress-fill" [class]="budgetStatusClass" [style.width.%]="budgetProgressPercentage"></span>
+        </div>
+      }
+    </section>
+  }
+
   <section class="dashboard-grid">
     <article class="panel chart-panel">
       <div class="panel-heading">
@@ -304,6 +351,7 @@
               @for (expense of missingRecurringExpenses; track expense.expenseName) {
                 <div class="suggestion-item">
                   <strong>{{ expense.expenseName }}</strong>
+                  <p>Ocekivano za: {{ expense.expectedMonth }}</p>
                   <p>Zadnji put evidentirano: {{ expense.lastSeenDate || '-' }}</p>
                   <small>Prosjek {{ expense.averageAmount | number: '1.2-2' }} KM · {{ expense.recommendation }}</small>
                 </div>

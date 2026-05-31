@@ -59,6 +59,41 @@ export class NotificationService implements INotificationService {
     });
   }
 
+  async createMissingRecurringExpenseNotifications(expenses: any[]): Promise<any[]> {
+    if (!Array.isArray(expenses) || expenses.length === 0) {
+      return [];
+    }
+
+    const recipients = await this.notificationRepository.getRecipientsForAnomalyNotifications();
+    const recipientIds = recipients.map((recipient: any) => recipient.id);
+    if (recipientIds.length === 0) {
+      return [];
+    }
+
+    const notifications = await Promise.all(
+      expenses.map((expense) => {
+        const expenseName = expense?.expenseName || "Trosak";
+        const expectedMonth = expense?.expectedMonth || "tekuci mjesec";
+        const averageAmount = Number(expense?.averageAmount || 0).toFixed(2);
+        const recommendation = expense?.recommendation || "Provjeriti da li racun jos nije unesen.";
+
+        return this.notificationRepository.createForUsersIfAbsent(recipientIds, {
+          naslov: `Izostao periodicni trosak: ${expenseName} (${expectedMonth})`,
+          poruka: [
+            `Trosak "${expenseName}" nije evidentiran za ${expectedMonth}.`,
+            `Prosjecni raniji iznos je ${averageAmount} BAM.`,
+            `Preporucena akcija: ${recommendation}`,
+          ].join(" "),
+          prioritet: "MEDIUM",
+          tipNotifikacije: "IZOSTAO_PERIODICNI_TROSAK",
+          povezaniTrosakId: null,
+        });
+      })
+    );
+
+    return notifications.flat();
+  }
+
   async getNotificationsForUser(authUser: unknown): Promise<any[]> {
     const userId = await this.notificationRepository.getUserIdFromAuth(authUser);
     if (!userId) {
