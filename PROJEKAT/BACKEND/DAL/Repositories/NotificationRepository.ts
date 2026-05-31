@@ -77,6 +77,28 @@ class NotificationRepository {
     return result.rows.map((row: any) => this.mapNotification(row));
   }
 
+  async createForUsersIfAbsent(userIds: string[], notification: any) {
+    if (!userIds.length) {
+      return [];
+    }
+
+    const notificationType = notification.tipNotifikacije || "AI_ANOMALIJA";
+    const result = await AppDB.db.query(
+      `
+      SELECT korisnik_id::text AS "korisnikId"
+      FROM notifikacije
+      WHERE korisnik_id = ANY($1::uuid[])
+        AND tip_notifikacije = $2
+        AND naslov = $3;
+      `,
+      [userIds, notificationType, notification.naslov]
+    );
+    const existingUserIds = new Set(result.rows.map((row: any) => String(row.korisnikId)));
+    const missingUserIds = userIds.filter((userId) => !existingUserIds.has(String(userId)));
+
+    return this.createForUsers(missingUserIds, notification);
+  }
+
   async getByUserId(userId: string) {
     const result = await AppDB.db.query(
       `

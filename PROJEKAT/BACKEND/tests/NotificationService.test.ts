@@ -3,6 +3,7 @@ export {};
 const mockNotificationRepository = {
   getRecipientsForAnomalyNotifications: jest.fn(),
   createForUsers: jest.fn(),
+  createForUsersIfAbsent: jest.fn(),
   getUserIdFromAuth: jest.fn(),
   getByUserId: jest.fn(),
   getUnreadCountByUserId: jest.fn(),
@@ -118,6 +119,39 @@ describe("NotificationService", () => {
         povezaniTrosakId: "trosak-1",
       })
     );
+  });
+
+  test("treba kreirati deduplicirano upozorenje za izostali periodicni trosak", async () => {
+    mockNotificationRepository.getRecipientsForAnomalyNotifications.mockResolvedValue([{ id: "user-1" }]);
+    mockNotificationRepository.createForUsersIfAbsent.mockResolvedValue([{ id: "notif-recurring" }]);
+
+    const result = await service.createMissingRecurringExpenseNotifications([
+      {
+        expenseName: "Internet usluge",
+        expectedMonth: "06.2026",
+        averageAmount: 120,
+        recommendation: "Provjeriti da li racun jos nije unesen.",
+      },
+    ]);
+
+    expect(result).toEqual([{ id: "notif-recurring" }]);
+    expect(mockNotificationRepository.createForUsersIfAbsent).toHaveBeenCalledWith(
+      ["user-1"],
+      expect.objectContaining({
+        naslov: "Izostao periodicni trosak: Internet usluge (06.2026)",
+        tipNotifikacije: "IZOSTAO_PERIODICNI_TROSAK",
+        poruka: expect.stringContaining("120.00 BAM"),
+      })
+    );
+  });
+
+  test("upozorenja za periodicne troskove vracaju prazno bez troskova ili primalaca", async () => {
+    await expect(service.createMissingRecurringExpenseNotifications([])).resolves.toEqual([]);
+    expect(mockNotificationRepository.getRecipientsForAnomalyNotifications).not.toHaveBeenCalled();
+
+    mockNotificationRepository.getRecipientsForAnomalyNotifications.mockResolvedValue([]);
+    await expect(service.createMissingRecurringExpenseNotifications([{ expenseName: "Internet" }])).resolves.toEqual([]);
+    expect(mockNotificationRepository.createForUsersIfAbsent).not.toHaveBeenCalled();
   });
 
   test("markDuplicateActionHandled delegira repository poziv", async () => {

@@ -374,6 +374,83 @@ export class AIAnalysisService {
   }
 
   async suggestExpenseCategory(payload: any): Promise<CategorySuggestionResult> {
+    const categories = Array.isArray(payload?.categories)
+      ? payload.categories
+          .map((category: any) => ({
+            id: String(category?.id || "").trim(),
+            naziv: String(category?.naziv || "").trim(),
+            opis: String(category?.opis || "").trim(),
+          }))
+          .filter((category: any) => category.id && category.naziv)
+      : [];
+
+    if (categories.length === 0) {
+      return this.getEmptyCategorySuggestion("Nema dostupnih kategorija za AI prijedlog.");
+    }
+
+    try {
+      const ai = await this.getGeminiClient();
+      if (ai) {
+        const prompt = `
+Ti si finansijski AI asistent za kategorizaciju troskova.
+Na osnovu naziva stavke, opcionog opisa i dobavljaca odaberi tacno jednu kategoriju iz dostavljene liste.
+Vrati samo JSON koji odgovara zadanoj shemi.
+categoryId mora biti ID jedne od dostupnih kategorija. Ne izmisljaj nove kategorije.
+confidence je broj od 0 do 1.
+reason napisi kratko i jasno na bosanskom jeziku.
+
+Trosak:
+${JSON.stringify({
+  naziv: String(payload?.naziv || "").trim(),
+  opis: payload?.opis || null,
+  dobavljac: payload?.dobavljac || null,
+})}
+
+Dostupne kategorije:
+${JSON.stringify(categories)}
+`;
+
+        const response = await ai.models.generateContent({
+          model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "object",
+              properties: {
+                categoryId: { type: "string", enum: categories.map((category: any) => category.id) },
+                confidence: { type: "number" },
+                reason: { type: "string" },
+              },
+              required: ["categoryId", "confidence", "reason"],
+            },
+          },
+        });
+
+        const suggestion = this.normalizeGeminiCategorySuggestion(response.text, categories);
+        if (suggestion) {
+          return suggestion;
+        }
+      }
+    } catch (error) {
+      console.error("Gemini category suggestion error:", error);
+    }
+
+    return this.suggestExpenseCategoryWithPython(payload, categories);
+  }
+
+  private normalizeGeminiCategorySuggestion(responseText: unknown, categories: any[]): CategorySuggestionResult | null {
+    try {
+      const rawText = typeof responseText === "string" ? responseText.trim() : "";
+      const jsonText = rawText.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+      const parsed = JSON.parse(jsonText);
+      return this.normalizeCategorySuggestion(parsed, categories, "Gemini je odabrao najprikladniju dostupnu kategoriju.");
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  private async suggestExpenseCategoryWithPython(payload: any, categories: any[]): Promise<CategorySuggestionResult> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
 
@@ -381,25 +458,52 @@ export class AIAnalysisService {
       const response = await fetch(`${this.aiServiceUrl}/ai/category-suggestion`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, categories }),
         signal: controller.signal,
       });
 
       if (!response.ok) {
-        throw new Error(`AI servis je vratio status ${response.status}.`);
+        throw new Error(`Python AI servis je vratio status ${response.status}.`);
       }
 
-      return await response.json() as CategorySuggestionResult;
-    } catch (_error) {
-      return {
-        categoryId: null,
-        categoryName: null,
-        confidence: 0,
-        reason: "AI servis trenutno nije dostupan za prijedlog kategorije.",
-      };
+      const suggestion = await response.json();
+      return this.normalizeCategorySuggestion(
+        suggestion,
+        categories,
+        "Python AI servis je odabrao najprikladniju dostupnu kategoriju."
+      ) || this.getEmptyCategorySuggestion("Python AI servis nije pronasao pouzdan prijedlog kategorije.");
+    } catch (error) {
+      console.error("Python category suggestion error:", error);
+      return this.getEmptyCategorySuggestion("Gemini API i Python AI servis trenutno nisu dostupni za prijedlog kategorije.");
     } finally {
       clearTimeout(timeout);
     }
+  }
+
+  private normalizeCategorySuggestion(suggestion: any, categories: any[], fallbackReason: string): CategorySuggestionResult | null {
+    const category = categories.find((item: any) => item.id === String(suggestion?.categoryId || "").trim());
+    if (!category) {
+      return null;
+    }
+
+    const confidence = Number(suggestion?.confidence);
+    return {
+      categoryId: category.id,
+      categoryName: category.naziv,
+      confidence: Number.isFinite(confidence) ? Math.min(Math.max(confidence, 0), 1) : 0,
+      reason: typeof suggestion?.reason === "string" && suggestion.reason.trim()
+        ? suggestion.reason.trim()
+        : fallbackReason,
+    };
+  }
+
+  private getEmptyCategorySuggestion(reason: string): CategorySuggestionResult {
+    return {
+      categoryId: null,
+      categoryName: null,
+      confidence: 0,
+      reason,
+    };
   }
 
   private fallbackExpenseAnalysis(expense: any, context: any): ExpenseAnalysisResult {
@@ -1205,21 +1309,20 @@ ${JSON.stringify(contextData)}
     return { suggestions: suggestions.slice(0, 5) };
   }
 
-  detectMissingRecurringExpenses(reportData: any): { missingRecurringExpenses: Array<{ expenseName: string; lastSeenDate: string; averageAmount: number; recommendation: string }> } {
+  detectMissingRecurringExpenses(reportData: any, referenceDate = new Date()): { missingRecurringExpenses: Array<{ expenseName: string; lastSeenDate: string; averageAmount: number; expectedMonth: string; recommendation: string }> } {
     const groups = this.detectRecurringExpenseGroups(reportData);
-    const { currentMonth } = this.getCurrentAndPreviousMonthKeys(this.getReportExpenses(reportData));
-    if (!currentMonth) {
-      return { missingRecurringExpenses: [] };
-    }
+    const currentMonth = this.getCalendarMonthKey(referenceDate);
 
     const missingRecurringExpenses = groups
-      .filter((group) => !group.months.includes(currentMonth))
+      .filter((group) => !group.months.includes(currentMonth) && this.hasThreeConsecutiveMonthsBefore(group.months, currentMonth))
       .map((group) => ({
         expenseName: group.expenseName,
-          lastSeenDate: this.formatDisplayDate(group.lastSeenDate) || group.lastSeenDate,
+        lastSeenDate: this.formatDisplayDate(group.lastSeenDate) || group.lastSeenDate,
         averageAmount: this.round(group.averageAmount),
+        expectedMonth: this.formatMonthKey(currentMonth),
         recommendation: "Provjeriti da li racun jos nije unesen.",
       }))
+      .sort((first, second) => second.lastSeenDate.localeCompare(first.lastSeenDate))
       .slice(0, 5);
 
     return { missingRecurringExpenses };
@@ -1392,6 +1495,10 @@ ${JSON.stringify(contextData)}
     return match ? `${match[1]}-${match[2]}` : null;
   }
 
+  private getCalendarMonthKey(value: Date): string {
+    return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}`;
+  }
+
   private groupSupplierTotalsByMonth(expenses: any[], monthKey: string): Map<string, any> {
     const totals = new Map<string, { supplierId: string | null; supplierName: string; amount: number }>();
     expenses
@@ -1530,17 +1637,35 @@ ${JSON.stringify(contextData)}
     });
 
     return Array.from(groups.entries())
-      .map(([expenseName, items]) => {
+      .map(([, items]) => {
         const months = Array.from(new Set(items.map((item) => this.getMonthKey(item.datum)).filter(Boolean) as string[])).sort();
         const amounts = items.map((item) => Number(item.iznos || 0)).filter((value) => Number.isFinite(value));
+        const sortedItems = [...items].sort((first, second) => String(first.datum || "").localeCompare(String(second.datum || "")));
+        const latestItem = sortedItems[sortedItems.length - 1];
         return {
-          expenseName,
-          lastSeenDate: items.map((item) => String(item.datum || "")).sort().pop() || "",
+          expenseName: latestItem?.naziv || "Trosak",
+          lastSeenDate: String(latestItem?.datum || ""),
           averageAmount: this.calculateMean(amounts),
           months,
         };
       })
       .filter((group) => group.months.length >= 3 && this.hasThreeConsecutiveMonths(group.months));
+  }
+
+  private hasThreeConsecutiveMonthsBefore(months: string[], expectedMonth: string): boolean {
+    const monthSet = new Set(months);
+    return [-1, -2, -3].every((offset) => monthSet.has(this.getRelativeMonthKey(expectedMonth, offset)));
+  }
+
+  private getRelativeMonthKey(monthKey: string, offset: number): string {
+    const [year, month] = monthKey.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1 + offset, 1));
+    return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+  }
+
+  private formatMonthKey(monthKey: string): string {
+    const [year, month] = monthKey.split("-");
+    return `${month}.${year}`;
   }
 
   private hasThreeConsecutiveMonths(months: string[]): boolean {

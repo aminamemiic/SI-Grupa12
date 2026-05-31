@@ -24,6 +24,10 @@ const mockBudgetService = {
   getAllBudgets: jest.fn(),
 };
 
+const mockNotificationService = {
+  createMissingRecurringExpenseNotifications: jest.fn(),
+};
+
 jest.mock("../BLL/Services/AIAnalysisService", () => ({
   AIAnalysisService: jest.fn().mockImplementation(() => mockAIAnalysisService),
 }));
@@ -34,6 +38,10 @@ jest.mock("../BLL/Services/ReportService", () => ({
 
 jest.mock("../BLL/Services/BudgetService", () => ({
   BudgetService: jest.fn().mockImplementation(() => mockBudgetService),
+}));
+
+jest.mock("../BLL/Services/NotificationService", () => ({
+  NotificationService: jest.fn().mockImplementation(() => mockNotificationService),
 }));
 
 const { registerAIAnalysisEndpoints } = require("../PRESENTATION API/Endpoints/AIAnalysisEndpoints");
@@ -339,18 +347,21 @@ describe("POST /api/ai/analize/baza – AIAnalysisEndpoints", () => {
           expenseName: "internet usluge",
           lastSeenDate: "15.04.2026",
           averageAmount: 120,
+          expectedMonth: "05.2026",
           recommendation: "Provjeriti da li racun jos nije unesen.",
         },
       ],
     };
     mockReportService.getExpenseReport.mockResolvedValue(sampleReport);
     mockAIAnalysisService.detectMissingRecurringExpenses.mockReturnValue(missing);
+    mockNotificationService.createMissingRecurringExpenseNotifications.mockResolvedValue([]);
 
     const response = await request(app).get("/api/ai/missing-recurring-expenses");
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(missing);
     expect(mockAIAnalysisService.detectMissingRecurringExpenses).toHaveBeenCalledWith(sampleReport);
+    expect(mockNotificationService.createMissingRecurringExpenseNotifications).toHaveBeenCalledWith(missing.missingRecurringExpenses);
   });
 
   test("GET /api/ai/supplier-risk vraca rizike zavisnosti od dobavljaca", async () => {
