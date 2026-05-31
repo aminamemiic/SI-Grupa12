@@ -19,7 +19,7 @@
 | US-51 | **Pregled periodičnih troškova za provjeru** - Kao glavni računovođa želim vidjeti periodične troškove koji nisu evidentirani u očekivanom periodu kako bih spriječio da se zaborave finansijske obaveze. | Adna Bajramović, Faris Aljić | Done  | Uz konsultaciju s ostatkom tima |
 | US-52 | **Povrat budžeta na doradu** - Kao finansijski direktor, želim vratiti budžet na doradu uz komentar kako bih obavijestio glavnog računovođu šta je potrebno ispraviti. | Amina Memić | Done  | Uz konsultaciju s ostatkom tima |
 | US-53 | **Ispravka i ponovna dostava budžeta** - Kao glavni računovođa, želim pregledati komentar finansijskog direktora, ispraviti budžet i ponovo ga poslati na odobravanje kako bih završio proces planiranja. | Amina Memić | Done  | Uz konsultaciju s ostatkom tima |
-| US-54 | **Pregled historije komentara budžeta* - Kao glavni računovođa ili finansijski direktor, želim pregledati historiju komentara vezanih za budžet kako bih imao uvid u sve izmjene i obrazloženja tokom procesa odobravanja | Amina Memić | Done  | Uz konsultaciju s ostatkom tima |
+| US-54 | **Pregled historije komentara budžeta** - Kao glavni računovođa ili finansijski direktor, želim pregledati historiju komentara vezanih za budžet kako bih imao uvid u sve izmjene i obrazloženja tokom procesa odobravanja | Amina Memić | Done  | Uz konsultaciju s ostatkom tima |
 
 ## Poređenje podataka
 
@@ -180,7 +180,7 @@ Kao glavni računovođa želim dodati komentar na trošak kako bih dodatno pojas
 **Poslovna vrijednost:** Omogućava bolju interpretaciju troškova i komunikaciju između korisnika  
 **Prioritet:** Low  
 
-#Pretpostavke i otvorena pitanja:
+# Pretpostavke i otvorena pitanja:
 Pretpostavlja se da u bazi podataka postoji struktura koja podržava vezivanje tekstualnih komentara i metapodataka (autor, vrijeme) za ID pojedinačnog troška.
 Otvoreno pitanje: Da li se jednom uneseni komentar može naknadno uređivati ili brisati od strane autora?
 
@@ -188,7 +188,7 @@ Otvoreno pitanje: Da li se jednom uneseni komentar može naknadno uređivati ili
 Zavisi od bilo kojeg prikaza ili tabele troškova gdje korisnik ima pristup detaljima pojedinačnog troška kako bi na njega mogao primijeniti akciju dodavanja komentara.
 Povezan sa Pregled komentara – koji služi za čitanje onoga što je uneseno kroz ovaj story.
 
-Acceptance Criteria:
+**Acceptance Criteria** <br>
 Kada korisnik odabere opciju "Dodaj komentar" na određenom trošku, unese tekst i potvrdi unos, tada sistem mora trajno spasiti komentar u bazu i povezati ga s tim troškom.
 Sistem ne smije dozvoliti spašavanje praznog komentara i treba imati definisanu maksimalnu dužinu karaktera (npr. 500 karaktera).
 Prilikom spašavanja komentara, sistem mora automatski zabilježiti korisničko ime autora i tačno vrijeme unosa komentara.
@@ -209,18 +209,18 @@ Otvoreno pitanje: Da li uz trošak može postojati hronološki niz od više kome
 Zavisi od (Dodavanje komentara – jer se pregled oslanja na postojanje prethodno unesenih komentara.
 Povezan sa Sažetak o uočenoj anomaliji – jer komentari mogu poslužiti kao prostor gdje računovođa objašnjava zašto je sistem detektovao određenu anomaliju.
 
-Acceptance Criteria:
+**Acceptance Criteria** <br>
 Kada trošak ima pridružen komentar, tada sistem u tabelarnom ili detaljnom prikazu mora prikazati vizuelni indikator pored tog troška.
 Kada korisnik klikne na indikator komentara ili otvori detalje troška, tada sistem mora hronološki prikazati tekst komentara, ime autora i vrijeme kada je komentar ostavljen.
 Kada trošak nema nijedan komentar, sistem ne prikazuje vizuelni indikator, a u detaljnom prikazu ispisuje poruku "Nema komentarâ za ovaj trošak".
 
-###ID: 46
-###Naziv: Inteligentni AI asistent za finansijska pitanja
+#### ID: 46
+#### Naziv: Inteligentni AI asistent za finansijska pitanja
 Kao glavni računovođa želim postavljati pitanja AI asistentu na prirodnom jeziku kako bih brzo dobio informacije o troškovima, budžetima, dobavljačima i anomalijama bez ručnog pretraživanja sistema.
 **Sprint:** 10
 **Poslovna vrijednost:** Omogućava brz pristup informacijama i pojednostavljuje analizu podataka.
 **Prioritet:** High
-#Pretpostavke i otvorena pitanja
+# Pretpostavke i otvorena pitanja
 Pretpostavlja se da postoje podaci o troškovima, budžetima i dobavljačima.
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
@@ -233,8 +233,8 @@ AI asistent mora podržavati pitanja o troškovima, budžetima, kategorijama, do
 Kada nema dovoljno podataka, sistem mora prikazati odgovarajuću poruku.
 Sistem ne smije prikazivati izmišljene informacije.
 
-###ID: 47
-###Naziv: AI Executive Summary
+#### ID: 47
+#### Naziv: AI Executive Summary
 Kao finansijski direktor želim automatski generisan sažetak najvažnijih finansijskih informacija kako bih odmah stekao pregled poslovnog stanja.
 
 **Sprint:** 10
@@ -252,15 +252,15 @@ Kada korisnik otvori dashboard, sistem mora prikazati automatski generisan saže
 Sažetak mora sadržavati informacije o troškovima, budžetu i anomalijama.
 Sistem ne smije prikazati grešku prilikom generisanja sažetka.
 
-###ID: 48
-###Naziv: Identifikacija dobavljača sa najvećim rastom
+#### ID: 48
+#### Naziv: Identifikacija dobavljača sa najvećim rastom
 Kao finansijski direktor želim vidjeti dobavljače sa najvećim rastom troškova kako bih mogao identifikovati potencijalne rizike i odstupanja.
 
 **Sprint:** 10
 **Poslovna vrijednost:** Omogućava bolju kontrolu troškova.
 **Prioritet:** High
 
-#Pretpostavke i otvorena pitanja
+# Pretpostavke i otvorena pitanja
 Pretpostavlja se da postoje podaci iz više vremenskih perioda.
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
@@ -271,13 +271,13 @@ Kada korisnik otvori dashboard, sistem mora prikazati dobavljače sa najvećim r
 Sistem mora prikazati procenat promjene troškova.
 Sistem mora razlikovati nove dobavljače od postojećih.
 
-###ID: 49
-###Naziv: AI preporuke za optimizaciju troškova
+#### ID: 49
+#### Naziv: AI preporuke za optimizaciju troškova
 Kao glavni računovođa želim dobiti preporuke za optimizaciju troškova kako bih mogao pravovremeno reagovati na povećanu potrošnju.
 **Sprint:** 10
 **Poslovna vrijednost:** Pomaže smanjenju troškova i unapređenju poslovanja.
 **Prioritet:** High
-#Pretpostavke i otvorena pitanja
+# Pretpostavke i otvorena pitanja
 Pretpostavlja se da postoje historijski podaci za analizu.
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
@@ -288,14 +288,14 @@ Kada sistem identifikuje potencijalnu priliku za optimizaciju, mora prikazati pr
 Preporuka mora sadržavati obrazloženje.
 Sistem ne smije prikazivati preporuke bez odgovarajućih podataka.
 
-###ID: 50
-###Naziv: Procjena rizika zavisnosti od dobavljača
+#### ID: 50
+#### Naziv: Procjena rizika zavisnosti od dobavljača
 Kao finansijski direktor želim biti upozoren kada veliki dio troškova odlazi jednom dobavljaču kako bih smanjio poslovni rizik.
 **Sprint:** 10
 **Poslovna vrijednost:** Smanjuje zavisnost od pojedinačnih dobavljača.
 **Prioritet:** Medium
 
-#Pretpostavke i otvorena pitanja
+# Pretpostavke i otvorena pitanja
 Pretpostavlja se da troškovi imaju pridruženog dobavljača.
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
@@ -306,14 +306,14 @@ Kada jedan dobavljač učestvuje značajnim procentom ukupne potrošnje, sistem 
 Sistem mora prikazati procenat učešća tog dobavljača.
 Sistem mora prikazati nivo rizika (LOW, MEDIUM ili HIGH).
 
-###ID: 51
-###Naziv: Pregled periodičnih troškova za provjeru
+#### ID: 51
+#### Naziv: Pregled periodičnih troškova za provjeru
 Kao glavni računovođa želim vidjeti periodične troškove koji nisu evidentirani u očekivanom periodu kako bih spriječio da se zaborave finansijske obaveze.
 **Sprint:** 10
 **Poslovna vrijednost:** Smanjuje rizik od propuštenih plaćanja i nepotpunih evidencija.
 **Prioritet:** High
 
-#Pretpostavke i otvorena pitanja
+# Pretpostavke i otvorena pitanja
 Pretpostavlja se da sistem može identifikovati periodične troškove.
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
@@ -324,14 +324,14 @@ Kada sistem identifikuje periodični trošak koji nije evidentiran u očekivanom
 Sistem mora prikazati datum posljednje evidencije i prosječan iznos troška.
 Kada nema periodičnih troškova za provjeru, sistem mora prikazati odgovarajuću poruku.
 
-###ID: 52
-###Naziv: Povrat budžeta na doradu
+#### ID: 52
+#### Naziv: Povrat budžeta na doradu
 Kao finansijski direktor, želim vratiti budžet na doradu uz komentar kako bih obavijestio glavnog računovođu šta je potrebno ispraviti
 **Sprint:** 10
 **Poslovna vrijednost:** Omogućava iterativno usavršavanje budžeta bez potpunog odbijanja, čime se ubrzava proces planiranja
 **Prioritet:** High
 
-#Pretpostavke i otvorena pitanja 
+# Pretpostavke i otvorena pitanja 
 Pretpostavlja se da budžet postoji i da je u statusu "na čekanju" ili u statusu "nacrt"
 Pretpostavlja se da finansijski direktor ima uvid u detalje budžeta prije povrata
 
@@ -347,15 +347,15 @@ Kada je budžet uspješno vraćen na doradu, tada sistem mora poslati notifikaci
 Sistem mora sačuvati komentar u historiji komentara budžeta 
 
 
-###ID: 53
-###Naziv: Ispravka i ponovna dostava budžeta
+#### ID: 53
+#### Naziv: Ispravka i ponovna dostava budžeta
 Kao glavni računovođa, želim pregledati komentar finansijskog direktora, ispraviti budžet i ponovo ga poslati na odobravanje kako bih završio proces planiranja
 
 ***Sprint:** 10
 **Poslovna vrijednost:** Omogućava efikasno ispravljanje budžeta na osnovu konkretnih povratnih informacija bez kreiranja novog budžeta od nule
 **Prioritet:** High
 
-#Pretpostavke i otvorena pitanja 
+# Pretpostavke i otvorena pitanja 
 Pretpostavlja se da je budžet u statusu "Na doradi" 
 Pretpostavlja se da samo kreator budžeta može submitovati doradu 
 
@@ -371,14 +371,14 @@ Kada je budžet ponovo poslan na odobravanje, tada sistem mora poslati notifikac
 Sistem mora sačuvati informaciju o ispravci u historiji komentara budžeta 
 
 
-###ID: 54
-###Naziv: Pregled historije komentara budžeta
+#### ID: 54
+#### Naziv: Pregled historije komentara budžeta
 Kao glavni računovođa ili finansijski direktor, želim pregledati historiju komentara vezanih za budžet kako bih imao uvid u sve izmjene i obrazloženja tokom procesa odobravanja
 **Sprint:** 10
 **Poslovna vrijednost:** Povećava transparentnost procesa odobravanja budžeta i omogućava praćenje svih iteracija
 **Prioritet:** Medium
 
-#Pretpostavke i otvorena pitanja 
+# Pretpostavke i otvorena pitanja 
 Pretpostavlja se da postoji najmanje jedan komentar vezan za budžet 
 
 **Veze sa drugim storyjima ili zavisnostima** <br>
