@@ -70,9 +70,23 @@ export interface Budget {
   projekatId?: string | number | null;
   projekat?: string | null;
   verzijaBudzeta?: number;
-  statusOdobrenja?: string;
+  statusOdobrenja?: BudzetStatus;
+  kreiraoKorisnikId?: string | number | null;
+  odobrioKorisnikId?: string | number | null;
   kategorije: string[];
   kategorijaIds: Array<string | number>;
+}
+
+export type BudzetStatus = 'nacrt' | 'na_cekanju' | 'odobren' | 'odbijen' | 'na_doradi' | 'NACRT' | 'ODOBREN' | 'ODBIJEN' | 'NA_CEKANJU';
+
+export interface BudzetKomentar {
+  id: number;
+  budzetId: string | number;
+  autorId: string;
+  autorIme: string;
+  komentar: string;
+  tip: 'povrat_na_doradu' | 'ispravka' | 'odobravanje' | 'odbijanje';
+  kreiranoAt: string;
 }
 
 export interface CreateBudgetRequest {

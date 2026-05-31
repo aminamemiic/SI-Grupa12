@@ -1,13 +1,13 @@
 <div class="budget-page">
   <section class="budget-header">
     <div>
-      <p class="eyebrow">Planiranje budžeta</p>
-      <h1>Budžet po kategorijama, odjelima i periodu</h1>
-      <p>Pregledajte postojeće budžete i kreirajte finansijski plan za naredne periode.</p>
+      <p class="eyebrow">Planiranje budzeta</p>
+      <h1>Budzet po kategorijama, odjelima i periodu</h1>
+      <p>Pregledajte postojece budzete i kreirajte finansijski plan za naredne periode.</p>
     </div>
  
     <button type="button" (click)="openCreateForm()" [disabled]="!canEditBudgets">
-      Kreiraj novi budžet
+      Kreiraj novi budzet
     </button>
   </section>
  <div class="messages" *ngIf="!showForm">
@@ -17,8 +17,8 @@
   <section class="form-card" *ngIf="showForm">
     <div class="section-heading">
       <div>
-        <h2>{{ editingBudgetId ? 'Uredi budžet' : 'Novi budžet' }}</h2>
-        <p class="subtitle">Polja označena zvjezdicom su obavezna.</p>
+        <h2>{{ editingBudgetId ? 'Uredi budzet' : 'Novi budzet' }}</h2>
+        <p class="subtitle">Polja oznacena zvjezdicom su obavezna.</p>
       </div>
       <button type="button" class="btn-secondary" (click)="closeForm()">Zatvori</button>
     </div>
@@ -26,7 +26,7 @@
     <form [formGroup]="budgetForm" (ngSubmit)="saveBudget()">
       <div class="form-grid">
         <div class="form-group">
-          <label>Naziv budžeta *</label>
+          <label>Naziv budzeta *</label>
           <input type="text" formControlName="naziv" placeholder="Npr. Marketing Q1" />
           <small *ngIf="isFieldInvalid('naziv')">Naziv je obavezan.</small>
         </div>
@@ -34,7 +34,7 @@
         <div class="form-group">
           <label>Planirani iznos *</label>
           <input type="number" formControlName="planiraniIznos" placeholder="Npr. 5000" />
-          <small *ngIf="isFieldInvalid('planiraniIznos')">Iznos mora biti veći od 0.</small>
+          <small *ngIf="isFieldInvalid('planiraniIznos')">Iznos mora biti veci od 0.</small>
         </div>
  
         <div class="form-group">
@@ -47,27 +47,27 @@
         </div>
  
         <div class="form-group">
-          <label>Datum početka *</label>
+          <label>Datum pocetka *</label>
           <div class="date-inputs">
             <input type="text" formControlName="datumPocetka" placeholder="DD.MM.YYYY" />
             <input
               type="date"
               class="date-picker"
-              title="Odaberite datum početka"
+              title="Odaberite datum pocetka"
               (change)="onDatePickerChange($event, 'datumPocetka')"
             />
           </div>
-          <small *ngIf="isFieldInvalid('datumPocetka')">Datum početka je obavezan u formatu DD.MM.YYYY.</small>
+          <small *ngIf="isFieldInvalid('datumPocetka')">Datum pocetka je obavezan u formatu DD.MM.YYYY.</small>
         </div>
  
         <div class="form-group">
-          <label>Datum završetka *</label>
+          <label>Datum zavrsetka *</label>
           <div class="date-inputs">
             <input type="text" formControlName="datumZavrsetka" placeholder="DD.MM.YYYY" />
             <input
               type="date"
               class="date-picker"
-              title="Odaberite datum završetka"
+              title="Odaberite datum zavrsetka"
               (change)="onDatePickerChange($event, 'datumZavrsetka')"
             />
           </div>
@@ -105,7 +105,7 @@
  
       <div class="form-actions">
         <button type="button" class="btn-secondary" (click)="closeForm()">Odustani</button>
-        <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Spremanje...' : 'Sačuvaj' }}</button>
+        <button type="submit" [disabled]="isSaving">{{ isSaving ? 'Spremanje...' : 'Sacuvaj' }}</button>
       </div>
     </form>
   </section>
@@ -114,10 +114,10 @@
     <article class="list-card">
       <div class="section-heading">
         <div>
-          <h2>Lista budžeta</h2>
-          <p class="subtitle">Evidencija svih kreiranih budžeta</p>
+          <h2>Lista budzeta</h2>
+          <p class="subtitle">Evidencija svih kreiranih budzeta</p>
         </div>
-        <button type="button" class="btn-secondary" (click)="loadBudgets()" [disabled]="isLoading">Osvježi</button>
+        <button type="button" class="btn-secondary" (click)="loadBudgets()" [disabled]="isLoading">Osvjezi</button>
       </div>
 
       <div class="search-bar">
@@ -125,12 +125,12 @@
           type="text"
           [value]="searchQuery"
           (input)="searchQuery = $any($event.target).value"
-          placeholder="Pretraži po nazivu, odjelu, statusu..."
+          placeholder="Pretrazi po nazivu, odjelu, statusu..."
         />
       </div>
 
-      <p *ngIf="isLoading">Učitavanje budžeta...</p>
-      <p *ngIf="!isLoading && budgets.length === 0">Trenutno nema kreiranih budžeta.</p>
+      <p *ngIf="isLoading">Ucitavanje budzeta...</p>
+      <p *ngIf="!isLoading && budgets.length === 0">Trenutno nema kreiranih budzeta.</p>
 
       <table *ngIf="!isLoading && filteredBudgets.length > 0">
         <thead>
@@ -149,7 +149,11 @@
             <td>{{ budget.planiraniIznos | number: '1.2-2' }} KM</td>
             <td>{{ budget.datumPocetka | date: 'dd.MM.yyyy' }} - {{ budget.datumZavrsetka | date: 'dd.MM.yyyy' }}</td>
             <td>{{ budget.odjel }}</td>
-            <td>{{ budget.statusOdobrenja }}</td>
+            <td>
+              <span class="status-pill" [ngClass]="'status-' + getStatusBadge(budget.statusOdobrenja).color">
+                {{ getStatusBadge(budget.statusOdobrenja).label }}
+              </span>
+            </td>
             <td class="actions-cell">
               <button type="button" class="btn-table" (click)="selectBudget(budget)">
                 Detalji
@@ -159,18 +163,27 @@
                 type="button"
                 class="btn-table"
                 (click)="editBudget(budget)"
-                [disabled]="!canEditBudgets || budget.statusOdobrenja !== 'NACRT'"
+                [disabled]="!canEditBudgets || isBudgetLockedForEditing(budget)"
               >
                 Uredi
               </button>
 
-              @if (canApproveBudgets && budget.statusOdobrenja === 'NACRT') {
+              @if (canApproveBudgets && (hasBudgetInStatus(budget, 'na_cekanju') || hasBudgetInStatus(budget, 'nacrt'))) {
                 <button type="button" class="btn-table" (click)="approveBudget(budget)">
                   Odobri
                 </button>
 
                 <button type="button" class="btn-table" (click)="rejectBudget(budget)">
                   Odbij
+                </button>
+
+                <button
+                  type="button"
+                  class="btn-table btn-warn"
+                  *ngIf="canReturnBudgetsToRevision"
+                  (click)="openVratiNaDoraduDialog(budget)"
+                >
+                  Vrati na doradu
                 </button>
               }
             </td>
@@ -184,8 +197,8 @@
     </article>
 
     <aside class="detail-card">
-      <h2>Detalji budžeta</h2>
-      <p *ngIf="!selectedBudget">Odaberite budžet za prikaz detalja.</p>
+      <h2>Detalji budzeta</h2>
+      <p *ngIf="!selectedBudget">Odaberite budzet za prikaz detalja.</p>
 
       <dl *ngIf="selectedBudget">
         <dt>Naziv</dt>
@@ -203,20 +216,67 @@
         <dt>Verzija</dt>
         <dd>{{ selectedBudget.verzijaBudzeta || 1 }}</dd>
         <dt>Status</dt>
-        <dd>{{ selectedBudget.statusOdobrenja }}</dd>
+        <dd>
+          <span class="status-pill" [ngClass]="'status-' + getStatusBadge(selectedBudget.statusOdobrenja).color">
+            {{ getStatusBadge(selectedBudget.statusOdobrenja).label }}
+          </span>
+        </dd>
       </dl>
+
+      @if (hasBudgetInStatus(selectedBudget, 'na_doradi') && lastFinancialDirectorComment) {
+        <div class="comment-callout">
+          <strong>Komentar finansijskog direktora:</strong>
+          <p>{{ lastFinancialDirectorComment.komentar }}</p>
+        </div>
+      }
+
+      @if (hasBudgetInStatus(selectedBudget, 'na_doradi') && canSubmitRevisedBudgets) {
+        <button type="button" class="btn-submit-revision" (click)="submitujDoradu(selectedBudget)">
+          Posalji na odobravanje
+        </button>
+      }
+
+      <section class="comment-history">
+        <button type="button" class="history-toggle" (click)="toggleCommentHistory()">
+          Historija komentara
+          <span>{{ showCommentHistory ? '−' : '+' }}</span>
+        </button>
+
+        @if (showCommentHistory) {
+          <div class="history-body">
+            @if (isCommentsLoading) {
+              <p class="history-empty">Ucitavanje komentara...</p>
+            } @else if (selectedBudgetComments.length === 0) {
+              <p class="history-empty">Nema komentara za ovaj budzet.</p>
+            } @else {
+              <article class="history-item" *ngFor="let comment of selectedBudgetComments">
+                <div class="history-item-header">
+                  <div>
+                    <strong>{{ comment.autorIme }}</strong>
+                    <span>{{ formatCommentDate(comment.kreiranoAt) }}</span>
+                  </div>
+                  <span class="comment-badge" [ngClass]="getCommentBadge(comment.tip).className">
+                    {{ getCommentBadge(comment.tip).label }}
+                  </span>
+                </div>
+                <p>{{ comment.komentar }}</p>
+              </article>
+            }
+          </div>
+        }
+      </section>
 
       <div class="projection-divider" *ngIf="selectedBudget"></div>
 
       <div class="projection-section" *ngIf="selectedBudget">
         <h3 class="projection-title">
           <svg class="w-5 h-5 projection-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
-          Projekcija budžeta za tekući mjesec
+          Projekcija budzeta za tekuci mjesec
         </h3>
 
         <div class="projection-loading" *ngIf="isProjectionLoading">
           <div class="spinner-small"></div>
-          <span>Učitavanje projekcije...</span>
+          <span>Ucitavanje projekcije...</span>
         </div>
 
         <div class="projection-error" *ngIf="!isProjectionLoading && projectionErrorMessage">
@@ -231,32 +291,32 @@
               <span *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">✓</span>
             </span>
             <div class="alert-text">
-              <span class="alert-status-title" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje < 0">Moguće probijanje budžeta!</span>
-              <span class="alert-status-title" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">U granicama budžeta</span>
-              <span class="alert-status-desc" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje < 0">Projektovano prekoračenje: {{ -selectedBudgetProjection.projektovanoKrajnjeStanje | number: '1.2-2' }} KM</span>
-              <span class="alert-status-desc" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">Preostali projektovani višak: {{ selectedBudgetProjection.projektovanoKrajnjeStanje | number: '1.2-2' }} KM</span>
+              <span class="alert-status-title" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje < 0">Moguce probijanje budzeta!</span>
+              <span class="alert-status-title" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">U granicama budzeta</span>
+              <span class="alert-status-desc" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje < 0">Projektovano prekoracenje: {{ -selectedBudgetProjection.projektovanoKrajnjeStanje | number: '1.2-2' }} KM</span>
+              <span class="alert-status-desc" *ngIf="selectedBudgetProjection.projektovanoKrajnjeStanje >= 0">Preostali projektovani visak: {{ selectedBudgetProjection.projektovanoKrajnjeStanje | number: '1.2-2' }} KM</span>
             </div>
           </div>
 
           <!-- Metrics grid -->
           <div class="projection-metrics">
             <div class="metric-item">
-              <span class="metric-label">Dnevna brzina potrošnje:</span>
+              <span class="metric-label">Dnevna brzina potrosnje:</span>
               <span class="metric-value font-mono">{{ selectedBudgetProjection.dnevnaBrzinaTrosenja | number: '1.2-2' }} KM/dan</span>
             </div>
             
             <div class="metric-item">
-              <span class="metric-label">Potrošeno prije ovog mjeseca:</span>
+              <span class="metric-label">Potroseno prije ovog mjeseca:</span>
               <span class="metric-value font-mono">{{ selectedBudgetProjection.potrosenoPrijeOvogMjeseca | number: '1.2-2' }} KM</span>
             </div>
 
             <div class="metric-item">
-              <span class="metric-label">Potrošeno u ovom mjesecu:</span>
+              <span class="metric-label">Potroseno u ovom mjesecu:</span>
               <span class="metric-value font-mono">{{ selectedBudgetProjection.potrosenoUovomMjesecu | number: '1.2-2' }} KM</span>
             </div>
 
             <div class="metric-item highlight">
-              <span class="metric-label">Projektovana potrošnja (mjesec):</span>
+              <span class="metric-label">Projektovana potrosnja (mjesec):</span>
               <span class="metric-value font-mono">{{ selectedBudgetProjection.projektovanaPotrosnjaZaMjesec | number: '1.2-2' }} KM</span>
             </div>
 
@@ -270,3 +330,7 @@
     </aside>
   </section>
 </div>
+
+@if (showVratiNaDoraduDialog) {
+  <app-vrati-na-doradu-dialog (zatvoreno)="handleVratiNaDoraduDialogClosed($event)"></app-vrati-na-doradu-dialog>
+}

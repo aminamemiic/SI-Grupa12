@@ -20,6 +20,7 @@ jest.mock("../DAL/Repositories/IngestionRepository", () => ({
 }));
 
 const { IngestionService } = require("../BLL/Services/IngestionService");
+const XLSX = require("xlsx");
 
 describe("IngestionService", () => {
   let service: any;
@@ -199,6 +200,87 @@ describe("IngestionService", () => {
       })
     );
   });
+
+  test("treba parsirati XLSX fajl i vratiti redove iz prve radne sveske", async () => {
+    const readSpy = jest.spyOn(XLSX, "read").mockReturnValue({
+      SheetNames: ["Sheet1"],
+      Sheets: { Sheet1: {} },
+    } as any);
+    const sheetSpy = jest.spyOn(XLSX.utils, "sheet_to_json").mockReturnValue([
+      {
+        naziv: "Laptop",
+        iznos: "1200.50",
+        datum: "2026-05-01",
+        kategorija: "Oprema",
+        odjel: "Finansije",
+        valuta: "BAM",
+      },
+    ] as any);
+
+    const result = await service.previewImport({
+      originalName: "troskovi.xlsx",
+      mimetype: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      buffer: Buffer.from("fake"),
+    });
+
+    expect(result.totalRows).toBe(1);
+    expect(readSpy).toHaveBeenCalled();
+    expect(sheetSpy).toHaveBeenCalled();
+
+    readSpy.mockRestore();
+    sheetSpy.mockRestore();
+  });
+
+  test("treba vratiti prazan preview za XLSX bez radne sveske", async () => {
+    const readSpy = jest.spyOn(XLSX, "read").mockReturnValue({
+      SheetNames: [],
+      Sheets: {},
+    } as any);
+
+    const result = await service.previewImport({
+      originalName: "prazan.xlsx",
+      mimetype: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      buffer: Buffer.from("fake"),
+    });
+
+    expect(result.totalRows).toBe(0);
+    expect(result.rows).toHaveLength(0);
+
+    readSpy.mockRestore();
+  });
+
+  test("treba prijaviti nepoznat obavezni sifarnik kada je ID neispravan", async () => {
+    const csv = [
+      "naziv,iznos,datum,kategorijaId,odjelId,valutaId",
+      "Laptop,1200,2026-05-01,nepostojeci-kat,odj-1,val-1",
+    ].join("\n");
+
+    const result = await service.previewImport({
+      originalName: "nepostojeci-id.csv",
+      mimetype: "text/csv",
+      buffer: Buffer.from(csv),
+    });
+
+    expect(result.validRows).toBe(0);
+    expect(result.rows[0].errors.some((error: any) => error.field === "kategorija")).toBe(true);
+  });
+
+  test("treba odbiti red sa praznim iznosom", async () => {
+    const csv = [
+      "naziv,iznos,datum,kategorija,odjel,valuta",
+      "Laptop,,2026-05-01,Oprema,Finansije,BAM",
+    ].join("\n");
+
+    const result = await service.previewImport({
+      originalName: "prazan-iznos.csv",
+      mimetype: "text/csv",
+      buffer: Buffer.from(csv),
+    });
+
+    expect(result.validRows).toBe(0);
+    expect(result.rows[0].errors.some((error: any) => error.field === "iznos")).toBe(true);
+  });
+
   test("treba baciti gresku ako fajl nije poslan", async () => {
   await expect(service.previewImport({ originalName: "", buffer: null })).rejects.toThrow(
     "Fajl za uvoz je obavezan."

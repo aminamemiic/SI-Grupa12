@@ -59,7 +59,45 @@ export class NotificationService implements INotificationService {
     });
   }
 
+  async createBudgetReturnedToRevisionNotification(budget: any, komentar: string): Promise<any[]> {
+    const recipientId = budget?.kreiraoKorisnikId;
+    if (!recipientId) {
+      return [];
+    }
+
+    const naziv = budget?.naziv || "Budzet";
+    const safeComment = komentar || "Bez komentara";
+
+    return this.notificationRepository.createForUsers([recipientId], {
+      naslov: `Budzet "${naziv}" vracen je na doradu`,
+      poruka: `Finansijski direktor je vratio budzet na doradu uz sljedeci komentar: "${safeComment}". Molimo ispravite budzet i ponovo ga posaljite na odobravanje.`,
+      prioritet: "LOW",
+      tipNotifikacije: "budzet_vracen_na_doradu",
+      povezaniBudzetId: budget?.id || null,
+    });
+  }
+
+  async createBudgetRevisedNotification(budget: any, finansijskiDirektorId: string | null): Promise<any[]> {
+    if (!finansijskiDirektorId) {
+      return [];
+    }
+
+    const naziv = budget?.naziv || "Budzet";
+
+    return this.notificationRepository.createForUsers([finansijskiDirektorId], {
+      naslov: `Budzet "${naziv}" je doradjen`,
+      poruka: "Glavni racunovodja je doradio budzet i ponovo ga poslao na odobravanje. Molimo pregledajte izmjene.",
+      prioritet: "LOW",
+      tipNotifikacije: "budzet_doradjen",
+      povezaniBudzetId: budget?.id || null,
+    });
+  }
+
   async getNotificationsForUser(authUser: unknown): Promise<any[]> {
+    if (this.notificationRepository.hasRole(authUser, "finansijski_direktor")) {
+      return this.notificationRepository.getAllNotifications();
+    }
+
     const userId = await this.notificationRepository.getUserIdFromAuth(authUser);
     if (!userId) {
       throw new Error("Nije moguce dohvatiti korisnika za notifikacije.");
@@ -69,6 +107,10 @@ export class NotificationService implements INotificationService {
   }
 
   async getUnreadCountForUser(authUser: unknown): Promise<number> {
+    if (this.notificationRepository.hasRole(authUser, "finansijski_direktor")) {
+      return this.notificationRepository.getUnreadCount();
+    }
+
     const userId = await this.notificationRepository.getUserIdFromAuth(authUser);
     if (!userId) {
       throw new Error("Nije moguce dohvatiti korisnika za notifikacije.");
@@ -80,6 +122,15 @@ export class NotificationService implements INotificationService {
   async markAsRead(id: string, authUser: unknown): Promise<any> {
     if (!id) {
       throw new Error("ID notifikacije je obavezan.");
+    }
+
+    if (this.notificationRepository.hasRole(authUser, "finansijski_direktor")) {
+      const notification = await this.notificationRepository.markAsReadById(id);
+      if (!notification) {
+        throw new Error("Notifikacija ne postoji ili ne pripada korisniku.");
+      }
+
+      return notification;
     }
 
     const userId = await this.notificationRepository.getUserIdFromAuth(authUser);

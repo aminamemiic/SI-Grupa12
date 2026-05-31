@@ -16,7 +16,7 @@ const expenseRoles = ['admin', 'administrativni_radnik', 'administrativni_zaposl
 const budgetViewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
 const dataOverviewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
 const reportRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
-const notificationRoles = ['admin', 'glavni_racunovodja'];
+const notificationRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
 
 const requireAuth = () => {
   const authService = inject(AuthGuardService);

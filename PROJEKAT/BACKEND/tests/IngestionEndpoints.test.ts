@@ -127,6 +127,17 @@ describe("IngestionEndpoints", () => {
   expect(response.body.message).toBe("Neispravan fajl");
 });
 
+test("POST /api/troskovi/uvoz/preview treba vratiti genericku gresku bez poruke", async () => {
+  mockIngestionService.previewImport.mockRejectedValue({});
+
+  const response = await request(app)
+    .post("/api/troskovi/uvoz/preview")
+    .attach("file", Buffer.from("bad"), "bad.csv");
+
+  expect(response.status).toBe(400);
+  expect(response.body.message).toBe("Greška pri preview uvozu troškova.");
+});
+
 test("POST /api/troskovi/uvoz/potvrdi treba vratiti 207 za djelimican import", async () => {
   mockIngestionService.confirmImport.mockResolvedValue({
     insertedCount: 1,
@@ -151,6 +162,17 @@ test("POST /api/troskovi/uvoz/potvrdi treba vratiti 400 ako servis baci gresku",
 
   expect(response.status).toBe(400);
   expect(response.body.message).toBe("Nema redova");
+});
+
+test("POST /api/troskovi/uvoz/potvrdi treba vratiti genericku gresku bez poruke", async () => {
+  mockIngestionService.confirmImport.mockRejectedValue({});
+
+  const response = await request(app)
+    .post("/api/troskovi/uvoz/potvrdi")
+    .send({ rows: [] });
+
+  expect(response.status).toBe(400);
+  expect(response.body.message).toBe("Greška pri potvrdi uvoza troškova.");
 });
 
 test("GET /api/troskovi/uvoz/historija treba vratiti 500 ako servis baci gresku", async () => {

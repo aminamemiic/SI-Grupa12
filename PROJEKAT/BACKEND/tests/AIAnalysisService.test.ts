@@ -2,6 +2,14 @@ export {};
 
 const { AIAnalysisService } = require("../BLL/Services/AIAnalysisService");
 
+jest.mock("@google/genai", () => ({
+  GoogleGenAI: jest.fn().mockImplementation(() => ({
+    models: {
+      generateContent: jest.fn().mockResolvedValue({ text: "Najveci trosak je Lenovo." }),
+    },
+  })),
+}), { virtual: true });
+
 describe("AIAnalysisService fallback logic", () => {
   let svc: any;
 
@@ -284,6 +292,73 @@ describe("AIAnalysisService supplier growth and assistant", () => {
     } else {
       process.env.GEMINI_API_KEY = previousKey;
     }
+  });
+
+  test("askAssistantWithGemini prolazi kroz getGeminiClient i koristi lazni SDK modul", async () => {
+    const previousKey = process.env.GEMINI_API_KEY;
+    process.env.GEMINI_API_KEY = "test-key";
+    svc.geminiClient = undefined;
+
+    const result = await svc.askAssistantWithGemini("Koji trosak je najveci?", reportData, []);
+
+    expect(result.source).toBe("gemini");
+    expect(result.answer).toBe("Najveci trosak je Lenovo.");
+
+    if (previousKey === undefined) {
+      delete process.env.GEMINI_API_KEY;
+    } else {
+      process.env.GEMINI_API_KEY = previousKey;
+    }
+  });
+
+  test("detectAmountOutlier vraca null za normalan iznos koji nije zaokruzen na nule", () => {
+    expect((svc as any).detectAmountOutlier(101.5, [100, 110, 90])).toBeNull();
+  });
+
+  test("detectUnrealisticValues vraca null za obican iznos", () => {
+    expect((svc as any).detectUnrealisticValues({ iznos: 123.45 })).toBeNull();
+  });
+
+  test("applyRequiredBudgetRule dodaje budzetski nalaz samo kada treba", () => {
+    const analysis = { status: "VALIDAN", severity: "LOW", findings: [] };
+    const expense = { odjelId: "odjel-1", kategorijaId: "kat-1", datum: "2026-05-01" };
+
+    const added = (svc as any).applyRequiredBudgetRule(analysis, expense, { budget: null });
+    expect(added.status).toBe("ANOMALIJA");
+    expect(added.findings.some((finding: any) => finding.type === "BUDGET_NOT_DEFINED")).toBe(true);
+
+    const duplicate = (svc as any).applyRequiredBudgetRule(
+      { ...analysis, findings: [{ type: "POTENCIJALNI_DUPLIKAT", severity: "MEDIUM", message: "duplikat" }] },
+      expense,
+      { budget: null }
+    );
+    expect(duplicate.findings).toHaveLength(1);
+  });
+
+  test("getTopGrowingSuppliers sortira new_spending dobavljace po trenutnom iznosu", () => {
+    const result = svc.getTopGrowingSuppliers({
+      expenses: [
+        { datum: "2026-05-01", iznos: 3000, dobavljacNaziv: "A" },
+        { datum: "2026-05-01", iznos: 2000, dobavljacNaziv: "B" },
+      ],
+    });
+
+    expect(result.suppliers[0].supplierName).toBe("A");
+  });
+
+  test("buildAssistantContextData sortira anomalije i budzete silazno po iznosu", () => {
+    const result = (svc as any).buildAssistantContextData({
+      expenses: [
+        { id: "1", naziv: "A", datum: "2026-05-01", iznos: 100, statusValidacije: "ANOMALIJA" },
+        { id: "2", naziv: "B", datum: "2026-05-01", iznos: 200, statusValidacije: "POTENCIJALNI_DUPLIKAT" },
+      ],
+    }, [
+      { naziv: "Budzet A", planiraniIznos: 300, datumPocetka: "2026-01-01", datumZavrsetka: "2026-12-31" },
+      { naziv: "Budzet B", planiraniIznos: 500, datumPocetka: "2026-01-01", datumZavrsetka: "2026-12-31" },
+    ]);
+
+    expect(result.anomalies[0].iznos).toBe(200);
+    expect(result.budgets.topBudgets[0].planiraniIznos).toBe(500);
   });
 
   test("askAssistant prepoznaje najskuplju kategoriju preko breakdown podataka", () => {
@@ -625,6 +700,49 @@ describe("AIAnalysisService dashboard AI helpers", () => {
     expect(result.budgets.total).toBe(1000);
     expect(result.categories[0].label).toBe("Oprema");
   });
+
+  test("getExecutiveSummary pokriva stabilan trend i upozorenje o iskoristenosti budzeta", () => {
+    const result = svc.getExecutiveSummary({
+      summary: { budgetUtilizationPercent: 95 },
+      expenses: [],
+    }, []);
+
+    expect(result.summary.some((item: any) => item.message.includes("stabilni"))).toBe(true);
+    expect(result.summary.some((item: any) => item.type === "WARNING" && item.message.includes("iskoristenost budzeta"))).toBe(true);
+    expect(result.summary.some((item: any) => item.message.includes("Nema otvorenih anomalija"))).toBe(true);
+  });
+
+  test("getCostOptimizationSuggestions pokriva rast kategorije, dobavljaca, budzet i ponavljajuci trosak", () => {
+    const reportData = {
+      summary: { totalAmount: 9200, budgetTotal: 10000 },
+      expenses: [
+        { datum: "2026-04-01", iznos: 1000, kategorijaNaziv: "Marketing", dobavljacId: "a", dobavljacNaziv: "Dobavljac A", naziv: "Internet usluge" },
+        { datum: "2026-05-01", iznos: 2000, kategorijaNaziv: "Marketing", dobavljacId: "a", dobavljacNaziv: "Dobavljac A", naziv: "Internet usluge" },
+        { datum: "2026-03-01", iznos: 300, kategorijaNaziv: "Marketing", dobavljacId: "a", dobavljacNaziv: "Dobavljac A", naziv: "Internet usluge" },
+        { datum: "2026-04-01", iznos: 300, kategorijaNaziv: "Marketing", dobavljacId: "a", dobavljacNaziv: "Dobavljac A", naziv: "Internet usluge" },
+        { datum: "2026-05-01", iznos: 300, kategorijaNaziv: "Marketing", dobavljacId: "a", dobavljacNaziv: "Dobavljac A", naziv: "Internet usluge" },
+      ],
+    };
+
+    const result = svc.getCostOptimizationSuggestions(reportData, [{ planiraniIznos: 10000 }]);
+
+    expect(result.suggestions.some((item: any) => item.title.includes("Marketing raste"))).toBe(true);
+    expect(result.suggestions.some((item: any) => item.title === "Konsolidacija dobavljaca")).toBe(true);
+    expect(result.suggestions.some((item: any) => item.title === "Budzet je blizu ogranicenja")).toBe(true);
+    expect(result.suggestions.some((item: any) => item.title === "Ponavljajuci trosak za pregled")).toBe(true);
+  });
+
+  test("getBudgetTotal i extractExpenses pokrivaju fallback grane", () => {
+    expect((svc as any).getBudgetTotal(null)).toBe(0);
+    expect((svc as any).extractExpenses({ data: [{ id: 1 }] })).toEqual([{ id: 1 }]);
+    expect((svc as any).extractExpenses({ items: [{ id: 2 }] })).toEqual([{ id: 2 }]);
+    expect((svc as any).extractExpenses({})).toEqual([]);
+  });
+
+  test("hasThreeConsecutiveMonths prepoznaje i prekid i kontinuitet", () => {
+    expect((svc as any).hasThreeConsecutiveMonths(["2026-01", "2026-02", "2026-03"])).toBe(true);
+    expect((svc as any).hasThreeConsecutiveMonths(["2026-01", "2026-03", "2026-04"])).toBe(false);
+  });
 });
 
 describe("AIAnalysisService targeted branch coverage", () => {
@@ -646,6 +764,64 @@ describe("AIAnalysisService targeted branch coverage", () => {
 
     expect(zScore.type).toBe("AMOUNT_OUTLIER_ZSCORE");
     expect(iqr.type).toBe("AMOUNT_OUTLIER_IQR");
+  });
+
+  test("detektuje threshold outlier i nisku staticku bazu", () => {
+    const threshold = (svc as any).detectAmountOutlier(300, [50, 60, 70, 80]);
+    const shortHistory = (svc as any).detectAmountOutlier(300, [50, 60]);
+
+    expect(threshold.type).toBe("AMOUNT_OUTLIER_THRESHOLD");
+    expect(shortHistory).toBeNull();
+  });
+
+  test("detektuje nerealne iznose i prazne vrijednosti", () => {
+    expect((svc as any).detectUnrealisticValues({ iznos: 0.001 }).type).toBe("UNREALISTIC_AMOUNT_TOO_SMALL");
+    expect((svc as any).detectUnrealisticValues({ iznos: 2000001 }).type).toBe("UNREALISTIC_AMOUNT_TOO_LARGE");
+    expect((svc as any).detectUnrealisticValues({ iznos: 100 })).toBeNull();
+  });
+
+  test("getMonthKey i formatDisplayDate pokrivaju Date, null i nepoznat format", () => {
+    expect((svc as any).getMonthKey(new Date("2026-05-15T00:00:00Z"))).toBe("2026-05");
+    expect((svc as any).getMonthKey("2026-05-15")).toBe("2026-05");
+    expect((svc as any).getMonthKey("15.05.2026")).toBeNull();
+
+    expect((svc as any).formatDisplayDate(null)).toBeNull();
+    expect((svc as any).formatDisplayDate("15.05.2026")).toBe("15.05.2026");
+    expect((svc as any).formatDisplayDate("2026-05-15")).toBe("15.05.2026");
+  });
+
+  test("calculateMedian i calculateInterquartileRange pokrivaju male i parne skupove", () => {
+    expect((svc as any).calculateMedian([])).toBe(0);
+    expect((svc as any).calculateMedian([1, 2, 3, 4])).toBe(2.5);
+    expect((svc as any).calculateInterquartileRange([7])).toEqual({ q1: 7, q3: 7, iqr: 0 });
+    expect((svc as any).calculateInterquartileRange([1, 2, 3, 4])).toEqual({ q1: 2, q3: 4, iqr: 2 });
+  });
+
+  test("detectDuplicates pokriva ponovljeni dobavljac i fuzzy granu", () => {
+    const repeated = (svc as any).detectDuplicates(
+      { naziv: "Racun", iznos: 100, datum: "2026-05-01" },
+      [
+        { naziv: "Racun Alpha", iznos: 99, datum: "2026-05-01" },
+        { naziv: "Racun Beta", iznos: 100, datum: "2026-05-01" },
+      ]
+    );
+    const fuzzy = (svc as any).detectDuplicates(
+      { naziv: "Laptop Lenovo", iznos: 1500, datum: "2026-05-02" },
+      [
+        { id: 1, naziv: "Laptop Lenovoo", iznos: 1495, datum: "2026-05-03" },
+      ]
+    );
+
+    expect(repeated?.type).toBe("POTENCIJALNI_DUPLIKAT");
+    expect(repeated?.evidence?.duplicateKind).toBe("REPEATED_VENDOR");
+    expect(fuzzy?.type).toBe("POTENCIJALNI_DUPLIKAT");
+    expect(fuzzy?.evidence?.duplicateKind).toBe("FUZZY");
+  });
+
+  test("getSupplierGrowthRisk pokriva MEDIUM i LOW grane", () => {
+    expect((svc as any).getSupplierGrowthRisk(60, "growth", 1000)).toBe("HIGH");
+    expect((svc as any).getSupplierGrowthRisk(25, "growth", 1000)).toBe("MEDIUM");
+    expect((svc as any).getSupplierGrowthRisk(null, "stable", 1000)).toBe("LOW");
   });
 
   test("analyzeExpense vraca AI odgovor i dodaje missing budget nalaz kada treba", async () => {

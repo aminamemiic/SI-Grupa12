@@ -101,10 +101,40 @@ class NotificationRepository {
     return result.rows.map((row: any) => this.mapNotification(row));
   }
 
+  async getAllNotifications() {
+    const result = await AppDB.db.query(
+      `
+      SELECT
+        id,
+        naslov,
+        poruka,
+        prioritet,
+        korisnik_id AS "korisnikId",
+        tip_notifikacije AS "tipNotifikacije",
+        povezani_trosak_id AS "povezaniTrosakId",
+        akcija_status AS "akcijaStatus",
+        procitano,
+        vrijeme_kreiranja AS "vrijemeKreiranja"
+      FROM notifikacije
+      ORDER BY vrijeme_kreiranja DESC;
+      `
+    );
+
+    return result.rows.map((row: any) => this.mapNotification(row));
+  }
+
   async getUnreadCountByUserId(userId: string) {
     const result = await AppDB.db.query(
       "SELECT COUNT(*)::int AS count FROM notifikacije WHERE korisnik_id = $1 AND procitano = FALSE;",
       [userId]
+    );
+
+    return Number(result.rows[0]?.count || 0);
+  }
+
+  async getUnreadCount() {
+    const result = await AppDB.db.query(
+      "SELECT COUNT(*)::int AS count FROM notifikacije WHERE procitano = FALSE;"
     );
 
     return Number(result.rows[0]?.count || 0);
@@ -129,6 +159,30 @@ class NotificationRepository {
         vrijeme_kreiranja AS "vrijemeKreiranja";
       `,
       [id, userId]
+    );
+
+    return this.mapNotification(result.rows[0]);
+  }
+
+  async markAsReadById(id: string) {
+    const result = await AppDB.db.query(
+      `
+      UPDATE notifikacije
+      SET procitano = TRUE
+      WHERE id = $1
+      RETURNING
+        id,
+        naslov,
+        poruka,
+        prioritet,
+        korisnik_id AS "korisnikId",
+        tip_notifikacije AS "tipNotifikacije",
+        povezani_trosak_id AS "povezaniTrosakId",
+        akcija_status AS "akcijaStatus",
+        procitano,
+        vrijeme_kreiranja AS "vrijemeKreiranja";
+      `,
+      [id]
     );
 
     return this.mapNotification(result.rows[0]);
@@ -193,6 +247,10 @@ class NotificationRepository {
     }
 
     return Array.from(roleSet);
+  }
+
+  hasRole(authUser: any, role: string): boolean {
+    return this.getAuthRoles(authUser).includes(this.normalizeRole(role));
   }
 
   private mapAuthRoleToDatabaseRole(authUser: any): string {

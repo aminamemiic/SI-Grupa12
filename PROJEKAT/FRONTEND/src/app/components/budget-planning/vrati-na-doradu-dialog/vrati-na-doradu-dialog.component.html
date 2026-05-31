@@ -1,0 +1,35 @@
+<div class="dialog-backdrop" (click)="odustani()"></div>
+
+<section class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="vrati-na-doradu-title" (click)="$event.stopPropagation()">
+  <header class="dialog-header">
+    <div>
+      <p class="dialog-eyebrow">Povrat budzeta</p>
+      <h2 id="vrati-na-doradu-title">Povrat budzeta na doradu</h2>
+    </div>
+    <button type="button" class="icon-button" (click)="odustani()" aria-label="Zatvori dijalog">×</button>
+  </header>
+
+  <p class="dialog-description">
+    Unesite komentar koji ce biti vidljiv glavnom racunovodji. Budzet ce biti vracen u status "Na doradi".
+  </p>
+
+  <label class="field-label" for="budzet-komentar">Komentar</label>
+  <textarea
+    id="budzet-komentar"
+    [(ngModel)]="komentar"
+    placeholder="Opisite sta je potrebno ispraviti..."
+    rows="4"
+    minlength="10"
+    required
+  ></textarea>
+  <p class="field-error" *ngIf="!komentar || komentar.trim().length < 10">
+    Komentar mora sadrzavati najmanje 10 znakova.
+  </p>
+
+  <footer class="dialog-actions">
+    <button type="button" class="secondary" (click)="odustani()">Odustani</button>
+    <button type="button" class="primary danger" [disabled]="!komentar || komentar.trim().length < 10" (click)="potvrdi()">
+      Vrati na doradu
+    </button>
+  </footer>
+</section>
