@@ -261,6 +261,209 @@ describe("AIAnalysisService supplier growth and assistant", () => {
       process.env.GEMINI_API_KEY = previousKey;
     }
   });
+
+  test("askAssistantWithGemini vraca Gemini odgovor kada SDK uspije", async () => {
+    const previousKey = process.env.GEMINI_API_KEY;
+    process.env.GEMINI_API_KEY = "test-key";
+    svc.geminiClient = {
+      models: {
+        generateContent: jest.fn().mockResolvedValue({ text: "Najveci trosak je Lenovo." }),
+      },
+    };
+
+    const result = await svc.askAssistantWithGemini("Koji trosak je najveci?", reportData, []);
+
+    expect(result.source).toBe("gemini");
+    expect(result.intent).toBe("GEMINI");
+    expect(result.answer).toBe("Najveci trosak je Lenovo.");
+    expect(result.data.topExpenses[0].iznos).toBe(7000);
+    expect(result.data.topExpenses[0].dobavljac).toBe("Lenovo");
+
+    if (previousKey === undefined) {
+      delete process.env.GEMINI_API_KEY;
+    } else {
+      process.env.GEMINI_API_KEY = previousKey;
+    }
+  });
+
+  test("askAssistant prepoznaje najskuplju kategoriju preko breakdown podataka", () => {
+    const result = svc.askAssistant("na sta najvise trosimo", reportData, []);
+
+    expect(result.intent).toBe("MOST_EXPENSIVE_CATEGORY");
+    expect(result.answer).toContain("Oprema");
+    expect(result.data.total).toBe(12000);
+  });
+
+  test("askAssistant prepoznaje odjel sa najvecom potrosnjom", () => {
+    const result = svc.askAssistant("koji odjel najvise trosi", reportData, []);
+
+    expect(result.intent).toBe("MOST_EXPENSIVE_DEPARTMENT");
+    expect(result.answer).toContain("IT");
+  });
+
+  test("askAssistant prijavljuje prekoracen budzet kada troskovi prelaze budzet", () => {
+    const overBudgetReport = { ...reportData, summary: { totalAmount: 25000, budgetTotal: 20000 } };
+    const result = svc.askAssistant("koliko je ostalo budzeta", overBudgetReport, []);
+
+    expect(result.intent).toBe("BUDGET_REMAINING");
+    expect(result.data.remaining).toBe(-5000);
+    expect(result.answer).toContain("prekoracen");
+  });
+
+  test("askAssistant pronalazi najvecu anomaliju", () => {
+    const anomalyReport = {
+      ...reportData,
+      expenses: [
+        ...reportData.expenses,
+        { id: "a1", naziv: "Sumnjivi server", datum: "2026-05-20", iznos: 9000, statusValidacije: "ANOMALIJA" },
+        { id: "a2", naziv: "Dupli racun", datum: "2026-05-21", iznos: 500, statusValidacije: "POTENCIJALNI_DUPLIKAT" },
+      ],
+    };
+
+    const result = svc.askAssistant("koja je najveca anomalija", anomalyReport, []);
+
+    expect(result.intent).toBe("BIGGEST_ANOMALY");
+    expect(result.answer).toContain("Sumnjivi server");
+    expect(result.answer).toContain("ANOMALIJA");
+  });
+
+  test("askAssistant trend pitanja vracaju SPENDING_TREND intent", () => {
+    const trendReport = {
+      expenses: [
+        { datum: "2026-01-01", iznos: 100, kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+        { datum: "2026-02-01", iznos: 100, kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+        { datum: "2026-03-01", iznos: 100, kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+        { datum: "2026-04-01", iznos: 500, kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+        { datum: "2026-05-01", iznos: 500, kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+        { datum: "2026-06-01", iznos: 500, kategorijaNaziv: "Oprema", odjelNaziv: "IT" },
+      ],
+    };
+
+    const result = svc.askAssistant("da li troskovi rastu ili padaju", trendReport, []);
+
+    expect(result.intent).toBe("SPENDING_TREND");
+    expect(result.answer).toContain("rastu");
+  });
+
+  test("askAssistant koristi reportData.data kada expenses ne postoji", () => {
+    const result = svc.askAssistant("koji trosak je najveci", {
+      summary: { totalAmount: 300 },
+      data: [
+        { naziv: "Manji trosak", iznos: 100, datum: "2026-05-10" },
+        { naziv: "Veci trosak", iznos: 200, datum: "2026-05-11" },
+      ],
+    }, []);
+
+    expect(result.intent).toBe("LARGEST_EXPENSE");
+    expect(result.answer).toContain("Veci trosak");
+    expect(result.answer).toContain("11.05.2026");
+  });
+
+  test("askAssistant koristi reportData.items kada expenses i data ne postoje", () => {
+    const result = svc.askAssistant("kojih je 5 najvecih troskova", {
+      items: [
+        { naziv: "Prvi", iznos: 10 },
+        { naziv: "Drugi", iznos: 20 },
+      ],
+    }, []);
+
+    expect(result.intent).toBe("TOP_EXPENSES");
+    expect(result.data.expenses[0].naziv).toBe("Drugi");
+  });
+});
+
+describe("AIAnalysisService dashboard AI helpers", () => {
+  let svc: any;
+
+  beforeEach(() => {
+    svc = new AIAnalysisService("http://noop");
+  });
+
+  const helperReport = {
+    summary: {
+      totalExpenses: 8,
+      totalAmount: 20000,
+      averageAmount: 2500,
+      budgetTotal: 25000,
+      budgetUtilizationPercent: 80,
+      topCategory: { label: "IT oprema", total: 12000 },
+      topDepartment: { label: "IT", total: 15000 },
+    },
+    breakdowns: {
+      byCategory: [{ label: "IT oprema", total: 12000 }, { label: "Zakup", total: 8000 }],
+      byDepartment: [{ label: "IT", total: 15000 }, { label: "Finansije", total: 5000 }],
+    },
+    expenses: [
+      { id: "1", naziv: "Internet usluge", datum: "2026-01-15", iznos: 120, kategorijaNaziv: "Usluge", odjelNaziv: "IT", dobavljacId: "tel", dobavljacNaziv: "Telekom" },
+      { id: "2", naziv: "Internet usluge", datum: "2026-02-15", iznos: 121, kategorijaNaziv: "Usluge", odjelNaziv: "IT", dobavljacId: "tel", dobavljacNaziv: "Telekom" },
+      { id: "3", naziv: "Internet usluge", datum: "2026-03-15", iznos: 119, kategorijaNaziv: "Usluge", odjelNaziv: "IT", dobavljacId: "tel", dobavljacNaziv: "Telekom" },
+      { id: "4", naziv: "Laptop Dell", datum: "2026-04-10", iznos: 3000, kategorijaNaziv: "IT oprema", odjelNaziv: "IT", dobavljacId: "dell", dobavljacNaziv: "Dell" },
+      { id: "5", naziv: "Laptop Dell", datum: "2026-05-10", iznos: 7000, kategorijaNaziv: "IT oprema", odjelNaziv: "IT", dobavljacId: "dell", dobavljacNaziv: "Dell", statusValidacije: "ANOMALIJA" },
+      { id: "6", naziv: "Zakup", datum: "2026-05-01", iznos: 8000, kategorijaNaziv: "Zakup", odjelNaziv: "Finansije", dobavljacId: "rent", dobavljacNaziv: "RentCo" },
+    ],
+  };
+
+  test("getExecutiveSummary vraca vise poruka sa tipovima", () => {
+    const result = svc.getExecutiveSummary(helperReport, [{ planiraniIznos: 25000 }]);
+
+    expect(result.summary.length).toBeGreaterThanOrEqual(3);
+    expect(result.summary.every((item: any) => ["INFO", "WARNING", "SUCCESS"].includes(item.type))).toBe(true);
+  });
+
+  test("explainAnomaly vraca objasnjenje za postojeci trosak", () => {
+    const result = svc.explainAnomaly("5", helperReport);
+
+    expect(result.explanation).toContain("7.000");
+    expect(result.explanation).toContain("IT oprema");
+    expect(["LOW", "MEDIUM", "HIGH"]).toContain(result.severity);
+  });
+
+  test("explainAnomaly vraca kontrolisan odgovor za nepostojeci trosak", () => {
+    const result = svc.explainAnomaly("missing", helperReport);
+
+    expect(result.severity).toBe("LOW");
+    expect(result.explanation).toContain("nije pronadjen");
+  });
+
+  test("getCostOptimizationSuggestions uvijek vraca barem jednu preporuku", () => {
+    const result = svc.getCostOptimizationSuggestions(helperReport, [{ planiraniIznos: 25000 }]);
+
+    expect(result.suggestions.length).toBeGreaterThan(0);
+    expect(result.suggestions[0]).toHaveProperty("title");
+    expect(result.suggestions[0]).toHaveProperty("description");
+    expect(result.suggestions[0]).toHaveProperty("estimatedImpact");
+  });
+
+  test("detectMissingRecurringExpenses pronalazi redovan trosak koji nedostaje u trenutnom mjesecu", () => {
+    const result = svc.detectMissingRecurringExpenses(helperReport);
+
+    expect(result.missingRecurringExpenses.some((item: any) => item.expenseName.includes("internet usluge"))).toBe(true);
+    expect(result.missingRecurringExpenses[0].lastSeenDate).toMatch(/^\d{2}\.\d{2}\.\d{4}$/);
+  });
+
+  test("getSupplierDependencyRisk detektuje dobavljaca sa preko 50 posto kategorije", () => {
+    const result = svc.getSupplierDependencyRisk(helperReport);
+
+    expect(result.risks.length).toBeGreaterThan(0);
+    expect(result.risks.some((risk: any) => risk.riskLevel === "HIGH")).toBe(true);
+  });
+
+  test("buildAssistantContextData ne salje cijelu bazu nego kompaktne top liste", () => {
+    const manyExpenses = Array.from({ length: 20 }, (_, index) => ({
+      id: String(index + 1),
+      naziv: `Trosak ${index + 1}`,
+      datum: "2026-05-01",
+      iznos: index + 1,
+      kategorijaNaziv: "Kategorija",
+      odjelNaziv: "Odjel",
+      dobavljacNaziv: "Dobavljac",
+    }));
+    const result = (svc as any).buildAssistantContextData({ expenses: manyExpenses, summary: { totalAmount: 210 } }, []);
+
+    expect(result.topExpenses).toHaveLength(10);
+    expect(result.categories.length).toBeLessThanOrEqual(10);
+    expect(result.departments.length).toBeLessThanOrEqual(10);
+  });
 });
 
 describe("AIAnalysisService – fallbackDatabaseAnalysis", () => {

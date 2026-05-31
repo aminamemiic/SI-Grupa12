@@ -8,6 +8,12 @@ const request = require("supertest");
 const mockAIAnalysisService = {
   analyzeFullDatabase: jest.fn(),
   askAssistantWithGemini: jest.fn(),
+  getTopGrowingSuppliers: jest.fn(),
+  getExecutiveSummary: jest.fn(),
+  explainAnomaly: jest.fn(),
+  getCostOptimizationSuggestions: jest.fn(),
+  detectMissingRecurringExpenses: jest.fn(),
+  getSupplierDependencyRisk: jest.fn(),
 };
 
 const mockReportService = {
@@ -211,5 +217,160 @@ describe("POST /api/ai/analize/baza – AIAnalysisEndpoints", () => {
       "glavni_racunovodja",
       "finansijski_direktor"
     );
+  });
+
+  test("POST /api/ai/asistent/pitaj vraca 400 kada pitanje nije poslano", async () => {
+    const response = await request(app).post("/api/ai/asistent/pitaj").send({ question: "   " });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("Pitanje je obavezno.");
+    expect(mockReportService.getExpenseReport).not.toHaveBeenCalled();
+    expect(mockAIAnalysisService.askAssistantWithGemini).not.toHaveBeenCalled();
+  });
+
+  test("POST /api/ai/asistent/pitaj dohvaća izvjestaj i budzete pa vraca odgovor asistenta", async () => {
+    const assistantResponse = {
+      answer: "Najveci trosak je Laptop Dell.",
+      source: "fallback",
+      intent: "LARGEST_EXPENSE",
+      data: { expense: { id: "e1" } },
+    };
+    mockReportService.getExpenseReport.mockResolvedValue(sampleReport);
+    mockBudgetService.getAllBudgets.mockResolvedValue(sampleBudgets);
+    mockAIAnalysisService.askAssistantWithGemini.mockResolvedValue(assistantResponse);
+
+    const response = await request(app)
+      .post("/api/ai/asistent/pitaj")
+      .send({ question: "Koji trosak je najveci?" });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(assistantResponse);
+    expect(mockReportService.getExpenseReport).toHaveBeenCalledWith({});
+    expect(mockBudgetService.getAllBudgets).toHaveBeenCalled();
+    expect(mockAIAnalysisService.askAssistantWithGemini).toHaveBeenCalledWith(
+      "Koji trosak je najveci?",
+      sampleReport,
+      sampleBudgets
+    );
+  });
+
+  test("GET /api/ai/dobavljaci/rast vraca top dobavljace sa rastom", async () => {
+    const supplierGrowth = {
+      suppliers: [
+        {
+          supplierId: "dell",
+          supplierName: "Dell",
+          currentAmount: 8000,
+          previousAmount: 4000,
+          growthPercentage: 100,
+          status: "growth",
+          riskLevel: "HIGH",
+        },
+      ],
+    };
+    mockReportService.getExpenseReport.mockResolvedValue(sampleReport);
+    mockAIAnalysisService.getTopGrowingSuppliers.mockReturnValue(supplierGrowth);
+
+    const response = await request(app).get("/api/ai/dobavljaci/rast");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(supplierGrowth);
+    expect(mockAIAnalysisService.getTopGrowingSuppliers).toHaveBeenCalledWith(sampleReport);
+  });
+
+  test("GET /api/ai/executive-summary vraca generisane poruke", async () => {
+    const summary = {
+      summary: [
+        { type: "INFO", message: "Troskovi su stabilni." },
+        { type: "WARNING", message: "Pronadjene su 2 anomalije." },
+      ],
+    };
+    mockReportService.getExpenseReport.mockResolvedValue(sampleReport);
+    mockBudgetService.getAllBudgets.mockResolvedValue(sampleBudgets);
+    mockAIAnalysisService.getExecutiveSummary.mockReturnValue(summary);
+
+    const response = await request(app).get("/api/ai/executive-summary");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(summary);
+    expect(mockAIAnalysisService.getExecutiveSummary).toHaveBeenCalledWith(sampleReport, sampleBudgets);
+  });
+
+  test("GET /api/ai/anomaly-explanation/:expenseId vraca objasnjenje anomalije", async () => {
+    const explanation = {
+      explanation: "Trosak je znatno veci od prosjeka kategorije.",
+      severity: "HIGH",
+    };
+    mockReportService.getExpenseReport.mockResolvedValue(sampleReport);
+    mockAIAnalysisService.explainAnomaly.mockReturnValue(explanation);
+
+    const response = await request(app).get("/api/ai/anomaly-explanation/e1");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(explanation);
+    expect(mockAIAnalysisService.explainAnomaly).toHaveBeenCalledWith("e1", sampleReport);
+  });
+
+  test("GET /api/ai/cost-suggestions vraca preporuke za ustedu", async () => {
+    const suggestions = {
+      suggestions: [
+        {
+          title: "Oprema raste",
+          description: "Pregledati narudzbe i odobrenja.",
+          estimatedImpact: "Srednji uticaj na troskove.",
+        },
+      ],
+    };
+    mockReportService.getExpenseReport.mockResolvedValue(sampleReport);
+    mockBudgetService.getAllBudgets.mockResolvedValue(sampleBudgets);
+    mockAIAnalysisService.getCostOptimizationSuggestions.mockReturnValue(suggestions);
+
+    const response = await request(app).get("/api/ai/cost-suggestions");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(suggestions);
+    expect(mockAIAnalysisService.getCostOptimizationSuggestions).toHaveBeenCalledWith(sampleReport, sampleBudgets);
+  });
+
+  test("GET /api/ai/missing-recurring-expenses vraca periodicne troskove za provjeru", async () => {
+    const missing = {
+      missingRecurringExpenses: [
+        {
+          expenseName: "internet usluge",
+          lastSeenDate: "15.04.2026",
+          averageAmount: 120,
+          recommendation: "Provjeriti da li racun jos nije unesen.",
+        },
+      ],
+    };
+    mockReportService.getExpenseReport.mockResolvedValue(sampleReport);
+    mockAIAnalysisService.detectMissingRecurringExpenses.mockReturnValue(missing);
+
+    const response = await request(app).get("/api/ai/missing-recurring-expenses");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(missing);
+    expect(mockAIAnalysisService.detectMissingRecurringExpenses).toHaveBeenCalledWith(sampleReport);
+  });
+
+  test("GET /api/ai/supplier-risk vraca rizike zavisnosti od dobavljaca", async () => {
+    const risks = {
+      risks: [
+        {
+          supplierName: "Dell",
+          sharePercentage: 68,
+          riskLevel: "HIGH",
+          message: "Dobavljac predstavlja visok nivo zavisnosti.",
+        },
+      ],
+    };
+    mockReportService.getExpenseReport.mockResolvedValue(sampleReport);
+    mockAIAnalysisService.getSupplierDependencyRisk.mockReturnValue(risks);
+
+    const response = await request(app).get("/api/ai/supplier-risk");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(risks);
+    expect(mockAIAnalysisService.getSupplierDependencyRisk).toHaveBeenCalledWith(sampleReport);
   });
 });
