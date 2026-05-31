@@ -49,5 +49,5 @@
 | 42 | Procjena rizika zavisnosti od dobavljača | Feature | Medium | Done | 5 | Upozorenje kada jedan dobavljač učestvuje značajnim procentom ukupne potrošnje, s prikazom nivoa rizika. |
 | 43 | Pregled periodičnih troškova za provjeru | Feature | High | Done | 3 |  Prikaz periodičnih troškova koji nisu evidentirani u očekivanom periodu na Dashboardu. |
 | 44 | Povrat budžeta na doradu | Feature | High | Done | 3 |  Finansijski direktor vraća budžet na doradu uz obavezan komentar i notifikaciju računovođi. |
-| 45 | Ispravka i ponovna dostava budžeta | Feature | High | Done | 3 | US-53: Računovođa pregledava komentar, ispravlja budžet i ponovo ga šalje na odobravanje. |
-| 46 | Pregled historije komentara budžeta | Feature | Medium | Done | 2 | US-54: Hronološki prikaz svih komentara tokom procesa odobravanja budžeta s autorom, vremenom i tipom akcije. |
+| 45 | Ispravka i ponovna dostava budžeta | Feature | High | Done | 3 |  Računovođa pregledava komentar, ispravlja budžet i ponovo ga šalje na odobravanje. |
+| 46 | Pregled historije komentara budžeta | Feature | Medium | Done | 2 |  Hronološki prikaz svih komentara tokom procesa odobravanja budžeta s autorom, vremenom i tipom akcije. |
