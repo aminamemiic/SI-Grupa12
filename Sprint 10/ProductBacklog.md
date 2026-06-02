@@ -25,7 +25,7 @@
 | 18 | Poređenje podataka | Feature | Medium | Done | 5 | Ručno poređenje podataka po kategorijama i poređenje stvarnih troškova u odnosu na planirane budžete kroz modul izvještaja s prikazom iskoristivosti budžeta. Prošireno u Sprintu 9. |
 | 19 | Generisanje upozorenja | Feature | Medium | Done | 3 | Generisanje real-time upozorenja o odstupanjima na formi, slanje notifikacija o duplikatima i interaktivno rješavanje/odlučivanje o potencijalno duplim troškovima. |
 | 20 | Izvještaj | Feature | Medium | Done | 3 | Generisanje i export sažetih i detaljnih izvještaja o troškovima u XLSX, CSV i PDF formatima. |
-| 21 | Evidencija komentara | Feature | Low | To do | 2 | Dodavanje i pregled komentara odgovornih osoba uz troškove. |
+| 21 | Evidencija komentara | Feature | Low | Done | 2 | Dodavanje i pregled komentara odgovornih osoba uz troškove. |
 | 22 | Integracija OCR biblioteke | Technical Task | Medium | To do | 8 | Povezivanje OCR alata sa backend kodom. |
 | 23 | Redis queue integracija | Technical Task | Medium | To do | 5 | Dodavanje Redis queue mehanizma između backend API servisa i AI mikroservisa. |
 | 24 | Pretraga i filtriranje troškova | Feature | Medium | Done | 3 | Pretraga po nazivu, opisu i dobavljaču, te filtriranje po kategoriji, odjelu, projektu, statusu, valuti, dobavljaču i rasponu iznosa. |
@@ -36,12 +36,12 @@
 | 29 | Predviđanje potrošnje do kraja perioda | Feature | High | Done | 8 | Backend i frontend projekcija budžeta na osnovu brzine trošenja u tekućem mjesecu. |
 | 30 | Vizuelno poređenje podataka (tabela) | Feature | High | Done | 3 | Paralelni prikaz odabranih troškova jedan pored drugog radi lakšeg uočavanja razlika. |
 | 31 | Grafički prikaz poređenja podataka | Feature | Medium | Done | 3 |  Grafički prikaz odabranih podataka s mogućnošću izbora tipa grafikona (bar, line, pie). |
-| 32 | Identifikacija sumnjivih obrazaca potrošnje | Feature | Medium | To do | 8 | Detekcija neuobičajenih termina unosa i anomalija u ponašanju korisnika s generisanjem upozorenja. |
+| 32 | Identifikacija sumnjivih obrazaca potrošnje | Feature | Medium | Done | 8 | Detekcija neuobičajenih termina unosa i anomalija u ponašanju korisnika s generisanjem upozorenja. |
 | 33 | Detekcija periodičnih troškova | Feature | Medium | Done | 5 |  Automatsko prepoznavanje periodičnih troškova i upozorenje kada očekivani trošak izostane. |
 | 34 | Centralni interaktivni Dashboard | Feature | High | Done | 8 |  Vizuelni prikaz ključnih finansijskih metrika na jednom mjestu s grafikonima i karticama. |
 | 35 | Bliži prikaz stanja  | Feature | Medium | Done | 3 |  Klik na grafikon na Dashboardu otvara listu pojedinačnih troškova koji čine prikazanu sumu. |
-| 36 | Dodavanje komentara | Feature | Low | To do | 2 |  Mogućnost dodavanja tekstualnog komentara na pojedinačni trošak s bilježenjem autora i vremena. |
-| 37 | Pregled komentara | Feature | Low | To do | 2 |  Hronološki prikaz komentara uz trošak s vizuelnim indikatorom u tabeli. |
+| 36 | Dodavanje komentara | Feature | Low | Done | 2 |  Mogućnost dodavanja tekstualnog komentara na pojedinačni trošak s bilježenjem autora i vremena. |
+| 37 | Pregled komentara | Feature | Low | Done | 2 |  Hronološki prikaz komentara uz trošak s vizuelnim indikatorom u tabeli. |
 | 38 | Inteligentni AI asistent za finansijska pitanja | Feature | High | Done | 13 | Chatbot  za postavljanje pitanja o troškovima, budžetima i anomalijama na prirodnom jeziku. |
 | 39 | AI Executive Summary | Feature | High | Done | 5 |  Automatski generisan sažetak ključnih finansijskih informacija prikazan na Dashboardu. |
 | 40 | Identifikacija dobavljača sa najvećim rastom | Feature | High | Done | 5 | Prikaz dobavljača s najvećim rastom troškova s postotkom promjene i razlikovanjem novih od postojećih. |
