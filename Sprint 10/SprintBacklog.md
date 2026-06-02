@@ -5,12 +5,12 @@
 |:---|:---|:---|:---|:---|
 | US-38 | **Vizuelno poređenje podataka** - Kao glavni računovođa/finansijski direktor, želim vidjeti podatke prikazane jedan pored drugog kako bih lakše uočio razlike. | Omer Valjevac| Done | Uz konsultaciju s ostatkom tima |
 | US-39 | **Vizuelno poređenje podataka** - Kao glavni računovođa/finansijski direktor, želim vidjeti grafički prikaz podataka kako bih lakše razumio razliike. | Elvedina Halilović, Nejla Ćenanović| Done | Uz konsultaciju s ostatkom tima |
-| US-40 | **Identifikacija sumnjivih obrazaca potrošnje** - Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unosa ili odstupanja u ponašanju korisnika kako bi se osigurala maksimalna kontrola.  | Ramiz Plančić |  | Uz konsultaciju s ostatkom tima |
+| US-40 | **Identifikacija sumnjivih obrazaca potrošnje** - Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unosa ili odstupanja u ponašanju korisnika i obavijesti me o tome kako bi se osigurala maksimalna kontrola.  | Ramiz Plančić | Done | Uz konsultaciju s ostatkom tima |
 | US-41 | **Detekcija periodičnih troškova** - Kao glavni računovođa želim da sistem identifikuje troškove koji se ponavljaju i upozori ako neki od njih izostane.  | Omer Valjevac | Done | Uz konsultaciju s ostatkom tima |
 | US-42 | **Centralni interaktivni Dashboard** - Kao glavni računovođa želim imati vizuelni prikaz ključnih metrika na jednom mjestu kako bih odmah razumio stanje budžeta.  | Omer Valjevac | Done | Uz konsultaciju s ostatkom tima |
 | US-43 | **Bliži prikaz stanja** - Kao glavni računovođa želim da klikom na npr. određeni grafikon dobijem listu svih pojedinačnih troškova koji čine sumu.  | Elvedina Halilović, Nejla Ćenanović | Done | Uz konsultaciju s ostatkom tima |
-| US-44 | **Dodavanje komentara** - Kao glavni računovođa želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku.  | Ramiz Plančić |  | Uz konsultaciju s ostatkom tima |
-| US-45 | **Pregled komentara** - Kao glavni računovođa ili finansijski direktor želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja.  | Ramiz Plančić |  | Uz konsultaciju s ostatkom tima |
+| US-44 | **Dodavanje komentara** - Kao glavni računovođa ili administrativni radnik želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku.  | Ramiz Plančić | Done | Uz konsultaciju s ostatkom tima |
+| US-45 | **Pregled komentara** - Kao glavni računovođa ili administrativni radnik želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja.  | Ramiz Plančić | Done | Uz konsultaciju s ostatkom tima |
 | US-46 | **Inteligentni AI asistent za finansijska pitanja** - Kao glavni računovođa želim postavljati pitanja AI asistentu na maternjem jeziku kako bih brzo dobio informacije o troškovima, budžetima, dobavljačima i anomalijama bez ručnog pretraživanja sistema.  | Adna Bajramović, Faris Aljić | Done  | Uz konsultaciju s ostatkom tima |
 | US-47 | **AI Executive Summary** - Kao finansijski direktor želim automatski generisan sažetak najvažnijih finansijskih informacija kako bih odmah stekao pregled poslovnog stanja.  | Adna Bajramović, Faris Aljić | Done  | Uz konsultaciju s ostatkom tima |
 | US-48 | **Identifikacija dobavljača sa najvećim rastom** - Kao finansijski direktor želim vidjeti dobavljače sa najvećim rastom troškova kako bih mogao identifikovati potencijalne rizike i odstupanja.  | Adna Bajramović, Faris Aljić | Done  | Uz konsultaciju s ostatkom tima |
@@ -73,7 +73,7 @@ Sistem ne smije prikazati grešku prilikom učitavanja grafikona <br>
 ### User story 1
 #### ID: 40
 #### Naziv: Identifikacija sumnjivih obrazaca potrošnje
-Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unosa ili odstupanja u ponašanju korisnika kako bi se osigurala maksimalna kontrola.
++Kao glavni računovođa želim da sistem identifikuje neuobičajene termine unosa ili odstupanja u ponašanju korisnika i obavijesti me o tome kako bi se osigurala maksimalna kontrola.
 
 **Sprint:** 10
 
@@ -90,9 +90,10 @@ Zavisi od Automatska validacija i detekcija anomalija pri unosu – jer se nadog
 Povezan sa: US-32 (Slanje notifikacije) i US-33 (Sažetak o uočenoj anomaliji) – kako bi se korisnik obavijestio o sumnjivom obrascu.
 
 **Acceptance Criteria** <br>
-Kada korisnik unese trošak u vremenskom periodu koji je definisan kao "neuobičajen" (npr. između 22:00 i 06:00 h), tada sistem mora označiti taj unos zastavicom za potencijalni rizik.
-Kada sistem detektuje nagli porast broja unosa od strane jednog korisnika u kratkom vremenskom roku u odnosu na njegov prosjek, tada sistem mora generisati sistemsko upozorenje o anomaliji u ponašanju.
-Sistem mora omogućiti glavnom računovođi jasan pregled svih identifikovanih sumnjivih obrazaca u posebnom panelu ili kroz sistem notifikacija.
+Kada korisnik unese trošak u vremenskom periodu koji je definisan kao "neuobičajen" (radno vrijeme je radnim danima od 08-17h), tada sistem mora označiti taj unos zastavicom za potencijalni rizik.
+Kada sistem detektuje učestalo ažuriranje ili učestalo brisanje troškova tada sistem mora generisati sistemsko upozorenje o anomaliji u ponašanju.
+Kada sistem detektuje pokušaj takozvanog cijepanja troškova tada sistem mora generisati sistemsko upozorenje o anomaliji u ponašanju.
+Sistem mora omogućiti glavnom računovođi jasan pregled svih identifikovanih sumnjivih obrazaca kroz sistem notifikacija.
 
 ### User story 2
 #### ID: 41
@@ -173,7 +174,7 @@ Kada se korisnik nalazi u dashboardu za prikaz troškova i budžeta, tada mu sis
 ### User story 1
 #### ID: 44
 #### Naziv: Dodavanje komentara  
-Kao glavni računovođa želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku  
+Kao glavni računovođa ili administrativni radnik želim dodati komentar na trošak kako bih dodatno pojasnio određenu stavku.
 
 **Sprint:** 10
 
@@ -189,14 +190,13 @@ Zavisi od bilo kojeg prikaza ili tabele troškova gdje korisnik ima pristup deta
 Povezan sa Pregled komentara – koji služi za čitanje onoga što je uneseno kroz ovaj story.
 
 **Acceptance Criteria** <br>
-Kada korisnik odabere opciju "Dodaj komentar" na određenom trošku, unese tekst i potvrdi unos, tada sistem mora trajno spasiti komentar u bazu i povezati ga s tim troškom.
-Sistem ne smije dozvoliti spašavanje praznog komentara i treba imati definisanu maksimalnu dužinu karaktera (npr. 500 karaktera).
+Kada korisnik odabere opciju Komentar na određenom trošku, unese tekst i potvrdi unos, tada sistem mora spasiti komentar u bazu i povezati ga s tim troškom.
 Prilikom spašavanja komentara, sistem mora automatski zabilježiti korisničko ime autora i tačno vrijeme unosa komentara.
 
 ### User story 2
 #### ID: 45
 #### Naziv: Pregled komentara  
-Kao glavni računovođa ili finansijski direktor želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja  
+Kao glavni računovođa ili administrativni radnik želim pregledati komentare uz trošak kako bih imao uvid u dodatna objašnjenja.
 
 **Sprint:** 10
 
@@ -210,8 +210,7 @@ Zavisi od (Dodavanje komentara – jer se pregled oslanja na postojanje prethodn
 Povezan sa Sažetak o uočenoj anomaliji – jer komentari mogu poslužiti kao prostor gdje računovođa objašnjava zašto je sistem detektovao određenu anomaliju.
 
 **Acceptance Criteria** <br>
-Kada trošak ima pridružen komentar, tada sistem u tabelarnom ili detaljnom prikazu mora prikazati vizuelni indikator pored tog troška.
-Kada korisnik klikne na indikator komentara ili otvori detalje troška, tada sistem mora hronološki prikazati tekst komentara, ime autora i vrijeme kada je komentar ostavljen.
+Kada korisnik klikne na opciju Komentar, tada sistem mora hronološki prikazati tekst komentara, ime autora i vrijeme kada je komentar ostavljen.
 Kada trošak nema nijedan komentar, sistem ne prikazuje vizuelni indikator, a u detaljnom prikazu ispisuje poruku "Nema komentarâ za ovaj trošak".
 
 #### ID: 46
