@@ -223,7 +223,8 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
       expect(response.body).toEqual(updated);
       expect(mockExpenseService.updateExpense).toHaveBeenCalledWith(
         "1",
-        expect.objectContaining(validPayload)
+        expect.objectContaining(validPayload),
+        expect.objectContaining({ sub: "test-user" })
       );
     });
 
@@ -288,7 +289,7 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
 
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});
-      expect(mockExpenseService.deleteExpense).toHaveBeenCalledWith("1");
+      expect(mockExpenseService.deleteExpense).toHaveBeenCalledWith("1", expect.objectContaining({ sub: "test-user" }));
     });
 
     test("treba pozivati requireAuthentication middleware (RBAC)", async () => {
@@ -417,7 +418,7 @@ describe("ExpenseEndpoints – integracioni testovi", () => {
       mockExpenseService.updateExpense.mockResolvedValue({ id: "query-id" });
       const response = await request(app).put("/api/troskovi/query-id").query({ id: "ignored" }).send({});
       expect(response.status).toBe(200);
-      expect(mockExpenseService.updateExpense).toHaveBeenLastCalledWith("query-id", {});
+      expect(mockExpenseService.updateExpense).toHaveBeenLastCalledWith("query-id", {}, expect.objectContaining({ sub: "test-user" }));
     });
 
     test("duplikat akcije vracaju fallback greske bez message", async () => {

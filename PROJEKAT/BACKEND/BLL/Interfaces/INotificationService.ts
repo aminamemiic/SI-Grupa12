@@ -8,4 +8,5 @@ export interface INotificationService {
   getUnreadCountForUser(authUser: unknown): Promise<number>;
   markAsRead(id: string, authUser: unknown): Promise<any>;
   markDuplicateActionHandled(expenseId: string, actionStatus: "SACUVAN" | "OBRISAN"): Promise<any[]>;
+  createFrequentActivityNotification(korisnikId: string, tip: string, poruka: string): Promise<any[]>;
 }

@@ -34,8 +34,14 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-06-01T10:00:00"));
     service = new ExpenseService();
     aiService = new AIAnalysisService();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   // ─────────────────────────────────────────────────────────────
@@ -542,6 +548,197 @@ describe("User Story 34 - Automatska validacija i detekcija anomalija pri unosu"
     test("trebalo bi detektovati različite stringove", () => {
       const result = aiService["getStringSimilarity"]("Gorivo", "Internet");
       expect(result).toBeLessThan(0.5);
+    });
+  });
+
+  describe("User Story 40 - Napredne AI anomalije", () => {
+    describe("OUT_OF_HOURS_ENTRY - Unos van radnog vremena", () => {
+      test("trebalo bi detektovati unos u 22:00 kao van radnog vremena", () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date("2026-06-01T22:00:00"));
+
+        const expense = { ...validExpense };
+        const context = {
+          historicalExpenses: [],
+          duplicateCandidates: [],
+          budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
+        };
+
+        const result = aiService["fallbackExpenseAnalysis"](expense, context);
+
+        expect(result.status).toBe("ANOMALIJA");
+        const outOfHours = result.findings.find((f: any) => f.type === "OUT_OF_HOURS_ENTRY");
+        expect(outOfHours).toBeDefined();
+
+        jest.useRealTimers();
+      });
+
+      test("trebalo bi detektovati unos u subotu kao van radnog vremena", () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date("2026-05-30T10:00:00")); // Subota
+
+        const expense = { ...validExpense };
+        const context = {
+          historicalExpenses: [],
+          duplicateCandidates: [],
+          budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
+        };
+
+        const result = aiService["fallbackExpenseAnalysis"](expense, context);
+
+        const outOfHours = result.findings.find((f: any) => f.type === "OUT_OF_HOURS_ENTRY");
+        expect(outOfHours).toBeDefined();
+
+        jest.useRealTimers();
+      });
+
+      test("trebalo bi prihvatiti unos u ponedjeljak u 10:00 kao radno vrijeme", () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date("2026-06-01T10:00:00")); // Ponedjeljak
+
+        const expense = { ...validExpense, iznos: 100 };
+        const context = {
+          historicalExpenses: [
+            { iznos: 90 }, { iznos: 100 }, { iznos: 110 },
+          ],
+          duplicateCandidates: [],
+          budget: { id: 1, planiraniIznos: 1000, potrosenoPrijeTroska: 100 },
+        };
+
+        const result = aiService["fallbackExpenseAnalysis"](expense, context);
+
+        const outOfHours = result.findings.find((f: any) => f.type === "OUT_OF_HOURS_ENTRY");
+        expect(outOfHours).toBeUndefined();
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe("POTENCIJALNO_CIJEPANJE_RACUNA - Cijepanje računa", () => {
+      test("trebalo bi detektovati cijepanje kada zbir malih troškova prelazi 1000 BAM", () => {
+        const expense = { ...validExpense, iznos: 600, kategorijaId: 1, odjelId: 2 };
+        const context = {
+          historicalExpenses: [],
+          duplicateCandidates: [],
+          budget: { id: 1, planiraniIznos: 5000, potrosenoPrijeTroska: 100 },
+          recentExpensesInCategory: [
+            { id: 99, naziv: "Laptop", iznos: 500, kategorijaId: 1, odjelId: 2, datum: "2026-06-01" },
+          ],
+        };
+
+        const result = aiService["fallbackExpenseAnalysis"](expense, context);
+
+        const splitting = result.findings.find((f: any) => f.type === "POTENCIJALNO_CIJEPANJE_RACUNA");
+        expect(splitting).toBeDefined();
+        expect(splitting?.severity).toBe("MEDIUM");
+      });
+
+      test("ne treba detektovati cijepanje ako zbir ne prelazi 1000 BAM", () => {
+        const expense = { ...validExpense, iznos: 300, kategorijaId: 1, odjelId: 2 };
+        const context = {
+          historicalExpenses: [],
+          duplicateCandidates: [],
+          budget: { id: 1, planiraniIznos: 5000, potrosenoPrijeTroska: 100 },
+          recentExpensesInCategory: [
+            { id: 99, naziv: "Laptop", iznos: 400, kategorijaId: 1, odjelId: 2, datum: "2026-06-01" },
+          ],
+        };
+
+        const result = aiService["fallbackExpenseAnalysis"](expense, context);
+
+        const splitting = result.findings.find((f: any) => f.type === "POTENCIJALNO_CIJEPANJE_RACUNA");
+        expect(splitting).toBeUndefined();
+      });
+
+      test("ne treba detektovati cijepanje ako nema nedavnih troškova", () => {
+        const expense = { ...validExpense, iznos: 600, kategorijaId: 1, odjelId: 2 };
+        const context = {
+          historicalExpenses: [],
+          duplicateCandidates: [],
+          budget: { id: 1, planiraniIznos: 5000, potrosenoPrijeTroska: 100 },
+          recentExpensesInCategory: [],
+        };
+
+        const result = aiService["fallbackExpenseAnalysis"](expense, context);
+
+        const splitting = result.findings.find((f: any) => f.type === "POTENCIJALNO_CIJEPANJE_RACUNA");
+        expect(splitting).toBeUndefined();
+      });
+    });
+
+    describe("collectExtraFindings - sakupljanje dodatnih nalaza", () => {
+      test("trebalo bi vratiti prazan niz kad nema anomalija", () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date("2026-06-01T10:00:00"));
+
+        const expense = { ...validExpense, iznos: 100 };
+        const context = {
+          recentExpensesInCategory: [],
+        };
+
+        const findings = aiService["collectExtraFindings"](expense, context);
+        expect(findings).toEqual([]);
+
+        jest.useRealTimers();
+      });
+
+      test("trebalo bi vratiti obje anomalije kad su obje prisutne", () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date("2026-06-01T22:00:00"));
+
+        const expense = { ...validExpense, iznos: 600, kategorijaId: 1, odjelId: 2 };
+        const context = {
+          recentExpensesInCategory: [
+            { id: 99, naziv: "Laptop", iznos: 500, kategorijaId: 1, odjelId: 2, datum: "2026-06-01" },
+          ],
+        };
+
+        const findings = aiService["collectExtraFindings"](expense, context);
+
+        expect(findings.length).toBe(2);
+        expect(findings.some((f: any) => f.type === "OUT_OF_HOURS_ENTRY")).toBe(true);
+        expect(findings.some((f: any) => f.type === "POTENCIJALNO_CIJEPANJE_RACUNA")).toBe(true);
+
+        jest.useRealTimers();
+      });
+    });
+
+    describe("buildRecommendedAction - preporuke sistema", () => {
+      test("kombinacija cijepanja i van radnog vremena", () => {
+        const action = aiService["buildRecommendedAction"]([
+          "POTENCIJALNO_CIJEPANJE_RACUNA",
+          "OUT_OF_HOURS_ENTRY",
+        ]);
+        expect(action).toContain("malverzacije");
+      });
+
+      test("samo cijepanje računa", () => {
+        const action = aiService["buildRecommendedAction"]([
+          "POTENCIJALNO_CIJEPANJE_RACUNA",
+        ]);
+        expect(action).toContain("zaobilaženje limita");
+      });
+
+      test("samo van radnog vremena", () => {
+        const action = aiService["buildRecommendedAction"]([
+          "OUT_OF_HOURS_ENTRY",
+        ]);
+        expect(action).toContain("opravdan");
+      });
+
+      test("učestalo uređivanje", () => {
+        const action = aiService["buildRecommendedAction"]([
+          "UCESTALO_UREDREIVANJE",
+        ]);
+        expect(action).toContain("audit log");
+      });
+
+      test("učestalo brisanje", () => {
+        const action = aiService["buildRecommendedAction"]([
+          "UCESTALO_BRISANJE",
+        ]);
+        expect(action).toContain("audit log");
+      });
     });
   });
 });

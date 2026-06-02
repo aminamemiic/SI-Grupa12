@@ -14,6 +14,8 @@ export interface CreateExpenseRequest {
 export interface IExpenseService {
   getAllExpenses(): Promise<any[]>;
   createExpense(payload: CreateExpenseRequest, authUser?: unknown): Promise<any>;
+  updateExpense(id: string, payload: CreateExpenseRequest, authUser?: unknown): Promise<any>;
+  deleteExpense(id: string, authUser?: unknown): Promise<void>;
   getReferenceData(): Promise<any>;
   suggestCategory(payload: any): Promise<any>;
   validateExpenseBeforeCreation(payload: CreateExpenseRequest): Promise<{

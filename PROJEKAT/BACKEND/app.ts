@@ -17,6 +17,7 @@ const { registerDataOverviewEndpoints } = require("./PRESENTATION API/Endpoints/
 const { registerReportEndpoints } = require("./PRESENTATION API/Endpoints/ReportEndpoints");
 const { registerNotificationEndpoints } = require("./PRESENTATION API/Endpoints/NotificationEndpoints");
 const { registerAIAnalysisEndpoints } = require("./PRESENTATION API/Endpoints/AIAnalysisEndpoints");
+const { registerCommentEndpoints } = require("./PRESENTATION API/Endpoints/CommentEndpoints");
 
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -349,6 +350,7 @@ function startServer() {
   registerNotificationEndpoints(app, authService, writeLog);
   registerUserEndpoints(app, authService);
   registerAIAnalysisEndpoints(app, authService, writeLog);
+  registerCommentEndpoints(app, authService, writeLog);
 
   app.listen(PORT, "0.0.0.0", () => {
     writeLog("INFO", `Backend aplikacija sluša na portu ${PORT}.`);

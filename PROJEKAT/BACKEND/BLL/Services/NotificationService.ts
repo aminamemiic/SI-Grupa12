@@ -16,11 +16,14 @@ export class NotificationService implements INotificationService {
     const priority = analysis?.severity === "HIGH" ? "HIGH" : "MEDIUM";
     const amount = Number(expense?.iznos || 0).toFixed(2);
     const currency = expense?.valuta || "BAM";
-    const title = `AI anomalija: ${expense?.naziv || "Trosak"}`;
+    const creatorName = expense?.kreiraoIme && expense?.kreiraoPrezime
+      ? `${expense.kreiraoIme} ${expense.kreiraoPrezime}`
+      : "Nepoznat korisnik";
+    const title = `AI anomalija: ${expense?.naziv || "Trosak"} (${creatorName})`;
     const explanation = analysis?.explanation || "AI analiza je oznacila trosak kao anomaliju.";
     const recommendation = analysis?.recommendedAction || "Provjeriti trosak prije dalje obrade.";
     const message = [
-      `Trosak "${expense?.naziv || "bez naziva"}" (${amount} ${currency}) oznacen je kao anomalija.`,
+      `Trosak "${expense?.naziv || "bez naziva"}" (${amount} ${currency}) unesen od strane ${creatorName} oznacen je kao anomalija.`,
       explanation,
       `Preporucena akcija: ${recommendation}`,
     ].join(" ");
@@ -187,6 +190,35 @@ export class NotificationService implements INotificationService {
     }
 
     return this.notificationRepository.markActionHandledByExpenseId(expenseId, actionStatus);
+  }
+
+  async createFrequentActivityNotification(korisnikId: string, tip: string, poruka: string): Promise<any[]> {
+    const recipients = await this.notificationRepository.getRecipientsForAnomalyNotifications();
+    const recipientIds = recipients
+      .map((recipient: any) => recipient.id)
+      .filter((id: string) => id !== korisnikId);
+
+    if (!recipientIds.length) {
+      return [];
+    }
+
+    const userName = await this.notificationRepository.getUserNameById(korisnikId);
+    const userNameText = userName ? ` (${userName})` : "";
+
+    const tipLabel =
+      tip === "UCESTALO_UREDREIVANJE"
+        ? "Učestalo uređivanje"
+        : tip === "UCESTALO_BRISANJE"
+          ? "Učestalo brisanje"
+          : tip;
+
+    return this.notificationRepository.createForUsers(recipientIds, {
+      naslov: `Upozorenje: ${tipLabel}${userNameText}`,
+      poruka: `${poruka} Korisnik: ${userName || "Nepoznat"}.`,
+      prioritet: "HIGH",
+      tipNotifikacije: tip,
+      povezaniTrosakId: null,
+    });
   }
 }
 

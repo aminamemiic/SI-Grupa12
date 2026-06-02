@@ -3,26 +3,30 @@ import { ChangeDetectorRef, Component, inject, OnInit, OnDestroy } from '@angula
 import {
   FormBuilder,
   ReactiveFormsModule,
+  FormsModule,
   Validators,
 } from '@angular/forms';
 import {
   CreateExpenseRequest,
   Expense,
   ExpenseReferenceData,
+  Comment,
 } from '../../../models/entities';
 import { ExpenseService, ValidationResult } from '../../../services/expense.service';
+import { CommentService } from '../../../services/comment.service';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './expenses.html',
   styleUrl: './expenses.css',
 })
 export class ExpensesComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private expenseService = inject(ExpenseService);
+  private commentService = inject(CommentService);
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
@@ -46,6 +50,13 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   editingExpenseId: string | null = null;
   showDeleteModal = false;
   expenseToDeleteId: string | null = null;
+
+  showChatModal = false;
+  chatExpense: Expense | null = null;
+  chatComments: Comment[] = [];
+  newCommentText = '';
+  isLoadingComments = false;
+  isSendingComment = false;
 
   // Validation warnings and errors
   validationWarnings: Array<{ type: string; message: string; severity: 'LOW' | 'MEDIUM' | 'HIGH' }> = [];
@@ -389,6 +400,23 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     );
   }
 
+  formatAnomalyTip(tip: string): string {
+    const mape: Record<string, string> = {
+      OUT_OF_HOURS_ENTRY: 'Van radnog vremena',
+      POTENCIJALNO_CIJEPANJE_RACUNA: 'Cijepanje računa',
+      UCESTALO_UREDREIVANJE: 'Učestalo uređivanje',
+      UCESTALO_BRISANJE: 'Učestalo brisanje',
+      BUDGET_EXCEEDED: 'Prekoračenje budžeta',
+      BUDGET_NOT_DEFINED: 'Budžet nije definisan',
+      AMOUNT_OUTLIER_THRESHOLD: 'Neuobičajen iznos',
+      AMOUNT_OUTLIER_ZSCORE: 'Statistički outlier',
+      AMOUNT_OUTLIER_IQR: 'Iznos van rasporeda',
+      UNREALISTIC_AMOUNT_TOO_SMALL: 'Sumnjivo mali iznos',
+      UNREALISTIC_AMOUNT_TOO_LARGE: 'Sumnjivo veliki iznos',
+    };
+    return mape[tip] || tip;
+  }
+
   private getErrorMessage(error: any, fallback: string): string {
     const backendMessage = error?.error?.message || error?.error?.error;
 
@@ -402,6 +430,79 @@ export class ExpensesComponent implements OnInit, OnDestroy {
 
     return fallback;
   }
+
+  openChat(expense: Expense): void {
+    this.chatExpense = expense;
+    this.showChatModal = true;
+    this.chatComments = [];
+    this.newCommentText = '';
+    this.loadComments();
+  }
+
+  closeChat(): void {
+    if (this.chatExpense) {
+      this.markCommentsAsRead(this.chatExpense.id);
+    }
+    this.showChatModal = false;
+    this.chatExpense = null;
+    this.chatComments = [];
+  }
+
+  loadComments(): void {
+    if (!this.chatExpense) return;
+
+    this.isLoadingComments = true;
+
+    this.commentService.getComments(this.chatExpense.id).subscribe({
+      next: (comments) => {
+        this.chatComments = comments;
+        this.isLoadingComments = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Greška pri dohvatu komentara:', error);
+        this.isLoadingComments = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  sendComment(): void {
+    if (!this.chatExpense || !this.newCommentText?.trim() || this.isSendingComment) return;
+
+    this.isSendingComment = true;
+
+    this.commentService.addComment(this.chatExpense.id, this.newCommentText.trim()).subscribe({
+      next: (comment) => {
+        this.chatComments = [...this.chatComments, comment];
+        this.newCommentText = '';
+        this.isSendingComment = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Greška pri slanju komentara:', error);
+        this.isSendingComment = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  getUnreadCount(expenseId: string | number): number {
+    const key = `chat_read_${expenseId}`;
+    const lastRead = localStorage.getItem(key);
+    if (!lastRead) return 0;
+
+    const count = this.chatComments.filter(
+      (c) => new Date(c.vrijemeUnosa).getTime() > parseInt(lastRead, 10)
+    ).length;
+
+    return count;
+  }
+
+  private markCommentsAsRead(expenseId: string | number): void {
+    localStorage.setItem(`chat_read_${expenseId}`, Date.now().toString());
+  }
+
   searchQuery: string = '';
 
 get filteredExpenses() {

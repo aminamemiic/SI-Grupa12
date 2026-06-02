@@ -49,7 +49,7 @@ describe("NotificationService", () => {
     expect(mockNotificationRepository.createForUsers).toHaveBeenCalledWith(
       ["user-1", "user-2"],
       expect.objectContaining({
-        naslov: "AI anomalija: Laptop",
+        naslov: "AI anomalija: Laptop (Nepoznat korisnik)",
         prioritet: "HIGH",
         poruka: expect.stringContaining("Iznos je veci od prosjeka."),
       })
@@ -244,10 +244,10 @@ describe("NotificationService", () => {
     expect(mockNotificationRepository.createForUsers).toHaveBeenCalledWith(
       ["user-1"],
       expect.objectContaining({
-        naslov: "AI anomalija: Trosak",
+        naslov: "AI anomalija: Trosak (Nepoznat korisnik)",
         prioritet: "MEDIUM",
         povezaniTrosakId: null,
-        poruka: expect.stringContaining('Trosak "bez naziva" (0.00 BAM)'),
+        poruka: expect.stringContaining('Trosak "bez naziva" (0.00 BAM) unesen od strane'),
       })
     );
   });

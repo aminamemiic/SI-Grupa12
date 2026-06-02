@@ -74,7 +74,7 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
       if (!id) {
         return res.status(400).json({ message: "ID troška je obavezan." });
       }
-      const updatedExpense = await expenseService.updateExpense(id, req.body);
+      const updatedExpense = await expenseService.updateExpense(id, req.body, req.user);
       return res.status(200).json(updatedExpense);
     } catch (error: any) {
       console.error("Greška pri ažuriranju troška:", error);
@@ -117,7 +117,7 @@ function registerExpenseEndpoints(app: any, authService: IAuthService, _logger?:
       if (!id) {
         return res.status(400).json({ message: "ID troška je obavezan." });
       }
-      await expenseService.deleteExpense(id);
+      await expenseService.deleteExpense(id, req.user);
       return res.status(204).send();
     } catch (error: any) {
       console.error("Greška pri brisanju troška:", error);

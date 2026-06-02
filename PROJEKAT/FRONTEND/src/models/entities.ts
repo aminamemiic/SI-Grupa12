@@ -22,6 +22,8 @@ export interface Expense {
 
   statusValidacije?: string;
   kreiraoKorisnikId?: string | number;
+  tipAnomalije?: string | null;
+  opisAnomalije?: string | null;
 }
 
 export interface CreateExpenseRequest {
@@ -124,6 +126,8 @@ export interface DataOverviewExpense {
   dobavljacId?: string | number | null;
   dobavljacNaziv?: string | null;
   kreiraoKorisnikId?: string | number;
+  tipAnomalije?: string | null;
+  opisAnomalije?: string | null;
 }
 
 export interface DataOverviewBudget {
@@ -251,4 +255,13 @@ export interface AppNotification {
   akcijaStatus?: string | null;
   procitano: boolean;
   vrijemeKreiranja: string;
+}
+
+export interface Comment {
+  id: string | number;
+  tekst: string;
+  vrijemeUnosa: string;
+  autorId: string | number;
+  autorIme: string;
+  autorPrezime: string;
 }

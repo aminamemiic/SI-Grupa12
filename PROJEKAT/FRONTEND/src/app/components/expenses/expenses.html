@@ -205,8 +205,19 @@
           <td>{{ expense.kategorija }}</td>
           <td>{{ expense.odjel }}</td>
           <td>{{ expense.valuta }}</td>
-          <td>{{ expense.statusValidacije }}</td>
+          <td>
+            <span class="status-pill" [class.status-anomalija]="expense.statusValidacije === 'ANOMALIJA'">
+              {{ expense.statusValidacije }}
+            </span>
+            <span class="anomaly-tip" *ngIf="expense.tipAnomalije" [title]="expense.opisAnomalije || ''">
+              {{ formatAnomalyTip(expense.tipAnomalije) }}
+            </span>
+          </td>
           <td class="actions-cell">
+            <button class="btn-chat-table" title="Komentari" (click)="openChat(expense)">
+              KOMENTARI
+              <span class="unread-badge" *ngIf="getUnreadCount(expense.id) > 0">{{ getUnreadCount(expense.id) }}</span>
+            </button>
             <button class="btn-edit-table" title="Uredi" (click)="editExpense(expense)">
               Uredi
             </button>
@@ -235,6 +246,48 @@
       <div class="modal-actions">
         <button class="btn-cancel-modal" (click)="closeDeleteModal()">Odustani</button>
         <button class="btn-confirm-delete" (click)="confirmDelete()">Izbriši</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showChatModal">
+    <div class="modal-card chat-modal">
+      <div class="chat-header">
+        <h3>Komentari - {{ chatExpense?.naziv || 'Trošak' }}</h3>
+        <button class="btn-close-chat" (click)="closeChat()">✕</button>
+      </div>
+
+      <div class="chat-messages">
+        <div class="chat-empty" *ngIf="chatComments.length === 0 && !isLoadingComments">
+          Nema komentara. Budite prvi koji će komentarisati.
+        </div>
+        <div class="chat-loading" *ngIf="isLoadingComments">
+          Učitavanje komentara...
+        </div>
+        <div class="chat-message" *ngFor="let comment of chatComments">
+          <div class="chat-message-header">
+            <strong>{{ comment.autorIme }} {{ comment.autorPrezime }}</strong>
+            <span class="chat-message-time">{{ comment.vrijemeUnosa | date: 'dd.MM.yyyy HH:mm' }}</span>
+          </div>
+          <div class="chat-message-text">{{ comment.tekst }}</div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <textarea
+          [(ngModel)]="newCommentText"
+          placeholder="Unesite komentar..."
+          rows="2"
+          [disabled]="isSendingComment"
+          (keydown.enter)="sendComment(); $event.preventDefault()"
+        ></textarea>
+        <button
+          class="btn-send-comment"
+          [disabled]="!newCommentText.trim() || isSendingComment"
+          (click)="sendComment()"
+        >
+          {{ isSendingComment ? '...' : 'Pošalji' }}
+        </button>
       </div>
     </div>
   </div>

@@ -349,6 +349,8 @@ export class AIAnalysisService {
   }
 
   async analyzeExpense(expense: any, context: any): Promise<ExpenseAnalysisResult> {
+    let analysis: ExpenseAnalysisResult;
+
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 3000);
@@ -366,11 +368,79 @@ export class AIAnalysisService {
         throw new Error(`AI servis je vratio status ${response.status}.`);
       }
 
-      const analysis = await response.json() as ExpenseAnalysisResult;
-      return this.applyRequiredBudgetRule(analysis, expense, context);
+      analysis = await response.json() as ExpenseAnalysisResult;
     } catch (_error) {
-      return this.fallbackExpenseAnalysis(expense, context);
+      analysis = this.fallbackExpenseAnalysis(expense, context);
+      return analysis;
     }
+
+    const extraFindings = this.collectExtraFindings(expense, context);
+    if (extraFindings.length > 0) {
+      const allFindings = [...(Array.isArray(analysis.findings) ? analysis.findings : []), ...extraFindings];
+      const anomalyFindings = allFindings.filter((f) => f.type !== "POTENCIJALNI_DUPLIKAT");
+      const status = anomalyFindings.length > 0 ? "ANOMALIJA" : analysis.status;
+      const maxSeverity = allFindings.reduce(
+        (max, f) => {
+          const order: Record<string, number> = { LOW: 0, MEDIUM: 1, HIGH: 2 };
+          return order[f.severity] > order[max] ? f.severity : max;
+        },
+        "LOW" as "LOW" | "MEDIUM" | "HIGH"
+      );
+
+      const tipovi = anomalyFindings.map((f) => f.type);
+      const recommendedAction = this.buildRecommendedAction(tipovi);
+
+      analysis = {
+        ...analysis,
+        status,
+        severity: maxSeverity,
+        findings: allFindings,
+        explanation: allFindings.map((f) => f.message).join(" "),
+        recommendedAction,
+      };
+    }
+
+    return this.applyRequiredBudgetRule(analysis, expense, context);
+  }
+
+  private collectExtraFindings(expense: any, context: any): ExpenseAnalysisFinding[] {
+    const findings: ExpenseAnalysisFinding[] = [];
+
+    const outOfHoursFinding = this.detectOutOfHoursEntry();
+    if (outOfHoursFinding) {
+      findings.push(outOfHoursFinding);
+    }
+
+    const billSplittingFinding = this.detectPotentialBillSplitting(expense, context);
+    if (billSplittingFinding) {
+      findings.push(billSplittingFinding);
+    }
+
+    return findings;
+  }
+
+  private buildRecommendedAction(tipovi: string[]): string {
+    if (tipovi.includes("POTENCIJALNO_CIJEPANJE_RACUNA") && tipovi.includes("OUT_OF_HOURS_ENTRY")) {
+      return "Pregledajte prijavljene troškove za potencijalne malverzacije — cijepanje računa u kombinaciji sa unosom van radnog vremena je sumnjiv obrazac.";
+    }
+
+    if (tipovi.includes("POTENCIJALNO_CIJEPANJE_RACUNA")) {
+      return "Pregledajte prijavljene troškove za potencijalno cijepanje računa. Provjerite da li više manjih troškova u istoj kategoriji služi za zaobilaženje limita od 1000 BAM.";
+    }
+
+    if (tipovi.includes("OUT_OF_HOURS_ENTRY")) {
+      return "Trošak je unesen van radnog vremena. Provjerite da li je unos hitan i opravdan.";
+    }
+
+    if (tipovi.includes("UCESTALO_UREDREIVANJE")) {
+      return "Korisnik učestalo mijenja troškove. Pregledajte audit log za detalje izmjena.";
+    }
+
+    if (tipovi.includes("UCESTALO_BRISANJE")) {
+      return "Korisnik učestalo briše troškove. Pregledajte audit log za detalje brisanja.";
+    }
+
+    return "Pregledajte prijavljene troškove i prateću dokumentaciju prije dalje obrade.";
   }
 
   async suggestExpenseCategory(payload: any): Promise<CategorySuggestionResult> {
@@ -568,6 +638,16 @@ ${JSON.stringify(categories)}
       }
     }
 
+    const outOfHoursFinding = this.detectOutOfHoursEntry();
+    if (outOfHoursFinding) {
+      findings.push(outOfHoursFinding);
+    }
+
+    const billSplittingFinding = this.detectPotentialBillSplitting(expense, context);
+    if (billSplittingFinding) {
+      findings.push(billSplittingFinding);
+    }
+
     const anomalyFindings = findings.filter((finding) => this.isAnomalyFinding(finding));
 
     // Calculate risk score based on anomaly severity. Duplicate-only findings are warnings.
@@ -592,9 +672,10 @@ ${JSON.stringify(categories)}
       severity: anomalyFindings.some((finding) => finding.severity === "HIGH") ? "HIGH" : findings.length > 0 ? "MEDIUM" : "LOW",
       findings,
       explanation,
-      recommendedAction:
-        findings.length > 0
-          ? "Provjeriti trošak i prateću dokumentaciju prije dalje obrade."
+      recommendedAction: anomalyFindings.length > 0
+        ? this.buildRecommendedAction(anomalyFindings.map((f) => f.type))
+        : findings.length > 0
+          ? "Provjeriti trosak i pratecu dokumentaciju prije dalje obrade."
           : "Nije potrebna dodatna akcija.",
     };
   }
@@ -622,6 +703,75 @@ ${JSON.stringify(categories)}
         datum: expense?.datum,
       },
     };
+  }
+
+  private detectOutOfHoursEntry(): ExpenseAnalysisFinding | null {
+    const trenutnoVrijeme = new Date();
+    const sat = trenutnoVrijeme.getHours();
+    const dan = trenutnoVrijeme.getDay();
+
+    if (sat < 8 || sat >= 17 || dan === 0 || dan === 6) {
+      const dani = ["Nedjelja", "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"];
+      return {
+        type: "OUT_OF_HOURS_ENTRY",
+        severity: "LOW",
+        message: `Trošak je unesen van standardnog radnog vremena (${dani[dan]}, ${String(sat).padStart(2, "0")}:${String(trenutnoVrijeme.getMinutes()).padStart(2, "0")}h). Radno vrijeme je pon-pet, 08-17h.`,
+        evidence: {
+          dan: dani[dan],
+          sat,
+          minute: trenutnoVrijeme.getMinutes(),
+        },
+      };
+    }
+
+    return null;
+  }
+
+  private detectPotentialBillSplitting(expense: any, context: any): ExpenseAnalysisFinding | null {
+    const recentExpenses = Array.isArray(context?.recentExpensesInCategory)
+      ? context.recentExpensesInCategory
+      : [];
+
+    if (recentExpenses.length === 0) {
+      return null;
+    }
+
+    const currentAmount = Number(expense?.iznos || 0);
+    const prag = 1000;
+
+    const smallRecentExpenses = recentExpenses.filter(
+      (recent: any) => Number(recent.iznos || 0) < prag
+    );
+
+    if (smallRecentExpenses.length === 0) {
+      return null;
+    }
+
+    if (currentAmount >= prag) {
+      return null;
+    }
+
+    const totalWithRecent = smallRecentExpenses.reduce(
+      (sum: number, recent: any) => sum + Number(recent.iznos || 0),
+      currentAmount
+    );
+
+    if (totalWithRecent > prag) {
+      return {
+        type: "POTENCIJALNO_CIJEPANJE_RACUNA",
+        severity: "MEDIUM",
+        message: `Unutar 48 sati pronađeno je ${smallRecentExpenses.length} troškova u istoj kategoriji i odjelu čiji pojedinačni iznosi ne prelaze ${prag} BAM, ali njihov zbir (${totalWithRecent.toFixed(2)} BAM) prelazi prag. Ovo može ukazivati na cijepanje računa.`,
+        evidence: {
+          currentAmount,
+          recentExpensesCount: smallRecentExpenses.length,
+          totalWithRecent: Number(totalWithRecent.toFixed(2)),
+          prag,
+          recentExpenseIds: smallRecentExpenses.map((recent: any) => recent.id),
+        },
+      };
+    }
+
+    return null;
   }
 
   private applyRequiredBudgetRule(analysis: ExpenseAnalysisResult, expense: any, context: any): ExpenseAnalysisResult {

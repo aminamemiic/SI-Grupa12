@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   DataOverview,
   DataOverviewBudget,
@@ -9,9 +10,11 @@ import {
   DataOverviewExpense,
   DataOverviewProject,
   DataOverviewSupplier,
+  Comment,
 } from '../../../models/entities';
 import { DataOverviewService } from '../../../services/data-overview.service';
 import { IngestionService, ImportHistoryEntry } from '../../../services/ingestion.service';
+import { CommentService } from '../../../services/comment.service';
 import { CategoryComparisonComponent } from './components/category-comparison/category-comparison';
 import { PlannedActualComparisonComponent } from './components/planned-actual-comparison/planned-actual-comparison';
 import { SelectedExpenseComparisonComponent } from './components/selected-expense-comparison/selected-expense-comparison';
@@ -34,13 +37,14 @@ type SelectedDetail = {
 @Component({
   selector: 'app-data-overview',
   standalone: true,
-  imports: [CommonModule, SelectedExpenseComparisonComponent, CategoryComparisonComponent, PlannedActualComparisonComponent],
+  imports: [CommonModule, FormsModule, SelectedExpenseComparisonComponent, CategoryComparisonComponent, PlannedActualComparisonComponent],
   templateUrl: './data-overview.html',
   styleUrl: './data-overview.css',
 })
 export class DataOverviewComponent implements OnInit {
   private readonly dataOverviewService = inject(DataOverviewService);
   private readonly ingestionService = inject(IngestionService);
+  private readonly commentService = inject(CommentService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   public overview: DataOverview = this.getEmptyOverview();
@@ -63,6 +67,13 @@ export class DataOverviewComponent implements OnInit {
   public plannedActualSelectedDepartments: Set<string> = new Set();
   public plannedActualDateFrom = '';
   public plannedActualDateTo = '';
+
+  public showChatModal = false;
+  public chatExpense: DataOverviewExpense | null = null;
+  public chatComments: Comment[] = [];
+  public newCommentText = '';
+  public isLoadingComments = false;
+  public isSendingComment = false;
 
   public ngOnInit(): void {
     this.loadOverview();
@@ -221,6 +232,8 @@ export class DataOverviewComponent implements OnInit {
         { label: 'Datum', value: this.formatDate(expense.datum) },
         { label: 'Opis', value: this.formatValue(expense.opis) },
         { label: 'Status validacije', value: this.formatValue(expense.statusValidacije) },
+        { label: 'Tip anomalije', value: this.formatAnomalyTip(expense.tipAnomalije) },
+        { label: 'Opis anomalije', value: this.formatValue(expense.opisAnomalije) },
         { label: 'Kategorija naziv', value: this.formatValue(expense.kategorijaNaziv) },
         { label: 'Odjel naziv', value: this.formatValue(expense.odjelNaziv) },
         { label: 'Valuta kod', value: this.formatValue(expense.valutaKod) },
@@ -388,6 +401,24 @@ export class DataOverviewComponent implements OnInit {
     }
 
     return String(value);
+  }
+
+  formatAnomalyTip(tip: string | null | undefined): string {
+    if (!tip) return '-';
+    const mape: Record<string, string> = {
+      OUT_OF_HOURS_ENTRY: 'Van radnog vremena',
+      POTENCIJALNO_CIJEPANJE_RACUNA: 'Cijepanje računa',
+      UCESTALO_UREDREIVANJE: 'Učestalo uređivanje',
+      UCESTALO_BRISANJE: 'Učestalo brisanje',
+      BUDGET_EXCEEDED: 'Prekoračenje budžeta',
+      BUDGET_NOT_DEFINED: 'Budžet nije definisan',
+      AMOUNT_OUTLIER_THRESHOLD: 'Neuobičajen iznos',
+      AMOUNT_OUTLIER_ZSCORE: 'Statistički outlier',
+      AMOUNT_OUTLIER_IQR: 'Iznos van rasporeda',
+      UNREALISTIC_AMOUNT_TOO_SMALL: 'Sumnjivo mali iznos',
+      UNREALISTIC_AMOUNT_TOO_LARGE: 'Sumnjivo veliki iznos',
+    };
+    return mape[tip] || tip;
   }
 
   private formatAmount(value: unknown): string {
@@ -666,5 +697,72 @@ sortBudgets(column: string): void {
     this.budgetSortDirection = 'asc';
   }
 }
-}
 
+  openExpenseChat(expense: DataOverviewExpense): void {
+    this.chatExpense = expense;
+    this.showChatModal = true;
+    this.chatComments = [];
+    this.newCommentText = '';
+    this.loadChatComments();
+  }
+
+  closeExpenseChat(): void {
+    if (this.chatExpense) {
+      localStorage.setItem(`chat_read_${this.chatExpense.id}`, Date.now().toString());
+    }
+    this.showChatModal = false;
+    this.chatExpense = null;
+    this.chatComments = [];
+  }
+
+  loadChatComments(): void {
+    if (!this.chatExpense) return;
+
+    this.isLoadingComments = true;
+
+    this.commentService.getComments(this.chatExpense.id).subscribe({
+      next: (comments) => {
+        this.chatComments = comments;
+        this.isLoadingComments = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Greška pri dohvatu komentara:', error);
+        this.isLoadingComments = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  sendChatComment(): void {
+    if (!this.chatExpense || !this.newCommentText?.trim() || this.isSendingComment) return;
+
+    this.isSendingComment = true;
+
+    this.commentService.addComment(this.chatExpense.id, this.newCommentText.trim()).subscribe({
+      next: (comment) => {
+        this.chatComments = [...this.chatComments, comment];
+        this.newCommentText = '';
+        this.isSendingComment = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Greška pri slanju komentara:', error);
+        this.isSendingComment = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  getChatUnreadCount(expenseId: string | number): number {
+    const key = `chat_read_${expenseId}`;
+    const lastRead = localStorage.getItem(key);
+    if (!lastRead) return 0;
+
+    const count = this.chatComments.filter(
+      (c) => new Date(c.vrijemeUnosa).getTime() > parseInt(lastRead, 10)
+    ).length;
+
+    return count;
+  }
+}

@@ -14,7 +14,13 @@ describe("AIAnalysisService fallback logic", () => {
   let svc: any;
 
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-06-01T10:00:00"));
     svc = new AIAnalysisService("http://noop");
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   test("vraća VALIDAN kada nema signala", () => {
@@ -927,11 +933,14 @@ describe("AIAnalysisService targeted branch coverage", () => {
   let fetchSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date("2026-06-01T10:00:00"));
     svc = new AIAnalysisService("http://ai-service.test/");
     fetchSpy = jest.spyOn(global, "fetch" as any);
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     fetchSpy.mockRestore();
   });
 

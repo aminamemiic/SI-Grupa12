@@ -135,7 +135,7 @@ export class ExpenseService implements IExpenseService {
     };
   }
 
-  async updateExpense(id: string, payload: CreateExpenseRequest): Promise<any> {
+  async updateExpense(id: string, payload: CreateExpenseRequest, authUser?: unknown): Promise<any> {
     const normalizedPayload = this.validateCreateExpense(payload);
 
     const existing = await this.expenseRepository.getById(id);
@@ -147,24 +147,76 @@ export class ExpenseService implements IExpenseService {
       throw new Error("Zaključani troškovi se ne mogu mijenjati.");
     }
 
-    const updatedExpense = await this.expenseRepository.update(id, normalizedPayload);
+    const updatedExpense = await this.expenseRepository.update(id, normalizedPayload, authUser);
     this.expensesCache = null;
+
+    await this.checkFrequentEditing(authUser);
 
     return updatedExpense;
   }
 
-  async deleteExpense(id: string): Promise<void> {
+  async deleteExpense(id: string, authUser?: unknown): Promise<void> {
     const existing = await this.expenseRepository.getById(id);
     if (!existing) {
-      return; 
+      return;
     }
 
     if (existing.statusValidacije === "ZAKLJUCAN") {
       throw new Error("Zaključani troškovi se ne mogu brisati.");
     }
 
-    await this.expenseRepository.delete(id);
+    await this.expenseRepository.delete(id, authUser);
     this.expensesCache = null;
+
+    await this.checkFrequentDeletion(authUser);
+  }
+
+  private async checkFrequentEditing(authUser: any): Promise<void> {
+    try {
+      const korisnikId = authUser
+        ? await this.expenseRepository.findOrCreateUserFromAuth(authUser)
+        : null;
+
+      if (!korisnikId) {
+        return;
+      }
+
+      const recentEditCount = await this.expenseRepository.getRecentAuditCount(korisnikId, "U", 1);
+
+      if (recentEditCount > 5) {
+        await this.notificationService.createFrequentActivityNotification(
+          korisnikId,
+          "UCESTALO_UREDREIVANJE",
+          `Korisnik je izvršio ${recentEditCount} izmjena troškova u zadnjih sat vremena.`
+        );
+      }
+    } catch (error) {
+      console.error("Greska pri provjeri ucestalog uredreivanja:", error);
+    }
+  }
+
+  private async checkFrequentDeletion(authUser: any): Promise<void> {
+    try {
+      const korisnikId = authUser
+        ? await this.expenseRepository.findOrCreateUserFromAuth(authUser)
+        : null;
+
+      if (!korisnikId) {
+        return;
+      }
+
+      const recentDeleteCount = await this.expenseRepository.getRecentAuditCount(korisnikId, "D", 1);
+
+      if (recentDeleteCount > 3) {
+        await this.notificationService.createFrequentActivityNotification(
+          korisnikId,
+          "UCESTALO_BRISANJE",
+          `Korisnik je izvršio ${recentDeleteCount} brisanja troškova u zadnjih sat vremena.`
+        );
+      }
+    } catch (error) {
+      console.error("Greska pri provjeri ucestalog brisanja:", error);
+    }
   }
 
   private validateCreateExpense(payload: CreateExpenseRequest): CreateExpenseRequest {
@@ -278,8 +330,8 @@ export class ExpenseService implements IExpenseService {
         };
       }
 
-      const updatedExpense = await this.expenseRepository.updateValidationStatus(createdExpense.id, "ANOMALIJA");
       await this.expenseRepository.createAnomaly(createdExpense.id, analysis);
+      const updatedExpense = await this.expenseRepository.updateValidationStatus(createdExpense.id, "ANOMALIJA");
       await this.notificationService.createAnomalyNotification(updatedExpense, analysis);
 
       return {
@@ -355,8 +407,8 @@ export class ExpenseService implements IExpenseService {
         ],
       };
 
-      const updatedExpense = await this.expenseRepository.updateValidationStatus(id, "ANOMALIJA");
       await this.expenseRepository.createAnomaly(id, analysis);
+      const updatedExpense = await this.expenseRepository.updateValidationStatus(id, "ANOMALIJA");
       await this.notificationService.createAnomalyNotification(updatedExpense, analysis);
       await this.notificationService.markDuplicateActionHandled(id, "SACUVAN");
       this.expensesCache = null;

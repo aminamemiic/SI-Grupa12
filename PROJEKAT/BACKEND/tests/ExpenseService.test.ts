@@ -333,7 +333,7 @@ describe("ExpenseService", () => {
       const result = await service.updateExpense("1", validPayload);
 
       expect(result).toEqual(updated);
-      expect(mockExpenseRepository.update).toHaveBeenCalledWith("1", validPayload);
+      expect(mockExpenseRepository.update).toHaveBeenCalledWith("1", validPayload, undefined);
     });
 
     test("treba obrisati keš troškova nakon ažuriranja", async () => {
@@ -397,7 +397,7 @@ describe("ExpenseService", () => {
 
       await service.deleteExpense("1");
 
-      expect(mockExpenseRepository.delete).toHaveBeenCalledWith("1");
+      expect(mockExpenseRepository.delete).toHaveBeenCalledWith("1", undefined);
     });
 
     test("treba obrisati keš troškova nakon brisanja", async () => {

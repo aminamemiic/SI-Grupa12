@@ -235,6 +235,16 @@ class NotificationRepository {
     return result.rows.map((row: any) => this.mapNotification(row));
   }
 
+  async getUserNameById(userId: string) {
+    const result = await AppDB.db.query(
+      "SELECT ime, prezime FROM korisnici WHERE id = $1",
+      [userId]
+    );
+
+    const row = result.rows[0];
+    return row ? `${row.ime} ${row.prezime}` : null;
+  }
+
   private normalizeRole(role: string): string {
     return role
       .normalize("NFD")

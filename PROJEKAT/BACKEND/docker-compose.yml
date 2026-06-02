@@ -41,6 +41,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      TZ: Europe/Sarajevo
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/grupa12app
       USE_DOCKER_DB: "false"
       NODE_ENV: development
