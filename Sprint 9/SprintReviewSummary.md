@@ -3,7 +3,7 @@
 ## Sprint 9
 
 # 1. Planirani sprint goal
-Implementirati cjelokupan napredni modul za poređenje finansijskih podataka, predviđanje/projekciju potrošnje budžeta te pametne AI mehanizme za kontrolu i validaciju troškova. Korisnicima omogućiti checkbox selekciju troškova iz Data Overview tabele za tabelarni side-by-side prikaz razlika po kategorijama i odjelima. Na backendu razviti formulu linearne projekcije budžeta na osnovu brzine trošenja tekućeg mjeseca. Dodatno, integrisati AI modul za automatsko predlaganje kategorija na osnovu naziva troška, uvesti klijentsku real-time pred-validaciju forme za unos (koja u pozadini prepoznaje anomalije, duplikate i prekoracenja budžeta prije spašavanja), te zatvoriti kompletan radni tok odlučivanja i rješavanja potencijalnih duplih troškova direktno kroz interfejs notifikacija.
+Implementirati cjelokupan napredni modul za poređenje finansijskih podataka, predviđanje/projekciju potrošnje budžeta te pametne AI mehanizme za kontrolu i validaciju troškova. Korisnicima omogućiti checkbox selekciju troškova iz Data Overview tabele za tabelarni side-by-side prikaz razlika po kategorijama i odjelima. Na backendu razviti formulu linearne projekcije budžeta na osnovu brzine trošenja tekućeg mjeseca. Dodatno, integrisati AI modul za automatsko predlaganje kategorija na osnovu naziva troška, uvesti klijentsku real-time pred-validaciju forme za unos (koja u pozadini prepoznaje anomalije, duplikate i prekoracenja budžeta prije spašavanja) te zatvoriti kompletan radni tok odlučivanja i rješavanja potencijalnih duplih troškova direktno kroz interfejs notifikacija.
 
 # 2. Šta je završeno
 Tim je uspješno realizirao sve planirane aktivnosti za ovaj sprint:
@@ -42,17 +42,13 @@ Sve planirane stavke za Sprint 9 su uspješno završene.
 - Odlučeno je da se linearne projekcije budžeta računaju isključivo na backendu kako bi se smanjila kompleksnost klijentskog koda i osigurala tačnost formula.
 
 # 7. Povratna informacija Product Ownera
-Product Owner je izrazio veliko zadovoljstvo kvalitetom i stabilnošću implementiranih funkcionalnosti, posebno ističući real-time pred-validaciju i AI modul za predviđanje. Kao jedinu sugestiju za poboljšanje, napomenuo je da bi tim trebao malo povećati obim posla ili brzinu (velocity) u narednim sprintovima kako bi se optimizovao kapacitet tima i ubrzao tempo isporuke projekta.
+Product Owner je izrazio zadovoljstvo implementiranim funkcionalnostima. Kao jedinu sugestiju za poboljšanje, napomenuo je da bi tim mogao za još jedan stepen povećati obim posla.
 
 # 8. Zaključak za naredni sprint
-Za Sprint 10 planirano je značajno proširenje obima posla u skladu sa sugestijom Product Ownera, uključujući 9 novih korisničkih priča (US-46 do US-54):
 - Vizuelno i grafičko poređenje troškova (US-38, US-39)
+- Identifikacija sumnjivih obrazaca potrošnje (US-40)
 - Detekcija periodičnih troškova i izostanka istih (US-41)
 - Centralni interaktivni Dashboard (US-42) i drill-down na grafikone (US-43)
-- Inteligentni AI asistent za finansijska pitanja na bosanskom jeziku (US-46)
-- AI Executive Summary na Dashboardu (US-47)
-- Identifikacija dobavljača s najvećim rastom i procjena rizika zavisnosti (US-48, US-50)
-- AI preporuke za optimizaciju troškova (US-49)
-- Pregled periodičnih troškova za provjeru (US-51)
+- Dodavanje i pregled komentara na troškove (US-44, US-45)
 - Tok odobravanja i dorade budžeta sa komentarima i historijom (US-52, US-53, US-54)
 - RBAC sigurnosna zaštita novih endpointa i stranica
