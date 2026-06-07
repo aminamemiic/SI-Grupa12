@@ -20,12 +20,18 @@ Posljedice ovih problema ogledaju se u povećanom riziku od prekoračenja budže
 Ovaj sistem rješava navedene probleme kroz centralizovano prikupljanje podataka o troškovima, njihovu automatsku klasifikaciju i AI-podržanu analizu — omogućavajući pravovremeno otkrivanje odstupanja, generisanje upozorenja i pružanje jasnih finansijskih uvida rukovodstvu.
 
 # Glavne korisničke uloge
--**Administrativni radnik**
-Zadužen za unos i ažuriranje podataka o troškovima.
--**Finansijski direktor**
-Odgovoran za donošenje ključnih finansijskih odluka.
--**Glavni računovođa**
-Odgovoran za upravljanje računovodstvom i podacima.
+
+- **Administrativni radnik**
+
+  Zadužen za unos i ažuriranje podataka o troškovima.
+
+- **Finansijski direktor**
+
+  Odgovoran za donošenje ključnih finansijskih odluka.
+
+- **Glavni računovođa**
+
+  Odgovoran za upravljanje računovodstvom i podacima.
 
 # Glavne funkcionalnosti sistema
 
