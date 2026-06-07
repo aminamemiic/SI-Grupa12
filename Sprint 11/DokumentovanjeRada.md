@@ -47,3 +47,23 @@ Ovaj sistem rješava navedene probleme kroz centralizovano prikupljanje podataka
 10. **Upravljanje korisnicima** — kontrola pristupa s različitim nivoima ovlaštenja 
 11. **Autentifikacija** — prijava i odjava korisnika iz sistema
 
+# Pregled rada kroz sprintove
+
+## Sprint 5 — Temelj sistema: autentifikacija i unos troškova
+Implementirana prijava i odjava korisnika, dodjela i ograničenje pristupa prema ulogama (RBAC), te ručni unos troškova s validacijom i kategorizacijom po atributima (kategorija, projekat, odjel).
+
+## Sprint 6 — CRUD operacije i upravljanje korisnicima
+Implementirane osnovne operacije nad troškovima (kreiranje, ažuriranje, brisanje), kontrola pristupa CRUD operacijama prema ulozi, te pregled i izmjena korisničkih uloga od strane administratora.
+
+## Sprint 7 — Pregled i uvoz podataka
+Implementiran pregled liste i detaljan prikaz pojedinačnih zapisa, te uvoz troškova iz CSV i Excel fajlova s automatskom obradom i validacijom uvezenih podataka.
+
+## Sprint 8 — Pretraga, izvještavanje i planiranje budžeta
+Implementirani filtriranje, pretraga i sortiranje podataka, generisanje izvještaja po vremenskim periodima s mogućnošću exporta, kreiranje, pregled i uređivanje budžeta po kategorijama, odjelima i vremenskim periodima.
+
+## Sprint 9 — AI analiza i poređenje podataka
+Implementirana automatska detekcija anomalija pri unosu, dubinska analiza trendova, predviđanje potrošnje do kraja perioda, pametno grupisanje troškova putem AI sugestija, odabir i poređenje podataka po kategorijama, te generisanje notifikacija i sažetaka o uočenim anomalijama.
+
+## Sprint 10 — Vizualizacija, dashboard i evidencija komentara
+Implementirani vizuelno i grafičko poređenje podataka, centralni interaktivni dashboard s ključnim metrikama, identifikacija sumnjivih obrazaca i periodičnih troškova, te dodavanje i pregled komentara uz pojedinačne troškove.
+
