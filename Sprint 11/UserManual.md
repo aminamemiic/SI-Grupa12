@@ -22,7 +22,8 @@ U sistemu postoje sljedeće korisničke uloge:
 | `glavni_racunovodja` | Pregleda i uređuje budžete, šalje budžete na odobrenje, koristi pregled podataka, izvještaje i notifikacije. |
 | `finansijski_direktor` | Odobrava ili odbija budžete, vraća budžete na doradu, koristi pregled podataka, izvještaje i notifikacije. |
 
-Napomena: dostupnost pojedinih ekrana i akcija zavisi od uloge. Ako korisnik nema pravo pristupa, sistem ga vraća na početnu stranicu ili prikazuje poruku da pristup nije dozvoljen.
+> Napomena:
+> Dostupnost pojedinih ekrana i akcija zavisi od uloge. Ako korisnik nema pravo pristupa, sistem ga vraća na početnu stranicu ili prikazuje poruku da pristup nije dozvoljen.
 
 ## 3. Prijava u sistem
 Prijava se vrši preko Keycloak autentifikacije.
@@ -40,7 +41,7 @@ Očekivani rezultat:
 - dostupni su samo ekrani koje ta uloga smije koristiti
 
 > Napomena: 
->> S obzirom da je ovo interni sistem finansijskog tima, nije moguće da se korisnik van tima registruje na sistem. Samo admin ima mogućnost kreiranja i dodjele korisničkih računa sa predefinisanim ulogama. 
+> S obzirom da je ovo interni sistem finansijskog tima, nije moguće da se korisnik van tima registruje na sistem. Samo admin ima mogućnost kreiranja i dodjele korisničkih računa sa predefinisanim ulogama. 
 
 ## 4. Demo kredencijali
 U projektu su pripremljeni demo nalozi za testiranje. Najvažniji poznati kredencijal je:
@@ -73,9 +74,13 @@ Nakon prijave korisnik dolazi na nadzornu ploču.
 - sažetak budžeta
 - troškovi po kategorijama i odjelima
 - AI pomoćnik za pitanja o troškovima
-- AI preporuke i sažetak
-- dobavljači sa najvećim rastom
-- provjera periodičnih troškova
+  
+  <img width="259.5" height="244.5" alt="image" src="https://github.com/user-attachments/assets/e77cdef4-63bc-4872-a010-91f6be0e5249" />
+  
+- AI preporuke i sažetak, dobavljači sa najvećim rastom, provjera periodičnih troškova
+
+  <img width="461.5" height="430.5" alt="image" src="https://github.com/user-attachments/assets/63d67123-4a60-44b9-8aba-900a130b405f" />
+
 
 
 ### 5.3 Upravljanje troškovima
@@ -88,14 +93,25 @@ Ovaj ekran služi za ručni unos, uređivanje i brisanje troškova.
 - dugmad za uređivanje, brisanje i komentare
 - upozorenja ako sistem prepozna anomaliju
 
+  <img width="754" height="434.5" alt="image" src="https://github.com/user-attachments/assets/bed7337f-b906-4d8e-8cdf-3e99488d6d9f" />
+
+
 
 ### 5.4 Import troškova
 Ekran za masovni unos troškova iz CSV ili XLSX fajla.
 
 Šta se prikazuje:
 - korak 1: odabir fajla
+
+  <img width="764.5" height="429" alt="image" src="https://github.com/user-attachments/assets/16353c80-4e40-44f4-8422-0ed2b74bcb46" />
+
 - korak 2: pregled i validacija redova
+
+  <img width="763" height="431.5" alt="image" src="https://github.com/user-attachments/assets/9e153565-092f-4f4d-a8c2-192801425d4a" />
+
 - korak 3: rezultat importa
+
+  <img width="764.5" height="413" alt="image" src="https://github.com/user-attachments/assets/6f175827-c201-4ed2-ac1b-02151989c8b5" />
 
 
 ### 5.5 Planiranje budžeta
@@ -105,8 +121,17 @@ Na ovom ekranu korisnik kreira, uređuje i pregledava budžete.
 - forma za novi budžet
 - lista budžeta
 - detalji odabranog budžeta
+
+  <img width="222.4" height="368.5" alt="image" src="https://github.com/user-attachments/assets/07ce57a7-6eeb-40e4-83af-0daf9a937851" />
+
 - historija komentara
+
+  <img width="217" height="263" alt="image" src="https://github.com/user-attachments/assets/568f1994-1c83-43eb-b2e4-b53154537f43" />
+
 - projekcija potrošnje za tekući mjesec
+
+  <img width="214" height="263.5" alt="image" src="https://github.com/user-attachments/assets/3e6b8c6d-27b3-4fa2-b493-682be56f7251" />
+
 
 
 ### 5.6 Pregled podataka
@@ -116,11 +141,14 @@ Ovaj ekran prikazuje objedinjene finansijske podatke iz baze.
 - zbirni broj troškova, budžeta, kategorija, odjela i dobavljača
 - filtriranje i pretraga
 - detaljan pregled pojedinačnih zapisa
-- poređenje troškova (pojedinačno i grupno)
 - prikaz historije uvoza
+- poređenje troškova (pojedinačno i grupno)
 
-> Napomena
->> Svaku stavku unutar pregleda podataka je moguće kliknuti što će prikazati detaljan pregled. 
+ <img width="738.5" height="436" alt="image" src="https://github.com/user-attachments/assets/ea2272cf-7b79-4eaa-b4ef-eb980c372f7b" />
+ <img width="739" height="434.5" alt="image" src="https://github.com/user-attachments/assets/2d7d1f0f-1a11-47d7-a2a3-4b2f4961c7ca" />
+
+> Napomena: 
+> Svaku stavku unutar pregleda podataka je moguće kliknuti što će prikazati detaljan pregled. 
 
 ### 5.7 Izvještaji
 Ekran za izradu sažetih i detaljnih izvještaja.
@@ -131,6 +159,8 @@ Ekran za izradu sažetih i detaljnih izvještaja.
 - grafički i tabelarni pregled troškova
 - export u PDF, CSV i XLSX
 - pokretanje AI analize (prikazuje kretanje troškova po mjesecima, predviđanje budžeta i preporuke)
+
+ <img width="744" height="434.5" alt="image" src="https://github.com/user-attachments/assets/9ddc48fc-0202-4dfd-b94c-473b8a0fdc34" />
 
 
 ### 5.8 Notifikacije
@@ -143,6 +173,7 @@ Ekran za pregled sistemskih upozorenja i AI obavještenja.
 - opcija označavanja kao pročitano (za odabranu notifikaciju ili svih notifikacija)
 - za duplikate troškova: opcija odobri ili obriši
 
+<img width="383" height="433" alt="image" src="https://github.com/user-attachments/assets/db1a285a-4dd5-42b2-98e0-deb8961eab2b" />
 
 
 ## 6. Najvažniji korisnički tokovi
