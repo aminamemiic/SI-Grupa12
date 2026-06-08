@@ -48,7 +48,7 @@ describe("ExpenseService", () => {
 
       const result = await service.getAllExpenses();
 
-      expect(result).toEqual([]);
+      expect(result).toEqual(expenses);
       expect(mockExpenseRepository.getAll).toHaveBeenCalledTimes(1);
     });
 
