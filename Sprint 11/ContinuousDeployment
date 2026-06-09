@@ -1,0 +1,436 @@
+# 3. Continuous Deployment skripta / pipeline
+
+## Pregled rješenja
+
+Za implementaciju Continuous Deployment (CD) procesa koristi se kombinacija:
+
+* GitHub Actions CI/CD workflow-a
+* Railway GitHub integracije
+* Railway hostinga za produkcijsko okruženje
+
+GitHub Actions služi za automatsku validaciju aplikacije kroz build i testiranje, dok Railway automatski vrši deployment nakon svake promjene na glavnoj (`main`) grani repozitorija.
+
+Ovakav pristup omogućava ponovljiv, automatizovan i provjerljiv deployment kompletnog sistema bez potrebe za dodatnim ručnim koracima.
+
+---
+
+# Lokacija skripte
+
+GitHub Actions workflow nalazi se u repozitoriju na lokaciji:
+
+```text
+.github/workflows/ci-cd.yml
+```
+
+Deployment konfiguracija nalazi se u Railway projektu koji je povezan sa GitHub repozitorijem putem Railway GitHub integracije.
+
+---
+
+# Kako se pokreće
+
+Pipeline se automatski pokreće prilikom:
+
+* push-a na `main` granu
+* kreiranja Pull Request-a prema `main` grani
+
+Nije potrebno ručno pokretanje workflow-a.
+
+Primjer:
+
+```bash
+git add .
+git commit -m "Nova funkcionalnost"
+git push origin main
+```
+
+Nakon push-a:
+
+1. GitHub Actions pokreće build i testove.
+2. Railway detektuje promjenu na GitHub repozitoriju.
+3. Railway automatski pokreće deployment produkcijske verzije sistema.
+
+---
+
+# Preduvjeti
+
+Za uspješno izvršavanje pipeline-a potrebno je:
+
+* GitHub repozitorij
+* GitHub Actions omogućen na repozitoriju
+* Railway projekat
+* PostgreSQL baza podataka
+* Konfigurisani Railway servisi
+* Node.js 20
+* npm
+
+---
+
+# Korištene tehnologije
+
+| Komponenta      | Tehnologija                |
+| --------------- | -------------------------- |
+| Frontend        | Angular                    |
+| Backend         | Node.js + TypeScript       |
+| AI servis       | Python                     |
+| Baza podataka   | PostgreSQL                 |
+| Autentifikacija | Keycloak                   |
+| CI              | GitHub Actions             |
+| CD              | Railway GitHub Integration |
+| Hosting         | Railway                    |
+
+---
+
+# Environment varijable
+
+Sistem koristi sljedeće environment varijable:
+
+## Backend
+
+```env
+DATABASE_URL=
+NODE_ENV=
+PORT=
+SESSION_SECRET=
+FRONTEND_ORIGIN=
+AI_SERVICE_URL=
+KEYCLOAK_URL=
+KEYCLOAK_REALM=
+KEYCLOAK_CLIENT_ID=
+JWT_ISSUER=
+JWT_AUDIENCE=
+JWKS_URI=
+GEMINI_API_KEY=
+GEMINI_MODEL=
+```
+
+## PostgreSQL
+
+```env
+POSTGRES_PASSWORD=
+DATABASE_URL=
+```
+
+## Frontend
+
+```env
+API_URL=
+```
+
+Produkcijske vrijednosti konfigurirane su kroz Railway Variables.
+
+---
+
+# Opis GitHub Actions workflow-a
+
+Workflow se sastoji od tri nezavisna posla:
+
+## 1. Backend Build
+
+Naziv posla:
+
+```yaml
+backend-build
+```
+
+Koraci:
+
+1. Checkout repozitorija
+2. Instalacija Node.js 20
+3. Instalacija zavisnosti
+4. Build backend aplikacije
+
+Komande:
+
+```bash
+cd PROJEKAT/BACKEND
+npm install
+npm run build
+```
+
+Svrha:
+
+* provjera da se backend može uspješno kompajlirati
+* otkrivanje grešaka prije deploymenta
+
+---
+
+## 2. Frontend Build
+
+Naziv posla:
+
+```yaml
+frontend-build
+```
+
+Koraci:
+
+1. Checkout repozitorija
+2. Instalacija Node.js 20
+3. Instalacija zavisnosti
+4. Produkcijski Angular build
+
+Komande:
+
+```bash
+cd PROJEKAT/FRONTEND
+npm install
+npm run build -- --configuration=production
+```
+
+Svrha:
+
+* provjera da se frontend može uspješno izgraditi
+* validacija produkcijske konfiguracije
+
+---
+
+## 3. Backend Testovi
+
+Naziv posla:
+
+```yaml
+backend-tests
+```
+
+Koraci:
+
+1. Instalacija zavisnosti
+2. Pokretanje testova
+3. Generisanje coverage izvještaja
+
+Komanda:
+
+```bash
+cd PROJEKAT/BACKEND
+npx jest --coverage
+```
+
+Svrha:
+
+* provjera funkcionalnosti sistema
+* automatska validacija prije deploymenta
+
+---
+
+# Baza podataka
+
+Projekt koristi PostgreSQL bazu podataka.
+
+Na Railway platformi koristi se Railway PostgreSQL servis.
+
+Konekcija prema bazi ostvaruje se putem:
+
+```env
+DATABASE_URL
+```
+
+---
+
+# Migracije baze podataka
+
+Migracije se izvršavaju korištenjem Prisma ORM-a.
+
+Komanda:
+
+```bash
+npx prisma migrate deploy
+```
+
+Za razvojno okruženje:
+
+```bash
+npx prisma migrate dev
+```
+
+Po potrebi se izvršava i inicijalni unos podataka:
+
+```bash
+npx prisma db seed
+```
+
+Migracije omogućavaju da baza podataka bude usklađena sa trenutnom verzijom aplikacije.
+
+---
+
+# Deployment backend servisa
+
+Backend servis hostovan je na Railway platformi.
+
+Nakon svakog push-a na `main` granu:
+
+1. GitHub Actions izvršava build i testove.
+2. Railway GitHub integracija preuzima najnoviju verziju koda.
+3. Railway pokreće deployment backend servisa.
+4. Backend se povezuje na PostgreSQL bazu, Keycloak i AI servis.
+
+Produkcijski backend dostupan je na:
+
+```text
+https://si-grupa12-production-bdb1.up.railway.app
+```
+
+---
+
+# Deployment frontend servisa
+
+Frontend aplikacija također koristi Railway GitHub integraciju.
+
+Nakon promjene na `main` grani:
+
+1. Railway preuzima najnoviju verziju Angular aplikacije.
+2. Pokreće produkcijski build.
+3. Deploya novu verziju frontenda.
+
+Produkcijski frontend dostupan je na:
+
+```text
+https://frontend-production-02b2.up.railway.app
+```
+
+---
+
+# Deployment Keycloak servisa
+
+Keycloak servis hostovan je na Railway platformi.
+
+Koristi se za:
+
+* autentifikaciju korisnika
+* autorizaciju pristupa
+* izdavanje JWT tokena
+
+Produkcijska instanca:
+
+```text
+https://keycloak-production-4c61.up.railway.app
+```
+
+---
+
+# Povezivanje servisa
+
+Sistem koristi sljedeću arhitekturu:
+
+```text
+Frontend (Angular)
+        |
+        v
+Backend API (Node.js)
+        |
+        +------ PostgreSQL
+        |
+        +------ Keycloak
+        |
+        +------ AI Service
+```
+
+Frontend komunicira sa backend API-jem putem HTTP zahtjeva.
+
+Backend koristi:
+
+* PostgreSQL za pohranu podataka
+* Keycloak za autentifikaciju
+* AI servis za AI funkcionalnosti
+
+---
+
+# Railway GitHub integracija
+
+Projekt koristi Railway Continuous Deployment mehanizam.
+
+Proces deploymenta:
+
+```text
+Developer
+    |
+    v
+Git Push
+    |
+    v
+GitHub Repository
+    |
+    v
+GitHub Actions
+(Build + Test)
+    |
+    v
+Railway GitHub Integration
+    |
+    v
+Automatic Deployment
+```
+
+Svaka promjena na `main` grani automatski prolazi kroz ovaj proces.
+
+---
+
+# Provjera uspješnog deploymenta
+
+Nakon deploymenta moguće je izvršiti sljedeće provjere.
+
+## Frontend
+
+Otvoriti:
+
+```text
+https://frontend-production-02b2.up.railway.app
+```
+
+Aplikacija mora biti dostupna bez grešaka.
+
+---
+
+## Backend
+
+Otvoriti:
+
+```text
+https://si-grupa12-production-bdb1.up.railway.app
+```
+
+Backend mora odgovarati na API zahtjeve.
+
+---
+
+## Keycloak
+
+Otvoriti:
+
+```text
+https://keycloak-production-4c61.up.railway.app
+```
+
+Servis mora biti dostupan i omogućiti prijavu korisnika.
+
+---
+
+## Railway Dashboard
+
+Deployment status i logovi mogu se pratiti putem Railway Dashboard-a:
+
+```text
+https://railway.app
+```
+
+---
+
+# Šta se tačno deploya
+
+Produkcijski deployment obuhvata:
+
+* Backend aplikaciju (Node.js + TypeScript)
+* Frontend aplikaciju (Angular)
+* PostgreSQL bazu podataka
+* Keycloak servis
+* AI mikroservis
+* Konfiguraciju environment varijabli
+
+---
+
+# Zaključak
+
+Continuous Deployment proces implementiran je korištenjem GitHub Actions workflow-a i Railway GitHub integracije.
+
+GitHub Actions automatski validira aplikaciju kroz build i testiranje, dok Railway vrši automatski deployment nakon svake promjene na glavnoj grani repozitorija.
+
+Na ovaj način deployment kompletnog sistema je automatizovan, ponovljiv, dokumentovan i lako provjerljiv, čime su ispunjeni zahtjevi artefakta za Continuous Deployment skriptu/pipeline.
