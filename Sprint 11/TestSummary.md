@@ -1,6 +1,6 @@
 # Svrha izvještaja
 
-Cilj izvještaja je prikazati konkretne i provjerljive rezultate testiranja, vrste testova koje postoje u sistemu, način pokretanja testova, broj testova koji prolaze, ručno testirane korisničke tokove, poznate testne propuste i dokaze o izvršenju testiranja. 
+Cilj izvještaja je prikazati konkretne i provjerljive rezultate testiranja sistema, vrste testova koje postoje u projektu, način pokretanja testova, broj testova koji prolaze, ručno testirane korisničke tokove, poznate testne propuste i dokaze o izvršenju testiranja. Dokument je pripremljen kao dio završne isporuke projekta i povezuje rezultate testiranja sa funkcionalnostima implementiranim kroz sprintove.
 
 # Obuhvat testiranja
 
@@ -30,7 +30,7 @@ U Sprintu 7 dodani su testovi za CSV/Excel uvoz, validaciju uvezenih redova, his
 | Lines coverage (All files) | 93.73% |
 | Vrijeme izvršavanja | 5.437 s |
 
-U Sprintu 8 testirani su Data Overview, filtriranje, sortiranje, historija uvoza, generisanje izvještaja i eksport u XLSX, CSV formate.
+U Sprintu 8 testirani su Data Overview, filtriranje, sortiranje, historija uvoza, generisanje izvještaja i eksport u XLSX, CSV i PDF formate.
 
 | Metrika | Vrijednost |
 |---|---|
@@ -131,25 +131,50 @@ Svi rezultati prelaze globalni coverage prag od 80% koji se koristio u ranijim s
 
 Pored automatizovanih backend testova, za svaki sprint provedeno je ručno testiranje. Ručno testiranje je rađeno kroz korisnički interfejs, jer određeni tokovi zahtijevaju provjeru stvarnog ponašanja aplikacije, prikaza poruka, modala, dugmadi, grafikona i workflowa između korisničkih rola.
 
-| Ručno testirani scenario | Koraci | Očekivani rezultat | Status |
+| Scenarij | Koraci | Očekivani rezultat | Status |
 |---|---|---|---|
-| Pregled i CRUD troškova | Otvoriti listu troškova, kreirati, urediti i obrisati trošak | Lista se ažurira, validacije rade, zaključani troškovi se ne mogu mijenjati | Pass |
-| RBAC kontrola za CRUD | Prijaviti se različitim rolama i pokušati CRUD akcije | Akcije su dostupne samo ovlaštenim korisnicima | Pass |
-| Uvoz CSV/XLS/XLSX fajla | Uploadovati validan i nevalidan fajl | Validni redovi se prikazuju za potvrdu, nevalidni se označavaju greškom | Pass |
-| Historija uvoza | Otvoriti detalje prethodnog importa | Prikazuju se status, broj redova i greške po redu | Pass |
-| Kreiranje i odobravanje budžeta | Kreirati budžet i promijeniti status kao ovlaštena rola | Budžet dobija ispravan status i evidentira se korisnik koji je izvršio akciju | Pass |
-| Izvještaji i eksport | Generisati izvještaj i eksportovati XLSX, CSV i PDF | Datoteke se preuzimaju i sadrže očekivane podatke | Pass |
-| Pretraga, filtriranje i sortiranje | Kombinovati tekstualnu pretragu, filtere i sortiranje | Tabele se ažuriraju prema zadatim kriterijima | Pass |
-| Poređenje troškova | Selektovati više troškova i kliknuti “Uporedi” | Otvara se tabelarno/grafičko poređenje selektovanih stavki | Pass |
-| AI pred-validacija troška | Unijeti neuobičajeno visok iznos troška | Sistem prikazuje upozorenje nakon debounce validacije | Pass |
-| Notifikacije o anomaliji | Kreirati/anlizirati trošak koji izaziva anomaliju | Kreira se notifikacija sa opisom i preporučenom akcijom | Pass |
-| Dashboard | Otvoriti centralni dashboard | Prikazuju se KPI kartice, grafikoni, trendovi i sažeci | Pass |
-| Drill-down sa grafikona | Kliknuti na segment grafikona | Prikazuju se pojedinačni troškovi koji čine odabranu sumu | Pass |
-| AI asistent | Postaviti pitanje o troškovima, budžetima ili anomalijama | Sistem vraća odgovor na osnovu dostupnih podataka | Pass |
-| Komentari na troškove | Dodati komentar i otvoriti historiju komentara | Komentar se prikazuje sa autorom i vremenom | Pass |
-| Povrat budžeta na doradu | Finansijski direktor vraća budžet uz komentar | Status prelazi u “Na doradi”, komentar se bilježi i šalje se notifikacija | Pass |
-| Ponovna dostava budžeta | Računovođa ispravlja budžet i šalje ponovo | Status prelazi u “Na čekanju”, direktor dobija notifikaciju | Pass |
-| Periodični troškovi | Provjeriti dashboard kada očekivani periodični trošak izostane | Sistem prikazuje upozorenje o neevidentiranom periodičnom trošku | Pass |
+| Pregled i CRUD troškova | Otvoriti listu troškova, kreirati novi trošak, urediti postojeći trošak i pokrenuti brisanje. | Lista troškova se ispravno prikazuje i ažurira nakon svake akcije. Sistem validira unesene podatke i ne dozvoljava izmjenu ili brisanje zaključanih troškova. | Prošlo |
+| RBAC kontrola akcija | Prijaviti se korisnicima različitih rola i pokušati izvršiti CRUD akcije, pristupiti izvještajima, dashboardu i zaštićenim modulima. | Akcije i stranice su dostupne samo korisnicima sa odgovarajućim rolama, dok se neovlaštenim korisnicima pristup blokira. | Prošlo |
+| Admin pregled korisničkih rola | Prijaviti se kao administrator i otvoriti pregled korisničkih rola kroz Keycloak integraciju. | Administrator može pregledati role korisnika, a prikazane role su usklađene sa backend autorizacijom. | Prošlo |
+| Import troškova iz fajla | Uploadovati validan CSV, XLS ili XLSX fajl i pokrenuti preview importovanja. | Sistem prikazuje redove za obradu, broj validnih i nevalidnih redova te omogućava potvrdu samo validnih podataka. | Prošlo |
+| Upload nepodržanog fajla | Odabrati fajl koji nije u podržanom CSV, XLS ili XLSX formatu. | Sistem odbija fajl i prikazuje odgovarajuću validacionu poruku. | Prošlo |
+| Validacija redova pri importu | Uploadovati fajl sa praznim obaveznim poljima ili neispravnim vrijednostima. | Neispravni redovi su označeni greškom i ne biraju se automatski za import. | Prošlo |
+| Potvrda validnih redova importovanog fajla | Odabrati validne redove iz preview prikaza i potvrditi import. | Validni troškovi se upisuju u sistem, a korisniku se prikazuje rezultat uvoza. | Prošlo |
+| Historija uvoza | Otvoriti historiju importovanih fajlova i pregledati detalje prethodnog uvoza. | Prikazuju se status importa, broj redova, korisnik, vrijeme uvoza i greške po pojedinačnim redovima. | Prošlo |
+| Planiranje budžeta | Kreirati novi budžet sa validnim podacima i pregledati ga u listi budžeta. | Budžet se uspješno sprema i prikazuje u listi sa ispravnim podacima. | Prošlo |
+| Validacija budžeta | Pokušati sačuvati budžet bez obaveznih polja ili sa neispravnim periodom. | Sistem odbija spremanje budžeta i prikazuje odgovarajuću grešku. | Prošlo |
+| Odobravanje i odbijanje budžeta | Prijaviti se kao finansijski direktor i promijeniti status budžeta. | Budžet dobija status odobren ili odbijen, a evidentira se korisnik koji je izvršio akciju. | Prošlo |
+| Povrat budžeta na doradu bez komentara | Kliknuti na opciju za povrat budžeta na doradu i pokušati potvrditi akciju bez komentara. | Sistem ne dozvoljava povrat budžeta na doradu bez obaveznog komentara. | Prošlo |
+| Povrat budžeta na doradu s komentarom | Finansijski direktor vraća budžet na doradu uz unos komentara. | Status budžeta prelazi u “Na doradi”, komentar se bilježi u historiji i šalje se notifikacija računovođi. | Prošlo |
+| Ispravka i ponovna dostava budžeta | Računovođa otvara budžet u statusu “Na doradi”, ispravlja podatke i ponovo ga šalje na odobravanje. | Status budžeta prelazi u “Na čekanju”, komentar direktora je vidljiv, a direktor dobija notifikaciju. | Prošlo |
+| Historija komentara budžeta | Otvoriti detalje budžeta koji je prošao kroz povrat na doradu i ponovnu dostavu. | Prikazuje se hronološka historija komentara sa autorom, datumom/vremenom i tipom akcije. | Prošlo |
+| Data Overview pregled | Otvoriti Data Overview modul i pregledati prikazane sekcije. | Prikazuju se referentne tabele, broj zapisa, agregacije i finansijski podaci. | Prošlo |
+| Modalni detalji entiteta | Kliknuti na red tabele, npr. trošak, dobavljač, projekat ili budžet. | Otvara se modal sa potpunim atributima odabranog zapisa. | Prošlo |
+| Pretraga, filtriranje i sortiranje | Kombinovati tekstualnu pretragu, filtere i sortiranje. | Tabele se ažuriraju prema zadatim kriterijima. | Prošlo |
+| Generisanje izvještaja | Odabrati period izvještaja i kliknuti na opciju za generisanje izvještaja. | Prikazuju se finansijski sažeci, agregacije, iskorištenost budžeta i relevantni troškovi. | Prošlo |
+| Validacija perioda izvještaja | Postaviti datum završetka prije početnog datuma. | Sistem odbija generisanje izvještaja i prikazuje validacionu grešku. | Prošlo |
+| Izvoz izvještaja | Generisati izvještaj i pokrenuti eksport u XLSX, CSV i PDF formatu. | Datoteke se preuzimaju i sadrže očekivane podatke u ispravnom formatu. | Prošlo |
+| Format datuma | Pregledati datume u tabelama, modalima, filterima i izvezenim dokumentima. | Datumi su dosljedno prikazani u formatu `dd.mm.yyyy`. | Prošlo |
+| Selekcija troškova za poređenje | Označiti više troškova checkboxovima u Data Overview tabeli. | Sistem pamti selekciju i prikazuje broj odabranih stavki sa opcijom za poređenje. | Prošlo |
+| Poređenje troškova | Selektovati više troškova i kliknuti “Uporedi”. | Otvara se tabelarno/grafičko poređenje selektovanih stavki. | Prošlo |
+| Grafički prikaz poređenja | Pokrenuti poređenje i odabrati grafički prikaz, npr. bar ili line chart. | Grafikon se prikazuje bez grešaka i vizuelno prikazuje razlike između selektovanih troškova. | Prošlo |
+| Poređenje planiranog i stvarnog stanja | Otvoriti budžet ili izvještaj koji prikazuje planned vs actual stanje. | Progress bar prikazuje iskorištenost budžeta, a prekoračenje se označava crvenim indikatorom. | Prošlo |
+| AI pred-validacija troška | Unijeti neuobičajeno visok iznos troška. | Sistem prikazuje upozorenje nakon debounce validacije. | Prošlo |
+| AI prijedlog kategorije troška | Unijeti naziv troška i kliknuti na opciju “AI Prijedlog”. | Sistem predlaže odgovarajuću kategoriju troška sa stepenom pouzdanosti. | Prošlo |
+| Dubinska AI analiza trendova | Kliknuti na opciju za pokretanje AI analize na Dashboardu. | Sistem generiše analizu trendova, predviđanja budžeta i preporuke na osnovu dostupnih podataka. | Prošlo |
+| Notifikacija o anomaliji | Kreirati ili analizirati trošak koji sistem detektuje kao anomaliju. | Sistem kreira notifikaciju sa opisom anomalije, stepenom ozbiljnosti i preporučenom akcijom. | Prošlo |
+| Sumnjivo vrijeme unosa troška | Unijeti trošak van radnog vremena. | Sistem prepoznaje neuobičajeno vrijeme unosa, označava unos i povećava risk score. | Prošlo |
+| Cijepanje računa | Unijeti više manjih troškova u kratkom vremenu u istoj kategoriji ili odjelu. | Sistem prepoznaje sumnjiv obrazac cijepanja računa i generiše upozorenje. | Prošlo |
+| Izostanak periodičnog troška | Provjeriti dashboard u periodu kada očekivani periodični trošak nije evidentiran. | Sistem prikazuje upozorenje o izostalom periodičnom trošku. | Prošlo |
+| Centralni Dashboard | Otvoriti Dashboard stranicu nakon prijave. | Prikazuju se KPI kartice, finansijske metrike, grafikoni, trendovi i sažeci. | Prošlo |
+| Drill-down sa grafikona | Kliknuti na segment grafikona na Dashboardu. | Sistem prikazuje listu pojedinačnih troškova koji čine odabranu sumu. | Prošlo |
+| AI Executive Summary | Otvoriti Dashboard kao ovlašteni korisnik. | Sistem automatski prikazuje sažetak najvažnijih informacija o troškovima, budžetu i anomalijama. | Prošlo |
+| AI asistent | Postaviti pitanje o troškovima, budžetima, dobavljačima ili anomalijama. | AI asistent vraća odgovor na osnovu dostupnih podataka, bez izmišljanja informacija. | Prošlo |
+| Dodavanje komentara na trošak | Otvoriti trošak, kliknuti “Dodaj komentar”, unijeti tekst i potvrditi. | Komentar se sprema sa autorom i vremenom, a uz trošak se prikazuje indikator komentara. | Prošlo |
+| Pregled komentara na trošku | Kliknuti na indikator komentara pored troška. | Prikazuje se hronološki pregled komentara sa autorom i vremenom unosa. | Prošlo |
+| Dobavljači sa najvećim rastom | Otvoriti odgovarajući panel na Dashboardu. | Sistem prikazuje dobavljače sa najvećim rastom troškova i procenat promjene. | Prošlo |
+| Procjena rizika od dobavljača | Otvoriti panel rizika dobavljača na Dashboardu. | Sistem prikazuje upozorenje kada jedan dobavljač čini značajan udio ukupne potrošnje, uz nivo rizika. | Prošlo |
+| AI preporuke za optimizaciju | Pregledati sekciju AI preporuka na Dashboardu. | Sistem prikazuje obrazložene preporuke za optimizaciju ili poruku kada nema dovoljno podataka. | Prošlo |
 
 Ovi scenariji su objedinjeni iz Testing Proof dokumenata za sprintove 6–10, u kojima su kroz svaki sprint evidentirani UI i regresioni testovi za implementirane funkcionalnosti.
 
@@ -157,14 +182,17 @@ Ovi scenariji su objedinjeni iz Testing Proof dokumenata za sprintove 6–10, u 
 
 Tokom završnog testiranja provjereni su ključni korisnički tokovi koji predstavljaju osnovni način korištenja sistema. Fokus testiranja bio je na tome da korisnik može izvršiti kompletne poslovne akcije kroz aplikaciju, a ne samo da se pojedinačne stranice uspješno otvaraju. Ključni korisnički tokovi provjereni su kroz kombinaciju automatizovanih backend testova i ručnog testiranja korisničkog interfejsa. Provjereni su sljedeći tokovi:
 
+- **Prijava, odjava i kontrola pristupa korisnika**  
+  Provjeren je tok prijave korisnika u sistem, odjave iz sistema i pristupa funkcionalnostima u skladu sa dodijeljenom korisničkom rolom. Testirano je da korisnici mogu koristiti samo module i akcije koje su dozvoljene njihovom rolom, uključujući CRUD akcije, izvještaje, budžete, dashboard i zaštićene stranice.
+  
 - **Upravljanje troškovima**  
-  Provjeren je tok pregleda, kreiranja, izmjene, validacije i brisanja troškova. Testirano je da se lista troškova ispravno ažurira nakon akcija korisnika, da se nevalidni podaci odbijaju i da se zaključani troškovi ne mogu mijenjati.
-
-- **Import troškova iz fajla**  
+  Provjeren je kompletan tok rada sa troškovima, uključujući pregled liste troškova, kreiranje novog troška, izmjenu postojećeg troška, validaciju unesenih podataka i brisanje troška. Posebno je testirano da se zaključani troškovi ne mogu mijenjati ili obrisati, te da se lista troškova ispravno ažurira nakon svake akcije.
+  
+- **Uvoz troškova iz fajla**  
   Provjeren je tok učitavanja CSV, XLS i XLSX fajlova, prikaz preview-a uvoza, označavanje validnih i nevalidnih redova, potvrda importovanja i pregled historije importovanih fajlova.
 
-- **Budžetiranje i odobravanje budžeta**  
-  Testirano je kreiranje budžeta, pregled postojećih budžeta, validacija budžetskih podataka, projekcija potrošnje i poređenje planiranog i stvarnog stanja. Posebno je provjeren tok odobravanja budžeta, uključujući povrat na doradu, unos komentara, ponovnu dostavu i pregled historije komentara.
+- **Planiranje, odobravanje i dorada budžeta**  
+  Testirano je kreiranje budžeta, pregled postojećih budžeta, validacija budžetskih podataka, projekcija potrošnje i poređenje planiranog i stvarnog stanja. Posebno je provjeren tok odobravanja budžeta, uključujući odobravanje, odbijanje, povrat na doradu uz obavezan komentar, ponovnu dostavu budžeta i pregled historije komentara. Testirano je i da sistem ne dozvoljava povrat budžeta na doradu bez komentara, da se status budžeta ispravno mijenja i da se šalju odgovarajuće notifikacije.
 
 - **AI analiza i detekcija odstupanja**  
   Provjereno je da sistem može detektovati anomalije, duple troškove, sumnjive obrasce potrošnje i izostanak periodičnih troškova. Testirano je i da sistem prikazuje odgovarajuća upozorenja i notifikacije sa opisom problema i preporučenom akcijom.
@@ -181,8 +209,6 @@ Tokom završnog testiranja provjereni su ključni korisnički tokovi koji predst
 - **Dashboard i AI asistent**  
   Testiran je centralni dashboard sa KPI karticama, grafikonima, trendovima, drill-down prikazom i Executive Summary sekcijom. Provjeren je i AI asistent kroz pitanja o troškovima, budžetima, dobavljačima i anomalijama, pri čemu sistem odgovara na osnovu dostupnih podataka.
 
-- **RBAC i pristup po korisničkim rolama**  
-  Provjereno je da korisnici mogu pristupiti samo funkcionalnostima koje su dozvoljene njihovom rolom. Testirani su zaštićeni endpointi, stranice i akcije kao što su CRUD operacije, izvještaji, budžeti, dashboard i administrativne funkcionalnosti.
 
 # Poznati testni propusti i ograničenja testiranja
 
