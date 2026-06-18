@@ -21,7 +21,7 @@ describe("ExpenseService", () => {
 
   const validPayload = {
     naziv: "Kupovina kancelarijskog materijala",
-    iznos: 120.5,
+    iznos: 120.0,
     datum: "2026-04-30",
     opis: "Papir i olovke",
     kategorijaId: 1,
