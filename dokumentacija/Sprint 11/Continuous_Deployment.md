@@ -1,5 +1,7 @@
 # 3. Continuous Deployment skripta / pipeline
 
+> **Historijski dokument:** raniji javni deployment više nije aktivan. Za trenutno okruženje pogledajte [lokalno pokretanje](../lokalno-pokretanje.md).
+
 ## Pregled rješenja
 
 Za implementaciju Continuous Deployment (CD) procesa koristi se kombinacija:
@@ -147,7 +149,7 @@ Frontend aplikacija koristi Railway GitHub integraciju.
 
 Produkcijski frontend:
 
-https://frontend-production-02b2.up.railway.app
+Raniji javni frontend više nije aktivan.
 
 ## Deployment Keycloak servisa
 
@@ -197,7 +199,7 @@ Automatic Deployment
 ## Provjera uspješnog deploymenta
 
 Frontend:
-https://frontend-production-02b2.up.railway.app
+Raniji javni frontend više nije aktivan.
 
 Backend:
 https://si-grupa12-production-bdb1.up.railway.app

@@ -1,5 +1,7 @@
 # DEPLOYMENT PROCEDURA
 
+> **Historijski dokument:** raniji javni deployment više nije aktivan. Za trenutno okruženje pogledajte [lokalno pokretanje](../lokalno-pokretanje.md).
+
 **Grupa 12 — SI Projektni zadatak**  
 **Verzija 1.0 | 2025**
 
@@ -248,7 +250,7 @@ npm test -- --watch
 ## 13. Linkovi
 
 Frontend:
-https://frontend-production-02b2.up.railway.app
+Raniji javni frontend više nije aktivan.
 
 Backend:
 https://si-grupa12-production-bdb1.up.railway.app
