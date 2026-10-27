@@ -2,17 +2,29 @@
   <section class="expenses-header">
     <div>
       <p class="eyebrow">Upravljanje troškovima</p>
-      <h1>{{ editingExpenseId ? 'Uređivanje troška' : 'Novi trošak' }}</h1>
-      <p>Unesite trošak kroz strukturisanu formu. Lista ispod prikazuje trenutno dostupne zapise.</p>
+      <h1>Vaši troškovi, pod kontrolom.</h1>
+      <p>Pregledajte, pretražite i uredite sve evidentirane troškove.</p>
     </div>
+    <button
+      class="primary-action"
+      type="button"
+      (click)="toggleExpenseForm()"
+      [attr.aria-expanded]="showExpenseForm || !!editingExpenseId"
+    >
+      {{ showExpenseForm || editingExpenseId ? 'Zatvori unos' : '+ Novi trošak' }}
+    </button>
   </section>
 
-  <section class="form-card">
+  <section class="form-card" *ngIf="showExpenseForm || editingExpenseId">
     <div class="section-heading">
       <div>
         <h2>{{ editingExpenseId ? 'Uredi trošak' : 'Ručni unos troška' }}</h2>
         <p class="subtitle">
-          {{ editingExpenseId ? 'Izmijenjite podatke o trošku.' : 'Popunite obavezna polja i sačuvajte zapis.' }}
+          {{
+            editingExpenseId
+              ? 'Izmijenjite podatke o trošku.'
+              : 'Popunite obavezna polja i sačuvajte zapis.'
+          }}
         </p>
       </div>
     </div>
@@ -65,7 +77,9 @@
             </button>
           </div>
           <small *ngIf="isFieldInvalid('kategorijaId')">Kategorija je obavezna.</small>
-          <small class="ai-suggestion-message" *ngIf="categorySuggestionMessage">{{ categorySuggestionMessage }}</small>
+          <small class="ai-suggestion-message" *ngIf="categorySuggestionMessage">{{
+            categorySuggestionMessage
+          }}</small>
         </div>
 
         <div class="form-group">
@@ -131,12 +145,20 @@
 
         <div *ngIf="!isValidating && validationWarnings.length > 0" class="validation-warnings">
           <h3>⚠️ Detektovane anomalije</h3>
-          <p class="warning-intro">Sistem je detektovao slijedeće probleme sa troško. Možete nastaviti sa spremanjem, ali preporučuje se provjera:</p>
+          <p class="warning-intro">
+            Sistem je detektovao slijedeće probleme sa troško. Možete nastaviti sa spremanjem, ali
+            preporučuje se provjera:
+          </p>
 
-          <div *ngFor="let warning of validationWarnings" [class]="'warning-item warning-' + warning.severity">
+          <div
+            *ngFor="let warning of validationWarnings"
+            [class]="'warning-item warning-' + warning.severity"
+          >
             <div class="warning-header">
               <span class="warning-type">{{ warning.type }}</span>
-              <span class="severity-badge" [class]="'severity-' + warning.severity">{{ warning.severity }}</span>
+              <span class="severity-badge" [class]="'severity-' + warning.severity">{{
+                warning.severity
+              }}</span>
             </div>
             <p class="warning-message">{{ warning.message }}</p>
           </div>
@@ -151,7 +173,7 @@
 
       <div class="form-actions">
         <button type="submit" [disabled]="isSaving">
-          {{ isSaving ? 'Spremanje...' : (editingExpenseId ? 'Sačuvaj izmjene' : 'Sačuvaj') }}
+          {{ isSaving ? 'Spremanje...' : editingExpenseId ? 'Sačuvaj izmjene' : 'Sačuvaj' }}
         </button>
 
         <button type="button" class="btn-cancel" *ngIf="editingExpenseId" (click)="cancelEdit()">
@@ -172,14 +194,14 @@
       </button>
     </div>
 
-   <div class="search-bar">
-  <input
-    type="text"
-    [value]="searchQuery"
-    (input)="searchQuery = $any($event.target).value"
-    placeholder="Pretraži po nazivu, kategoriji, odjelu, valuti..."
-  />
-</div>
+    <div class="search-bar">
+      <input
+        type="text"
+        [value]="searchQuery"
+        (input)="searchQuery = $any($event.target).value"
+        placeholder="Pretraži po nazivu, kategoriji, odjelu, valuti..."
+      />
+    </div>
 
     <p *ngIf="isLoading">Učitavanje troškova...</p>
 
@@ -200,28 +222,41 @@
       <tbody>
         <tr *ngFor="let expense of filteredExpenses">
           <td>{{ expense.naziv }}</td>
-          <td>{{ expense.iznos }}</td>
+          <td>{{ expense.iznos | number: '1.2-2' }}</td>
           <td>{{ expense.datum | date: 'dd.MM.yyyy' }}</td>
           <td>{{ expense.kategorija }}</td>
           <td>{{ expense.odjel }}</td>
           <td>{{ expense.valuta }}</td>
           <td>
-            <span class="status-pill" [class.status-anomalija]="expense.statusValidacije === 'ANOMALIJA'">
-              {{ expense.statusValidacije }}
+            <span
+              class="status-pill"
+              [class.status-anomalija]="expense.statusValidacije === 'ANOMALIJA'"
+            >
+              {{ statusLabel(expense.statusValidacije) }}
             </span>
-            <span class="anomaly-tip" *ngIf="expense.tipAnomalije" [title]="expense.opisAnomalije || ''">
+            <span
+              class="anomaly-tip"
+              *ngIf="expense.tipAnomalije"
+              [title]="expense.opisAnomalije || ''"
+            >
               {{ formatAnomalyTip(expense.tipAnomalije) }}
             </span>
           </td>
           <td class="actions-cell">
             <button class="btn-chat-table" title="Komentari" (click)="openChat(expense)">
-              KOMENTARI
-              <span class="unread-badge" *ngIf="getUnreadCount(expense.id) > 0">{{ getUnreadCount(expense.id) }}</span>
+              Komentari
+              <span class="unread-badge" *ngIf="getUnreadCount(expense.id) > 0">{{
+                getUnreadCount(expense.id)
+              }}</span>
             </button>
             <button class="btn-edit-table" title="Uredi" (click)="editExpense(expense)">
               Uredi
             </button>
-            <button class="btn-delete-table" title="Izbriši" (click)="openDeleteModal(expense.id.toString())">
+            <button
+              class="btn-delete-table"
+              title="Izbriši"
+              (click)="openDeleteModal(expense.id.toString())"
+            >
               Izbriši
             </button>
           </td>
@@ -230,12 +265,11 @@
     </table>
 
     <p *ngIf="!isLoading && filteredExpenses.length === 0 && searchQuery">
-      Nema rezultata za pretragu "<strong>{{ searchQuery }}</strong>".
+      Nema rezultata za pretragu "<strong>{{ searchQuery }}</strong
+      >".
     </p>
 
-    <p *ngIf="!isLoading && expenses.length === 0">
-      Trenutno nema evidentiranih troškova.
-    </p>
+    <p *ngIf="!isLoading && expenses.length === 0">Trenutno nema evidentiranih troškova.</p>
   </section>
 
   <div class="modal-overlay" *ngIf="showDeleteModal">
@@ -261,13 +295,13 @@
         <div class="chat-empty" *ngIf="chatComments.length === 0 && !isLoadingComments">
           Nema komentara. Budite prvi koji će komentarisati.
         </div>
-        <div class="chat-loading" *ngIf="isLoadingComments">
-          Učitavanje komentara...
-        </div>
+        <div class="chat-loading" *ngIf="isLoadingComments">Učitavanje komentara...</div>
         <div class="chat-message" *ngFor="let comment of chatComments">
           <div class="chat-message-header">
             <strong>{{ comment.autorIme }} {{ comment.autorPrezime }}</strong>
-            <span class="chat-message-time">{{ comment.vrijemeUnosa | date: 'dd.MM.yyyy HH:mm' }}</span>
+            <span class="chat-message-time">{{
+              comment.vrijemeUnosa | date: 'dd.MM.yyyy HH:mm'
+            }}</span>
           </div>
           <div class="chat-message-text">{{ comment.tekst }}</div>
         </div>

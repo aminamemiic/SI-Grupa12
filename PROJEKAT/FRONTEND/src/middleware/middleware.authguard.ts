@@ -86,6 +86,11 @@ export class AuthGuardService {
       return;
     }
 
+    if (!environment.production && environment.localAuth) {
+      await this.loginLocally();
+      return;
+    }
+
     const redirectUri = this.getRedirectUri();
     const codeVerifier = this.generateRandomString(96);
     const codeChallenge = await this.createPkceChallenge(codeVerifier);
@@ -106,6 +111,27 @@ export class AuthGuardService {
     });
 
     window.location.href = `${this.keycloakAuthorizeUrl}?${query.toString()}`;
+  }
+
+  private async loginLocally(): Promise<void> {
+    const backendUrl = environment.apiUrl.replace(/\/api\/?$/, '');
+    const response = await this.fetchWithTimeout(`${backendUrl}/auth/local-login`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (!response.ok) throw new Error('Lokalna prijava nije dostupna. Provjeri da li je backend pokrenut s lokalnom konfiguracijom.');
+    const { accessToken } = await response.json() as { accessToken?: string };
+    if (!accessToken) throw new Error('Backend nije vratio token za lokalnu prijavu.');
+    const session = await this.fetchWithTimeout(`${backendUrl}/auth/session`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${accessToken}` },
+      credentials: 'include',
+    });
+    if (!session.ok) throw new Error('Backend nije kreirao lokalnu sesiju.');
+    this.clearStoredTokens();
+    sessionStorage.setItem(this.accessTokenKey, accessToken);
+    this.authStateSubject.next(true);
+    window.location.assign(`${window.location.origin}/#/home`);
   }
 
   public async handleKeycloakCallback(): Promise<KeycloakCallbackResult> {
@@ -218,6 +244,9 @@ export class AuthGuardService {
   }
 
   public getKeycloakLogoutUrl(): string {
+    if (!environment.production && environment.localAuth) {
+      return `${window.location.origin}/#/`;
+    }
     const redirectUri = this.getRedirectUri();
     const logoutQuery = new URLSearchParams({
       client_id: this.clientId,

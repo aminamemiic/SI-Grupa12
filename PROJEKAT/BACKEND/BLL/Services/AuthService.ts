@@ -3,6 +3,7 @@ const jwksClient = require("jwks-rsa");
 
 import type { NextFunction, Response } from "express";
 import type { AuthenticatedRequest, IAuthService, JwtPayload, RefreshSessionResult } from "../Interfaces/IAuthService";
+import type { LocalDevelopmentAuth } from "./LocalDevelopmentAuth";
 
 type AuthServiceConfig = {
   jwtIssuer: string;
@@ -12,6 +13,7 @@ type AuthServiceConfig = {
   keycloakRealm: string;
   keycloakClientId: string;
   keycloakClientSecret?: string;
+  localAuth?: LocalDevelopmentAuth;
 };
 
 type Logger = (level: string, message: string, error?: unknown) => void;
@@ -101,6 +103,9 @@ export class AuthService implements IAuthService {
   };
 
   private verifyToken(token: string): Promise<JwtPayload> {
+    if (this.config.localAuth && jwt.decode(token, { complete: true })?.header.alg === "HS256") {
+      return this.config.localAuth.verifyToken(token);
+    }
     return new Promise((resolve, reject) => {
       jwt.verify(
         token,

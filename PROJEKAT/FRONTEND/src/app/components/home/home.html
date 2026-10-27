@@ -1,367 +1,524 @@
 <div class="dashboard-page">
   <section class="dashboard-header">
     <div>
-      <p class="eyebrow">Nadzorna ploča</p>
-      <h1>Pregled troškova</h1>
+      <p class="eyebrow">PREGLED POSLOVANJA</p>
+      <h1>Finansije, na jednom mjestu.</h1>
+      <p class="lead">Jasan pregled troškova. Više prostora za dobre odluke.</p>
     </div>
-
-   <div class="header-actions">
-  @if (canOpenReports) {
-    <button type="button" class="secondary-action" (click)="idiNaIzvjestaje()">
-      Izvještaji
-    </button>
-  }
-
-  <button type="button" class="secondary-action" (click)="idiNaImportTroskova()">
-    Import troškova
-  </button>
-
-  @if (canOpenBudgets) {
-    <button type="button" class="secondary-action" (click)="idiNaBudzetiranje()">
-      Planiranje budžeta
-    </button>
-  }
-
-  @if (canOpenDataOverview) {
-    <button type="button" class="secondary-action" (click)="idiNaPregledPodataka()">
-      Pregled podataka
-    </button>
-  }
-
-  @if (isAdmin) {
-    <a class="primary-action" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
-      Admin Panel
-    </a>
-  }
-</div>
+    <div class="header-actions">
+      @if (canOpenExpenses) {
+        <button class="secondary-action" (click)="idiNaImportTroskova()">
+          <ui-icon name="upload" />Uvezi podatke
+        </button>
+        <button class="primary-action" (click)="idiNaTroskove(true)">
+          <ui-icon name="plus" />Novi trošak
+        </button>
+      } @else if (canOpenReports) {
+        <button class="primary-action" (click)="idiNaIzvjestaje()">
+          <ui-icon name="file" />Otvori izvještaje
+        </button>
+      }
+    </div>
   </section>
-
+  <div class="dashboard-toolbar">
+    <div class="dashboard-tabs" role="tablist" aria-label="Prikaz nadzorne ploče">
+      <button
+        role="tab"
+        [attr.aria-selected]="dashboardTab === 'overview'"
+        [class.selected]="dashboardTab === 'overview'"
+        (click)="dashboardTab = 'overview'"
+      >
+        <ui-icon name="grid" />Finansijski pregled
+      </button>
+      @if (canOpenAiAnalysis) {
+        <button
+          role="tab"
+          [attr.aria-selected]="dashboardTab === 'insights'"
+          [class.selected]="dashboardTab === 'insights'"
+          (click)="dashboardTab = 'insights'"
+        >
+          <ui-icon name="sparkle" />AI uvidi<span class="tab-tag">AI</span>
+        </button>
+      }
+    </div>
+    <span class="data-caption"><span></span>Podaci iz vašeg radnog prostora</span>
+  </div>
   @if (accessNotice) {
     <p class="notice">{{ accessNotice }}</p>
   }
-
   @if (dashboardMessage) {
     <p class="notice success-notice">{{ dashboardMessage }}</p>
   }
-
   @if (dashboardError) {
     <p class="notice error-notice">{{ dashboardError }}</p>
   }
 
-  <section class="metric-grid" aria-label="Kljucni indikatori">
-    <article class="metric-card blue">
-      <span>Ukupno troškova</span>
-      <strong>{{ totalExpenses }}</strong>
-      <small>Učitano iz baze.</small>
-    </article>
-    <article class="metric-card red">
-      <span>Ukupni iznos</span>
-      <strong>{{ totalAmount | number: '1.2-2' }} KM</strong>
-      <small>Zbir evidentiranih troškova.</small>
-    </article>
-    <article class="metric-card green">
-      <span>Prosječan trošak</span>
-      <strong>{{ averageAmount | number: '1.2-2' }} KM</strong>
-      <small>Prosjek po zapisu.</small>
-    </article>
-    <article class="metric-card orange">
-      <span>Top kategorija</span>
-      <strong>{{ topCategoryLabel }}</strong>
-      <small>Najveći zbir troškova.</small>
-    </article>
-    <article class="metric-card purple">
-      <span>Top odjel</span>
-      <strong>{{ topDepartmentLabel }}</strong>
-      <small>Najveći zbir troškova.</small>
-    </article>
-  </section>
-
-  @if (canOpenReports) {
-    <section class="panel budget-overview" aria-label="Stanje budzeta">
-      <div class="panel-heading budget-heading">
-        <div>
-          <p class="eyebrow">Budzet</p>
-          <h2>Stanje budzeta na jednom mjestu</h2>
-        </div>
-        @if (budgetSummary) {
-          <span class="budget-status" [class]="budgetStatusClass">{{ budgetStatusLabel }}</span>
-        }
-      </div>
-
-      @if (isLoadingBudgetSummary) {
-        <p class="assistant-loading">Ucitavanje budzetskih metrika...</p>
-      } @else if (budgetSummaryError) {
-        <p class="inline-error">{{ budgetSummaryError }}</p>
-      } @else if (budgetSummary; as summary) {
-        <div class="budget-kpi-grid">
-          <article>
-            <span>Planirani budzet</span>
-            <strong>{{ summary.budgetTotal | number: '1.2-2' }} KM</strong>
-            <small>{{ summary.budgetCount }} evidentiranih budzeta</small>
-          </article>
-          <article>
-            <span>Evidentirani troskovi</span>
-            <strong>{{ summary.totalAmount | number: '1.2-2' }} KM</strong>
-            <small>{{ summary.totalExpenses }} zapisa</small>
-          </article>
-          <article>
-            <span>Preostalo</span>
-            <strong [class.negative-value]="budgetRemainingAmount < 0">{{ budgetRemainingAmount | number: '1.2-2' }} KM</strong>
-            <small>Planirano minus evidentirano</small>
-          </article>
-          <article>
-            <span>Iskoristenost budzeta</span>
-            <strong>{{ budgetUtilizationPercentage === null ? '-' : (budgetUtilizationPercentage | number: '1.1-1') + '%' }}</strong>
-            <small>{{ budgetStatusLabel }}</small>
-          </article>
-        </div>
-
-        <div class="budget-progress" role="progressbar" aria-label="Iskoristenost budzeta" [attr.aria-valuenow]="budgetUtilizationPercentage || 0" aria-valuemin="0" aria-valuemax="100">
-          <span class="budget-progress-fill" [class]="budgetStatusClass" [style.width.%]="budgetProgressPercentage"></span>
-        </div>
-      }
+  @if (dashboardTab === 'overview') {
+    <section class="kpi-grid" aria-label="Ključni finansijski indikatori">
+      <article class="kpi-card kpi-featured">
+        <div class="kpi-label">Ukupni troškovi<ui-icon name="wallet" /></div>
+        <strong
+          >{{ totalAmount | number: '1.2-2' }}<small>{{ displayCurrency }}</small></strong
+        ><span class="kpi-note"><span class="light-dot"></span>Ukupno evidentirano</span>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label">Evidentirani troškovi<ui-icon name="file" /></div>
+        <strong>{{ totalExpenses }}<small>zapisa</small></strong
+        ><span class="kpi-note">Svi troškovi na jednom mjestu</span>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label">Prosječan trošak<ui-icon name="chart" /></div>
+        <strong
+          >{{ averageAmount | number: '1.2-2' }}<small>{{ displayCurrency }}</small></strong
+        ><span class="kpi-note">Prosjek po evidentiranom zapisu</span>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label">Vodeća kategorija<ui-icon name="layers" /></div>
+        <strong class="category-value">{{ topCategoryLabel }}</strong
+        ><span class="kpi-note"
+          >{{ categoryBreakdown.length }}
+          {{ categoryBreakdown.length === 1 ? 'aktivna kategorija' : 'aktivnih kategorija' }}</span
+        >
+      </article>
     </section>
-  }
 
-  <section class="dashboard-grid">
-    <article class="panel chart-panel">
-      <div class="panel-heading">
-        <h2>Troškovi po kategorijama</h2>
-        <span>{{ categoryBreakdown.length }} kategorija</span>
-      </div>
-      @if (categoryBreakdown.length === 0) {
-        <div class="empty-state compact">
-          <strong>Nema podataka za grafikon.</strong>
-        </div>
-      } @else {
-        <div class="bar-list">
-          @for (item of categoryBreakdown; track item.label) {
-            <div class="bar-row">
-              <div class="bar-label">
-                <strong>{{ item.label }}</strong>
-                <small>{{ item.count }} troškova</small>
-              </div>
-              <div class="bar-track">
-                <span [style.width.%]="item.percentage"></span>
-              </div>
-              <b>{{ item.total | number: '1.2-2' }} KM</b>
-            </div>
-          }
-        </div>
-      }
-    </article>
-
-    <article class="panel bar-panel">
-      <div class="panel-heading">
-        <h2>Troškovi po odjelima</h2>
-        <span>{{ departmentBreakdown.length }} odjela</span>
-      </div>
-      @if (departmentBreakdown.length === 0) {
-        <div class="empty-state compact">
-          <strong>Nema podataka za grafikon.</strong>
-        </div>
-      } @else {
-        <div class="bar-list">
-          @for (item of departmentBreakdown; track item.label) {
-            <div class="bar-row">
-              <div class="bar-label">
-                <strong>{{ item.label }}</strong>
-                <small>{{ item.count }} troškova</small>
-              </div>
-              <div class="bar-track purple-track">
-                <span [style.width.%]="item.percentage"></span>
-              </div>
-              <b>{{ item.total | number: '1.2-2' }} KM</b>
-            </div>
-          }
-        </div>
-      }
-    </article>
-
-  </section>
-
-  @if (canOpenAiAnalysis) {
-  <section class="ai-analysis-section" aria-label="AI analiza">
-    <div class="ai-section-heading">
-      <div>
-        <p class="eyebrow">AI analiza</p>
-        <h2>Pametni pregled troškova</h2>
-      </div>
-      <span>Automatski uvidi iz postojećih podataka</span>
-    </div>
-
-    <div class="ai-layout">
-      <article class="panel assistant-panel">
+    <section class="visual-grid" aria-label="Analitika troškova">
+      <article class="panel trend-panel">
         <div class="panel-heading">
-          <h2>AI asistent</h2>
-          <span>Beta</span>
+          <div>
+            <h2>Kretanje troškova</h2>
+            <p class="panel-subtitle">Mjesečna potrošnja u {{ displayCurrency }}</p>
+          </div>
+          <select
+            class="period-select"
+            aria-label="Period grafikona"
+            [value]="trendMonths"
+            (change)="trendMonths = +$any($event.target).value"
+          >
+            <option value="6">Posljednjih 6 mjeseci</option>
+            <option value="12">Posljednjih 12 mjeseci</option>
+          </select>
         </div>
-        <div class="assistant-form">
-          <input
-            type="text"
-            [value]="assistantQuestion"
-            (input)="assistantQuestion = $any($event.target).value"
-            (keyup.enter)="askAssistant()"
-            placeholder="Postavi pitanje AI asistentu..."
-          />
-          <button type="button" class="primary-action" (click)="askAssistant()" [disabled]="isAssistantLoading">
-            Pitaj
+        <div class="trend-summary">
+          <strong
+            >{{ trendTotal | number: '1.2-2' }}<span>{{ displayCurrency }}</span></strong
+          ><span>u odabranom periodu</span>
+        </div>
+        <div
+          class="trend-chart"
+          role="img"
+          [attr.aria-label]="'Mjesečna potrošnja za posljednjih ' + trendMonths + ' mjeseci'"
+        >
+          <div class="chart-axis">
+            <span>{{ compactAmount(trendMaximum) }}</span
+            ><span>{{ compactAmount(trendMaximum * 0.75) }}</span
+            ><span>{{ compactAmount(trendMaximum * 0.5) }}</span
+            ><span>{{ compactAmount(trendMaximum * 0.25) }}</span
+            ><span>0</span>
+          </div>
+          <div class="chart-plot">
+            <div class="chart-gridlines">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="chart-columns" [style.--column-count]="trendMonths">
+              @for (month of monthlyTrend; track $index) {
+                <div class="chart-column">
+                  <div class="column-track">
+                    <div
+                      class="column-fill"
+                      [class.empty-column]="month.total === 0"
+                      [style.height.%]="month.percentage"
+                      [attr.title]="
+                        month.label + ': ' + (month.total | number: '1.2-2') + ' ' + displayCurrency
+                      "
+                    ></div>
+                  </div>
+                  <span>{{ month.label }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+        @if (trendTotal === 0) {
+          <p class="chart-empty-note">Nema evidentiranih troškova u ovom periodu.</p>
+        }
+      </article>
+      <article class="panel distribution-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Raspodjela troškova</h2>
+            <p class="panel-subtitle">Gdje odlazi vaš budžet</p>
+          </div>
+          <ui-icon name="pie" />
+        </div>
+        <div class="breakdown-tabs">
+          <button
+            [class.active]="breakdownView === 'category'"
+            (click)="breakdownView = 'category'"
+          >
+            Po kategorijama</button
+          ><button
+            [class.active]="breakdownView === 'department'"
+            (click)="breakdownView = 'department'"
+          >
+            Po odjelima
           </button>
         </div>
-
-        @if (isAssistantLoading) {
-          <p class="assistant-loading">AI asistent analizira podatke...</p>
-        }
-
-        @if (assistantError) {
-          <p class="inline-error">{{ assistantError }}</p>
-        }
-
-        @if (assistantAnswer) {
-          <div class="assistant-answer">
-            {{ assistantAnswer }}
+        <div class="donut-wrap">
+          <div class="donut-chart" [style.background]="donutBackground">
+            <div class="donut-hole">
+              <small>UKUPNO</small><strong>{{ compactAmount(totalAmount) }}</strong
+              ><span>{{ displayCurrency }}</span>
+            </div>
           </div>
-        } @else if (!isAssistantLoading) {
-          <div class="empty-state compact">
-            <strong>Postavite pitanje o troškovima.</strong>
-            <p>Asistent koristi postojeće izvještaje, budžete, dobavljače i anomalije.</p>
-          </div>
-        }
-
-        <div class="suggested-questions">
-          @for (question of visibleSuggestedQuestions; track question) {
-            <button type="button" (click)="askSuggestedQuestion(question)">{{ question }}</button>
+        </div>
+        <div class="chart-legend">
+          @for (item of activeBreakdown; track item.label; let i = $index) {
+            <div>
+              <span
+                class="legend-dot"
+                [style.background]="chartColors[i % chartColors.length]"
+              ></span
+              ><span>{{ item.label }}</span
+              ><strong>{{ item.percentage | number: '1.0-1' }}%</strong>
+            </div>
+          } @empty {
+            <p class="panel-subtitle">Raspodjela će se prikazati nakon unosa troškova.</p>
           }
-          <button type="button" (click)="showAllSuggestedQuestions = !showAllSuggestedQuestions">
-            {{ showAllSuggestedQuestions ? 'Manje pitanja' : 'Još pitanja' }}
-          </button>
         </div>
       </article>
+    </section>
 
-      <div class="ai-card-grid">
-        <article class="panel suppliers-panel">
-          <div class="panel-heading">
-            <h2>Dobavljači sa najvećim rastom</h2>
+    <section class="lower-grid">
+      <article class="panel recent-panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Posljednji troškovi</h2>
+            <p class="panel-subtitle">Najnovije aktivnosti u vašem radnom prostoru</p>
           </div>
-          @if (isLoadingSuppliers) {
-            <p class="assistant-loading">Učitavanje dobavljača...</p>
-          } @else if (suppliersError) {
-            <p class="inline-error">{{ suppliersError }}</p>
-          } @else if (topGrowingSuppliers.length === 0) {
-            <div class="empty-state compact">
-              <strong>Nema dobavljača za prikaz.</strong>
-            </div>
-          } @else {
-            <div class="supplier-list">
-              @for (supplier of topGrowingSuppliers; track supplier.supplierId || supplier.supplierName) {
-                <div class="supplier-row">
-                  <div>
-                    <strong>{{ supplier.supplierName }}</strong>
-                    <small>
-                      {{ supplier.currentAmount | number: '1.2-2' }} KM sada ·
-                      {{ supplier.previousAmount | number: '1.2-2' }} KM ranije
-                    </small>
-                  </div>
-                  <div class="supplier-growth">
-                    @if (supplier.status === 'new_spending') {
-                      <span>Novi trošak</span>
-                    } @else {
-                      <span>{{ supplier.growthPercentage | number: '1.0-2' }}%</span>
-                    }
-                    <b [class.high-risk]="supplier.riskLevel === 'HIGH'" [class.medium-risk]="supplier.riskLevel === 'MEDIUM'">
-                      {{ supplier.riskLevel }}
-                    </b>
-                  </div>
-                </div>
-              }
-            </div>
+          @if (canOpenExpenses) {
+            <button class="text-link" (click)="idiNaTroskove()">
+              Prikaži sve<ui-icon name="arrow" />
+            </button>
           }
-
-          @if (supplierRisks.length > 0) {
-            <div class="supplier-risk-list">
-              @for (risk of supplierRisks; track risk.supplierName + risk.message) {
-                <p><strong>{{ risk.riskLevel }}</strong> {{ risk.message }}</p>
+        </div>
+        <div class="recent-table-wrap">
+          <table class="recent-table">
+            <thead>
+              <tr>
+                <th>Trošak</th>
+                <th>Datum</th>
+                <th>Status</th>
+                <th class="amount-col">Iznos</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (expense of recentExpenses; track expense.id) {
+                <tr>
+                  <td>
+                    <div class="expense-cell">
+                      <span class="expense-avatar"><ui-icon name="wallet" /></span
+                      ><span
+                        ><strong>{{ expense.naziv }}</strong
+                        ><small
+                          >{{ expense.kategorija || 'Bez kategorije' }} ·
+                          {{ expense.odjel || 'Bez odjela' }}</small
+                        ></span
+                      >
+                    </div>
+                  </td>
+                  <td>{{ expenseDate(expense.datum) }}</td>
+                  <td>
+                    <span
+                      class="expense-status"
+                      [class.valid-status]="
+                        expense.statusValidacije === 'VALIDAN' ||
+                        expense.statusValidacije === 'ZAKLJUCAN'
+                      "
+                      ><span></span>{{ expenseStatus(expense) }}</span
+                    >
+                  </td>
+                  <td class="amount-col">
+                    <strong>{{ expense.iznos | number: '1.2-2' }}</strong
+                    ><small>{{ expense.valuta || 'KM' }}</small>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4">
+                    <div class="empty-state">
+                      <strong>{{
+                        isLoadingExpenses
+                          ? 'Učitavanje troškova…'
+                          : 'Vaš prvi trošak počinje ovdje.'
+                      }}</strong>
+                      <p>Dodajte trošak ili uvezite postojeće podatke.</p>
+                    </div>
+                  </td>
+                </tr>
               }
-            </div>
-          }
-        </article>
-
-        <article class="panel summary-panel">
+            </tbody>
+          </table>
+        </div>
+      </article>
+      @if (canOpenReports) {
+        <article class="panel budget-summary-panel">
           <div class="panel-heading">
-            <h2>AI Executive Summary</h2>
-          </div>
-          @if (isLoadingExecutiveSummary) {
-            <p class="assistant-loading">Učitavanje sažetka...</p>
-          } @else if (executiveSummaryError) {
-            <p class="inline-error">{{ executiveSummaryError }}</p>
-          } @else if (executiveSummary.length === 0) {
-            <div class="empty-state compact">
-              <strong>Nema sažetka za prikaz.</strong>
-            </div>
-          } @else {
-            <div class="summary-list">
-              @for (item of executiveSummary; track item.message) {
-                <p [class.warning-summary]="item.type === 'WARNING'" [class.success-summary]="item.type === 'SUCCESS'">
-                  {{ item.message }}
-                </p>
-              }
-            </div>
-          }
-        </article>
-
-        <article class="panel suggestions-panel">
-          <div class="panel-heading">
-            <h2>AI Preporuke</h2>
-          </div>
-          @if (isLoadingCostSuggestions) {
-            <p class="assistant-loading">Učitavanje preporuka...</p>
-          } @else if (costSuggestionsError) {
-            <p class="inline-error">{{ costSuggestionsError }}</p>
-          } @else {
-            <div class="suggestion-list">
-              @for (suggestion of costSuggestions; track suggestion.title) {
-                <div class="suggestion-item">
-                  <strong>{{ suggestion.title }}</strong>
-                  <p>{{ suggestion.description }}</p>
-                  <small>{{ suggestion.estimatedImpact }}</small>
-                </div>
-              }
-            </div>
-          }
-        </article>
-
-        <article class="panel missing-panel">
-          <div class="panel-heading stacked-heading">
             <div>
-              <h2>Periodični troškovi za provjeru</h2>
-              <small>Računi koji su se ranije ponavljali, a sada nisu evidentirani.</small>
+              <h2>Vaš budžet</h2>
+              <p class="panel-subtitle">Planirajte korak unaprijed</p>
             </div>
+            <span class="budget-icon"><ui-icon name="pie" /></span>
           </div>
-          @if (isLoadingMissingRecurring) {
-            <p class="assistant-loading">Provjera periodičnih troškova...</p>
-          } @else if (missingRecurringError) {
-            <p class="inline-error">{{ missingRecurringError }}</p>
-          } @else if (missingRecurringExpenses.length === 0) {
-            <div class="empty-state compact">
-              <strong>Nema periodičnih troškova za provjeru.</strong>
-              <p>Sistem nije pronašao redovne račune koji nedostaju u trenutnom periodu.</p>
+          @if (isLoadingBudgetSummary) {
+            <p class="panel-subtitle">Učitavanje budžeta…</p>
+          } @else if (budgetSummaryError) {
+            <p class="inline-error">{{ budgetSummaryError }}</p>
+          } @else if (budgetSummary && budgetSummary.budgetTotal > 0) {
+            <div class="budget-amount">
+              <small>PLANIRANI BUDŽET</small
+              ><strong>{{ budgetSummary.budgetTotal | number: '1.2-2' }}<span>KM</span></strong>
+            </div>
+            <div class="budget-progress">
+              <span [style.width.%]="budgetProgressPercentage"></span>
+            </div>
+            <div class="budget-detail-row">
+              <span>Iskorišteno</span
+              ><strong>{{ budgetUtilizationPercentage | number: '1.1-1' }}%</strong>
+            </div>
+            <div class="budget-detail-row">
+              <span>Preostalo</span
+              ><strong>{{ budgetRemainingAmount | number: '1.2-2' }} KM</strong>
             </div>
           } @else {
-            <div class="missing-list">
-              @for (expense of missingRecurringExpenses; track expense.expenseName) {
-                <div class="suggestion-item">
-                  <strong>{{ expense.expenseName }}</strong>
-                  <p>Ocekivano za: {{ expense.expectedMonth }}</p>
-                  <p>Zadnji put evidentirano: {{ expense.lastSeenDate || '-' }}</p>
-                  <small>Prosjek {{ expense.averageAmount | number: '1.2-2' }} KM · {{ expense.recommendation }}</small>
-                </div>
-              }
+            <div class="budget-empty-art">
+              <span></span><span></span><span></span><span></span><ui-icon name="pie" />
             </div>
+            <h3>Napravite prostor za plan.</h3>
+            <p class="budget-empty-copy">
+              Postavite budžet i pratite koliko vam je preostalo za naredne odluke.
+            </p>
+          }
+          @if (canOpenBudgets) {
+            <button class="budget-open" (click)="idiNaBudzetiranje()">
+              Otvori budžete<ui-icon name="arrow" />
+            </button>
           }
         </article>
+      }
+    </section>
+    @if (canOpenAiAnalysis) {
+      <button class="insight-shortcut" (click)="dashboardTab = 'insights'">
+        <span class="insight-icon"><ui-icon name="sparkle" /></span
+        ><span
+          ><strong>Brojke pričaju priču. Otkrijte koju.</strong
+          ><small>AI sažeci, preporuke i uvidi iz vaših podataka.</small></span
+        ><span class="insight-action">Istraži AI uvide<ui-icon name="arrow" /></span>
+      </button>
+    }
+  }
+
+  @if (canOpenAiAnalysis && dashboardTab === 'insights') {
+    <section class="ai-analysis-section" aria-label="AI analiza">
+      <div class="ai-section-heading">
+        <div>
+          <p class="eyebrow">AI analiza</p>
+          <h2>Pametni pregled troškova</h2>
+        </div>
+        <span>Automatski uvidi iz postojećih podataka</span>
       </div>
-    </div>
-  </section>
+
+      <div class="ai-layout">
+        <article class="panel assistant-panel">
+          <div class="panel-heading">
+            <h2>AI asistent</h2>
+            <span>Beta</span>
+          </div>
+          <div class="assistant-form">
+            <input
+              type="text"
+              [value]="assistantQuestion"
+              (input)="assistantQuestion = $any($event.target).value"
+              (keyup.enter)="askAssistant()"
+              placeholder="Postavi pitanje AI asistentu..."
+            />
+            <button
+              type="button"
+              class="primary-action"
+              (click)="askAssistant()"
+              [disabled]="isAssistantLoading"
+            >
+              Pitaj
+            </button>
+          </div>
+
+          @if (isAssistantLoading) {
+            <p class="assistant-loading">AI asistent analizira podatke...</p>
+          }
+
+          @if (assistantError) {
+            <p class="inline-error">{{ assistantError }}</p>
+          }
+
+          @if (assistantAnswer) {
+            <div class="assistant-answer">
+              {{ assistantAnswer }}
+            </div>
+          } @else if (!isAssistantLoading) {
+            <div class="empty-state compact">
+              <strong>Postavite pitanje o troškovima.</strong>
+              <p>Asistent koristi postojeće izvještaje, budžete, dobavljače i anomalije.</p>
+            </div>
+          }
+
+          <div class="suggested-questions">
+            @for (question of visibleSuggestedQuestions; track question) {
+              <button type="button" (click)="askSuggestedQuestion(question)">{{ question }}</button>
+            }
+            <button type="button" (click)="showAllSuggestedQuestions = !showAllSuggestedQuestions">
+              {{ showAllSuggestedQuestions ? 'Manje pitanja' : 'Još pitanja' }}
+            </button>
+          </div>
+        </article>
+
+        <div class="ai-card-grid">
+          <article class="panel suppliers-panel">
+            <div class="panel-heading">
+              <h2>Dobavljači sa najvećim rastom</h2>
+            </div>
+            @if (isLoadingSuppliers) {
+              <p class="assistant-loading">Učitavanje dobavljača...</p>
+            } @else if (suppliersError) {
+              <p class="inline-error">{{ suppliersError }}</p>
+            } @else if (topGrowingSuppliers.length === 0) {
+              <div class="empty-state compact">
+                <strong>Nema dobavljača za prikaz.</strong>
+              </div>
+            } @else {
+              <div class="supplier-list">
+                @for (
+                  supplier of topGrowingSuppliers;
+                  track supplier.supplierId || supplier.supplierName
+                ) {
+                  <div class="supplier-row">
+                    <div>
+                      <strong>{{ supplier.supplierName }}</strong>
+                      <small>
+                        {{ supplier.currentAmount | number: '1.2-2' }} KM sada ·
+                        {{ supplier.previousAmount | number: '1.2-2' }} KM ranije
+                      </small>
+                    </div>
+                    <div class="supplier-growth">
+                      @if (supplier.status === 'new_spending') {
+                        <span>Novi trošak</span>
+                      } @else {
+                        <span>{{ supplier.growthPercentage | number: '1.0-2' }}%</span>
+                      }
+                      <b
+                        [class.high-risk]="supplier.riskLevel === 'HIGH'"
+                        [class.medium-risk]="supplier.riskLevel === 'MEDIUM'"
+                      >
+                        {{ supplier.riskLevel }}
+                      </b>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (supplierRisks.length > 0) {
+              <div class="supplier-risk-list">
+                @for (risk of supplierRisks; track risk.supplierName + risk.message) {
+                  <p>
+                    <strong>{{ risk.riskLevel }}</strong> {{ risk.message }}
+                  </p>
+                }
+              </div>
+            }
+          </article>
+
+          <article class="panel summary-panel">
+            <div class="panel-heading">
+              <h2>Sažetak poslovanja</h2>
+            </div>
+            @if (isLoadingExecutiveSummary) {
+              <p class="assistant-loading">Učitavanje sažetka...</p>
+            } @else if (executiveSummaryError) {
+              <p class="inline-error">{{ executiveSummaryError }}</p>
+            } @else if (executiveSummary.length === 0) {
+              <div class="empty-state compact">
+                <strong>Nema sažetka za prikaz.</strong>
+              </div>
+            } @else {
+              <div class="summary-list">
+                @for (item of executiveSummary; track item.message) {
+                  <p
+                    [class.warning-summary]="item.type === 'WARNING'"
+                    [class.success-summary]="item.type === 'SUCCESS'"
+                  >
+                    {{ item.message }}
+                  </p>
+                }
+              </div>
+            }
+          </article>
+
+          <article class="panel suggestions-panel">
+            <div class="panel-heading">
+              <h2>AI preporuke</h2>
+            </div>
+            @if (isLoadingCostSuggestions) {
+              <p class="assistant-loading">Učitavanje preporuka...</p>
+            } @else if (costSuggestionsError) {
+              <p class="inline-error">{{ costSuggestionsError }}</p>
+            } @else {
+              <div class="suggestion-list">
+                @for (suggestion of costSuggestions; track suggestion.title) {
+                  <div class="suggestion-item">
+                    <strong>{{ suggestion.title }}</strong>
+                    <p>{{ suggestion.description }}</p>
+                    <small>{{ suggestion.estimatedImpact }}</small>
+                  </div>
+                }
+              </div>
+            }
+          </article>
+
+          <article class="panel missing-panel">
+            <div class="panel-heading stacked-heading">
+              <div>
+                <h2>Periodični troškovi za provjeru</h2>
+                <small>Računi koji su se ranije ponavljali, a sada nisu evidentirani.</small>
+              </div>
+            </div>
+            @if (isLoadingMissingRecurring) {
+              <p class="assistant-loading">Provjera periodičnih troškova...</p>
+            } @else if (missingRecurringError) {
+              <p class="inline-error">{{ missingRecurringError }}</p>
+            } @else if (missingRecurringExpenses.length === 0) {
+              <div class="empty-state compact">
+                <strong>Nema periodičnih troškova za provjeru.</strong>
+                <p>Sistem nije pronašao redovne račune koji nedostaju u trenutnom periodu.</p>
+              </div>
+            } @else {
+              <div class="missing-list">
+                @for (expense of missingRecurringExpenses; track expense.expenseName) {
+                  <div class="suggestion-item">
+                    <strong>{{ expense.expenseName }}</strong>
+                    <p>Ocekivano za: {{ expense.expectedMonth }}</p>
+                    <p>Zadnji put evidentirano: {{ expense.lastSeenDate || '-' }}</p>
+                    <small
+                      >Prosjek {{ expense.averageAmount | number: '1.2-2' }} KM ·
+                      {{ expense.recommendation }}</small
+                    >
+                  </div>
+                }
+              </div>
+            }
+          </article>
+        </div>
+      </div>
+    </section>
   }
 
   @if (editingExpense) {
@@ -455,7 +612,9 @@
           </div>
 
           <div class="modal-actions">
-            <button type="button" class="secondary-action" (click)="closeEditExpense()">Odustani</button>
+            <button type="button" class="secondary-action" (click)="closeEditExpense()">
+              Odustani
+            </button>
             <button type="submit" class="primary-action" [disabled]="isSavingExpense">
               {{ isSavingExpense ? 'Spremanje...' : 'Sačuvaj izmjene' }}
             </button>
@@ -471,8 +630,16 @@
         <h2>Brisanje troška</h2>
         <p>Jeste li sigurni da želite izbrisati trošak "{{ expenseToDelete.naziv }}"?</p>
         <div class="modal-actions">
-          <button type="button" class="secondary-action" (click)="closeDeleteExpense()">Odustani</button>
-          <button type="button" class="primary-action danger-action" (click)="confirmDeleteExpense()">Izbriši</button>
+          <button type="button" class="secondary-action" (click)="closeDeleteExpense()">
+            Odustani
+          </button>
+          <button
+            type="button"
+            class="primary-action danger-action"
+            (click)="confirmDeleteExpense()"
+          >
+            Izbriši
+          </button>
         </div>
       </section>
     </div>

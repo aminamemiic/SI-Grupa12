@@ -14,20 +14,24 @@
         (click)="runAiAnalysis()"
         [disabled]="isAiLoading"
       >
-        <span class="ai-icon">✦</span>
-        {{ isAiLoading ? 'Analiza u toku...' : 'Pokreni AI analizu' }}
+        <span class="ai-icon">✦</span>{{ isAiLoading ? 'Analiza u toku…' : 'AI analiza' }}
       </button>
-      <button type="button" class="secondary-action" (click)="loadReport()" [disabled]="isLoading">
-        {{ isLoading ? 'Generisanje...' : 'Generisi ' + selectedReportTypeLabel.toLowerCase() }}
-      </button>
-      <button type="button" class="export-action" (click)="exportReport('xlsx')" [disabled]="isExporting || !report">
-        {{ selectedReportTypeLabel }} Excel
-      </button>
-      <button type="button" class="export-action" (click)="exportReport('pdf')" [disabled]="isExporting || !report">
-        {{ selectedReportTypeLabel }} PDF
-      </button>
-      <button type="button" class="export-action" (click)="exportReport('csv')" [disabled]="isExporting || !report">
-        {{ selectedReportTypeLabel }} CSV
+      <details class="export-menu">
+        <summary>Izvezi izvještaj <span>↓</span></summary>
+        <div class="export-options">
+          <button type="button" (click)="exportReport('xlsx')" [disabled]="isExporting || !report">
+            Excel <span>.xlsx</span>
+          </button>
+          <button type="button" (click)="exportReport('pdf')" [disabled]="isExporting || !report">
+            PDF dokument <span>.pdf</span>
+          </button>
+          <button type="button" (click)="exportReport('csv')" [disabled]="isExporting || !report">
+            CSV podaci <span>.csv</span>
+          </button>
+        </div>
+      </details>
+      <button type="button" class="primary-action" (click)="loadReport()" [disabled]="isLoading">
+        {{ isLoading ? 'Generisanje…' : 'Generiši izvještaj' }}
       </button>
     </div>
   </section>
@@ -186,7 +190,9 @@
                   <strong>{{ item.label }}</strong>
                   <small>{{ item.count }} zapisa</small>
                 </div>
-                <div class="bar-track green-track"><span [style.width.%]="item.percentage"></span></div>
+                <div class="bar-track green-track">
+                  <span [style.width.%]="item.percentage"></span>
+                </div>
                 <b>{{ formatAmount(item.total) }}</b>
               </div>
             }
@@ -218,50 +224,57 @@
     </section>
 
     @if (isDetailedReport) {
-    <section class="panel wide-panel">
-      <div class="panel-heading">
-        <h2>Relevantni troškovi</h2>
-        <span>{{ currentReport.expenses.length }} zapisa</span>
-      </div>
+      <section class="panel wide-panel">
+        <div class="panel-heading">
+          <h2>Relevantni troškovi</h2>
+          <span>{{ currentReport.expenses.length }} zapisa</span>
+        </div>
 
-      @if (!hasExpenses) {
-        <div class="empty-state compact-state">
-          <strong>Nema troškova za odabrani period.</strong>
-        </div>
-      } @else {
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Naziv</th>
-                <th>Iznos</th>
-                <th>Datum</th>
-                <th>Kategorija</th>
-                <th>Odjel</th>
-                <th>Valuta</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (expense of visibleExpenses; track expense.id) {
+        @if (!hasExpenses) {
+          <div class="empty-state compact-state">
+            <strong>Nema troškova za odabrani period.</strong>
+          </div>
+        } @else {
+          <div class="table-wrap">
+            <table>
+              <thead>
                 <tr>
-                  <td><strong>{{ expense.naziv }}</strong></td>
-                  <td>{{ formatAmount(expense.iznos) }}</td>
-                  <td>{{ formatDate(expense.datum) }}</td>
-                  <td>{{ expense.kategorijaNaziv || '-' }}</td>
-                  <td>{{ expense.odjelNaziv || '-' }}</td>
-                  <td>{{ expense.valutaKod || '-' }}</td>
-                  <td><span class="status-pill">{{ expense.statusValidacije || '-' }}</span></td>
+                  <th>Naziv</th>
+                  <th>Iznos</th>
+                  <th>Datum</th>
+                  <th>Kategorija</th>
+                  <th>Odjel</th>
+                  <th>Valuta</th>
+                  <th>Status</th>
                 </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        @if (currentReport.expenses.length > visibleExpenses.length) {
-          <p class="table-note">Prikazano je prvih {{ visibleExpenses.length }} od {{ currentReport.expenses.length }} zapisa.</p>
+              </thead>
+              <tbody>
+                @for (expense of visibleExpenses; track expense.id) {
+                  <tr>
+                    <td>
+                      <strong>{{ expense.naziv }}</strong>
+                    </td>
+                    <td>{{ formatAmount(expense.iznos) }}</td>
+                    <td>{{ formatDate(expense.datum) }}</td>
+                    <td>{{ expense.kategorijaNaziv || '-' }}</td>
+                    <td>{{ expense.odjelNaziv || '-' }}</td>
+                    <td>{{ expense.valutaKod || '-' }}</td>
+                    <td>
+                      <span class="status-pill">{{ expense.statusValidacije || '-' }}</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          @if (currentReport.expenses.length > visibleExpenses.length) {
+            <p class="table-note">
+              Prikazano je prvih {{ visibleExpenses.length }} od
+              {{ currentReport.expenses.length }} zapisa.
+            </p>
+          }
         }
-      }
-    </section>
+      </section>
     }
   }
 
@@ -274,7 +287,14 @@
           <span class="ai-badge">✦ AI</span>
           <h2>AI analiza cjelokupne baze</h2>
         </div>
-        <button type="button" class="ai-close" (click)="closeAiPanel()" aria-label="Zatvori AI analizu">✕</button>
+        <button
+          type="button"
+          class="ai-close"
+          (click)="closeAiPanel()"
+          aria-label="Zatvori AI analizu"
+        >
+          ✕
+        </button>
       </div>
 
       @if (isAiLoading) {
@@ -285,7 +305,6 @@
       } @else if (aiError) {
         <p class="notice error-notice">{{ aiError }}</p>
       } @else if (aiAnalysis) {
-
         <!-- Sažetak -->
         <p class="ai-sazetak">{{ aiAnalysis.sazetak }}</p>
 
@@ -308,7 +327,10 @@
           <div class="ai-metric">
             <span>Trend kretanja</span>
             <strong [class]="aiTrendClass">{{ aiTrendLabel }}</strong>
-            <small>{{ aiAnalysis.postotakPromjene > 0 ? '+' : '' }}{{ aiAnalysis.postotakPromjene }}%</small>
+            <small
+              >{{ aiAnalysis.postotakPromjene > 0 ? '+' : ''
+              }}{{ aiAnalysis.postotakPromjene }}%</small
+            >
           </div>
           <div class="ai-metric">
             <span>Top kategorija</span>
@@ -331,7 +353,11 @@
                   <div class="ai-bar-track">
                     <div
                       class="ai-bar-fill"
-                      [style.width.%]="aiAnalysis.ukupniIznos > 0 ? (t.ukupniIznos / aiAnalysis.ukupniIznos) * 100 : 0"
+                      [style.width.%]="
+                        aiAnalysis.ukupniIznos > 0
+                          ? (t.ukupniIznos / aiAnalysis.ukupniIznos) * 100
+                          : 0
+                      "
                     ></div>
                   </div>
                   <span class="ai-trend-val">{{ formatAmount(t.ukupniIznos) }}</span>
@@ -350,12 +376,17 @@
               @for (pred of aiAnalysis.predvidjanjeBudzeta; track pred.sljedeciMjesec) {
                 <div class="ai-prediction-card">
                   <span class="ai-pred-month">{{ pred.sljedeciMjesec }}</span>
-                  <strong class="ai-pred-amount">{{ formatAmount(pred.predvideniIznos) }} BAM</strong>
+                  <strong class="ai-pred-amount"
+                    >{{ formatAmount(pred.predvideniIznos) }} BAM</strong
+                  >
                   <div class="ai-pred-range">
                     <small>Min: {{ formatAmount(pred.donjaBoundary) }}</small>
                     <small>Max: {{ formatAmount(pred.gornjaBoundary) }}</small>
                   </div>
-                  <span class="ai-pouzdanost" [class]="'pouzdanost-' + pred.pouzdanostProcjene.toLowerCase()">
+                  <span
+                    class="ai-pouzdanost"
+                    [class]="'pouzdanost-' + pred.pouzdanostProcjene.toLowerCase()"
+                  >
                     {{ pouzdanostLabel(pred.pouzdanostProcjene) }}
                   </span>
                 </div>
@@ -376,9 +407,10 @@
           </div>
         }
 
-        <p class="ai-generated-at">Generisano: {{ aiAnalysis.generisanoU | date:'dd.MM.yyyy HH:mm' }}</p>
+        <p class="ai-generated-at">
+          Generisano: {{ aiAnalysis.generisanoU | date: 'dd.MM.yyyy HH:mm' }}
+        </p>
       }
     </section>
   }
-
 </div>

@@ -15,6 +15,7 @@ import {
 import { ExpenseService, ValidationResult } from '../../../services/expense.service';
 import { CommentService } from '../../../services/comment.service';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-expenses',
@@ -28,6 +29,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   private expenseService = inject(ExpenseService);
   private commentService = inject(CommentService);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
   private destroy$ = new Subject<void>();
 
   expenses: Expense[] = [];
@@ -48,6 +50,20 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   errorMessage = '';
   categorySuggestionMessage = '';
   editingExpenseId: string | null = null;
+  showExpenseForm = false;
+  toggleExpenseForm(): void {
+    if (this.editingExpenseId) {
+      this.cancelEdit();
+      this.showExpenseForm = false;
+      return;
+    }
+    this.showExpenseForm = !this.showExpenseForm;
+  }
+
+  statusLabel(status?: string): string {
+    const labels: Record<string, string> = { VALIDAN: 'Validiran', NA_CEKANJU: 'Na provjeri', POTENCIJALNI_DUPLIKAT: 'Duplikat', ANOMALIJA: 'Za provjeru', ODBIJEN: 'Odbijen', ZAKLJUCAN: 'Zaključan' };
+    return labels[status || 'NA_CEKANJU'] || status || 'Na provjeri';
+  }
   showDeleteModal = false;
   expenseToDeleteId: string | null = null;
 
@@ -78,6 +94,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
+    this.showExpenseForm = this.route.snapshot.queryParamMap.get('new') === 'true';
     this.loadReferenceData();
     this.loadExpenses();
     this.setupFormValidation();

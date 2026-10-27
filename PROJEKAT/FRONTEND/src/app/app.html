@@ -1,128 +1,131 @@
-<div class="app-shell">
-  <aside class="sidebar">
-    <a class="brand-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-      <span class="brand-mark">T12</span>
-      <span>
-        <strong>Tim12</strong>
-        <small>Finansije</small>
-      </span>
+<div class="app-shell" [class.navigation-open]="mobileNavigationOpen">
+  @if (mobileNavigationOpen) {
+    <button
+      class="navigation-backdrop"
+      aria-label="Zatvori navigaciju"
+      (click)="mobileNavigationOpen = false"
+    ></button>
+  }
+  <aside class="sidebar" aria-label="Bočna navigacija">
+    <a
+      class="brand-link"
+      [routerLink]="isAuthenticated ? '/home' : '/'"
+      (click)="mobileNavigationOpen = false"
+    >
+      <span class="brand-mark"><span></span><span></span><span></span></span>
+      <strong>tim12<span class="brand-dot">.</span></strong
+      ><small>FINANSIJE</small>
     </a>
-
+    <div class="workspace-label">
+      <span class="workspace-avatar">T</span>
+      <div><strong>Tim12 Workspace</strong><small>Finansijski radni prostor</small></div>
+    </div>
     @if (isAuthenticated) {
-      <button type="button" class="company-switch" disabled>
-        <span class="company-icon">D</span>
-        <span>Kompanija</span>
-        <span class="chevron">v</span>
-      </button>
-
+      <p class="nav-caption">RADNI PROSTOR</p>
       <nav class="side-nav" aria-label="Glavna navigacija">
-        <a routerLink="/home" routerLinkActive="active">
-          <span class="nav-icon">NP</span>
-          <span>Nadzorna ploča</span>
-        </a>
-        <a
-          routerLink="/troskovi"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          [class.disabled]="!canOpenExpenses"
-          (click)="openExpensesTab($event)"
-        >
-          <span class="nav-icon">TR</span>
-          <span>Upravljanje troškovima</span>
-        </a>
-        <a
-          routerLink="/troskovi/import"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          [class.disabled]="!canOpenExpenses"
-          (click)="openExpensesTab($event)"
-        >
-          <span class="nav-icon">IM</span>
-          <span>Import troškova</span>
-        </a>
-        <a
-            routerLink="/budzeti"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }"
-            [class.disabled]="!canOpenBudgets"
-            (click)="openBudgetsTab($event)"
-          >
-            <span class="nav-icon">PB</span>
-            <span>Planiranje budžeta</span>
-          </a>
-        <a
-          routerLink="/podaci/pregled"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          [class.disabled]="!canOpenDataOverview"
-          (click)="openDataOverviewTab($event)"
-        >
-          <span class="nav-icon">PP</span>
-          <span>Pregled podataka</span>
-        </a>
-        <a
-          routerLink="/izvjestaji"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          [class.disabled]="!canOpenReports"
-          (click)="openReportsTab($event)"
-        >
-          <span class="nav-icon">IZ</span>
-          <span>Izvještaji</span>
-        </a>
-        <a
-          routerLink="/notifikacije"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          [class.disabled]="!canOpenNotifications"
-          (click)="openNotificationsTab($event)"
-        >
-          <span class="nav-icon">NO</span>
-          <span>Notifikacije</span>
-          @if (unreadNotificationCount$ | async; as unreadNotificationCount) {
-            @if (unreadNotificationCount > 0) {
-              <span class="notification-count" [attr.aria-label]="unreadNotificationCount + ' nepročitanih notifikacija'">
-                {{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}
-              </span>
-            }
+        @for (item of navigation; track item.path) {
+          @if (canAccessNavigation(item.roles)) {
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              (click)="mobileNavigationOpen = false"
+            >
+              <ui-icon [name]="item.icon" /><span>{{ item.label }}</span
+              ><span class="nav-active-dot"></span>
+            </a>
           }
-        </a>
+        }
       </nav>
+      @if (canOpenNotifications) {
+        <p class="nav-caption secondary-caption">PRAĆENJE</p>
+        <nav class="side-nav" aria-label="Praćenje">
+          <a
+            routerLink="/notifikacije"
+            routerLinkActive="active"
+            (click)="mobileNavigationOpen = false"
+            ><ui-icon name="bell" /><span>Notifikacije</span>
+            @if (unreadNotificationCount$ | async; as count) {
+              <span class="notification-count">{{ count > 99 ? '99+' : count }}</span>
+            }
+          </a>
+        </nav>
+      }
     }
-
-    @if (isAdmin) {
-      <a class="sidebar-admin-link" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
-        <span class="nav-icon">AD</span>
-        <span>Admin panel</span>
-      </a>
-    }
+    <div class="sidebar-bottom">
+      @if (isAdmin) {
+        <a class="settings-link" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer"
+          ><ui-icon name="settings" />Administracija<ui-icon name="arrow"
+        /></a>
+      }
+      @if (isAuthenticated) {
+        <a class="profile-link" routerLink="/profile" (click)="mobileNavigationOpen = false"
+          ><span class="user-avatar">{{ isAdmin ? 'AD' : 'KO' }}</span
+          ><span
+            ><strong>{{ isAdmin ? 'Administrator' : 'Korisnički profil' }}</strong
+            ><small>{{
+              localEnvironment ? 'Lokalni radni prostor' : 'Tim12 Finansije'
+            }}</small></span
+          ><ui-icon name="down"
+        /></a>
+      } @else {
+        <p class="sidebar-note">Manje administracije.<br />Više kontrole nad finansijama.</p>
+      }
+      <span class="sidebar-version">TIM12 FINANCE <span>v1.0</span></span>
+    </div>
   </aside>
-
   <section class="workspace">
     <header class="topbar">
-    
+      <button
+        class="menu-toggle icon-button"
+        [attr.aria-expanded]="mobileNavigationOpen"
+        aria-label="Otvori navigaciju"
+        (click)="mobileNavigationOpen = !mobileNavigationOpen"
+      >
+        <ui-icon name="menu" />
+      </button>
+      <div class="breadcrumbs">
+        <span>Radni prostor</span><span class="breadcrumb-divider">/</span
+        ><strong>{{ currentPageLabel }}</strong>
+      </div>
       <div class="topbar-actions">
+        <span class="today"><ui-icon name="calendar" />{{ todayLabel }}</span>
+        @if (isAuthenticated && canOpenNotifications) {
+          <a
+            class="icon-button notification-link"
+            routerLink="/notifikacije"
+            aria-label="Otvori notifikacije"
+            ><ui-icon name="bell" />
+            @if (unreadNotificationCount$ | async; as count) {
+              <span class="unread-dot"></span>
+            }
+          </a>
+        }
+        <span class="topbar-divider"></span>
         @if (isAuthenticated) {
-          @if (primaryRole) {
-            <span class="role-badge">{{ primaryRole }}</span>
-          }
-          <button type="button" class="danger-button" (click)="signOut()" [disabled]="isLoading">
-            Odjavi se
+          <button
+            class="signout-button"
+            type="button"
+            aria-label="Odjavi se"
+            (click)="signOut()"
+            [disabled]="isLoading"
+          >
+            <ui-icon name="logout" /><span>Odjavi se</span>
           </button>
         } @else {
-          <button type="button" class="secondary-button" (click)="signIn()" [disabled]="isLoading">
-            Prijavi se
+          <button class="signin-button" type="button" (click)="signIn()" [disabled]="isLoading">
+            Prijavi se<ui-icon name="arrow" />
           </button>
         }
       </div>
     </header>
-
     @if (navMessage) {
-      <p class="nav-message">{{ navMessage }}</p>
+      <p class="nav-message" role="status">{{ navMessage }}</p>
     }
-
-    <main>
-      <router-outlet></router-outlet>
-    </main>
+    <main id="main-content"><router-outlet /></main>
+    <footer class="workspace-footer">
+      <span>© {{ localEnvironment ? 'Tim12 · Lokalni razvoj' : 'Tim12 Finansije' }}</span
+      ><span>Vaše finansije, jasnije.</span>
+    </footer>
   </section>
 </div>

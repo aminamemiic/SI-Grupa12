@@ -36,14 +36,14 @@
   margin: 0 0 6px;
   color: #c2410c;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 h2 {
   margin: 0;
-  color: #111827;
+  color: var(--ink);
   font-size: 24px;
 }
 
@@ -68,9 +68,9 @@ h2 {
 .field-label {
   display: block;
   margin-bottom: 8px;
-  color: #374151;
+  color: #4d5e53;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -82,7 +82,7 @@ textarea {
   border-radius: 14px;
   border: 1px solid #d6d3d1;
   background: #ffffff;
-  color: #111827;
+  color: var(--ink);
   resize: vertical;
   font: inherit;
   line-height: 1.5;
@@ -113,7 +113,7 @@ button {
   padding: 10px 14px;
   border: 0;
   border-radius: 12px;
-  font-weight: 900;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -123,15 +123,15 @@ button:disabled {
 }
 
 .secondary {
-  color: #374151;
+  color: #4d5e53;
   background: #f3f4f6;
 }
 
 .primary {
   color: #ffffff;
-  background: linear-gradient(135deg, #fb923c, #f97316);
+  background: linear-gradient(135deg, #fb923c, #b89a64);
 }
 
 .primary.danger {
-  background: linear-gradient(135deg, #f97316, #ea580c);
+  background: linear-gradient(135deg, #b89a64, #ea580c);
 }

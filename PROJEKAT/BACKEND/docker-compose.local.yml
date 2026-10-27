@@ -1,0 +1,14 @@
+services:
+  keycloak:
+    environment:
+      KC_HOSTNAME: http://localhost:8080
+
+  backend:
+    ports: !override
+      - "127.0.0.1:3000:3000"
+    environment:
+      LOCAL_AUTH_ENABLED: "true"
+      KEYCLOAK_URL: http://keycloak:8080
+      JWT_ISSUER: http://localhost:8080/realms/Grupa12SI
+      JWKS_URI: http://keycloak:8080/realms/Grupa12SI/protocol/openid-connect/certs
+      SESSION_SECRET: ${SESSION_SECRET}

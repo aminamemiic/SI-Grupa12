@@ -8,6 +8,7 @@ const fs = require("fs");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const { AuthService } = require("./BLL/Services/AuthService");
+const { LocalDevelopmentAuth } = require("./BLL/Services/LocalDevelopmentAuth");
 const { registerSessionEndpoints } = require("./PRESENTATION API/Endpoints/SessionEndpoints");
 const { registerUserEndpoints } = require("./PRESENTATION API/Endpoints/UserEndpoints");
 const { registerExpenseEndpoints } = require("./PRESENTATION API/Endpoints/ExpenseEndpoints");
@@ -32,6 +33,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET;
 const SESSION_COOKIE_NAME = "tim12.sid";
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:4200";
 const IS_PROD = process.env.NODE_ENV === "production";
+const localAuth = LocalDevelopmentAuth.fromEnvironment(process.env);
 const dbClientConfig = () => ({
   connectionString: process.env.DATABASE_URL,
   ssl: IS_PROD ? { rejectUnauthorized: false } : false,
@@ -283,6 +285,7 @@ function startServer() {
       keycloakRealm: KEYCLOAK_REALM,
       keycloakClientId: KEYCLOAK_CLIENT_ID,
       keycloakClientSecret: KEYCLOAK_CLIENT_SECRET,
+      localAuth,
     },
     writeLog
   );
@@ -341,6 +344,7 @@ function startServer() {
     res.status(200).json({ status: "ok" });
   });
 
+  localAuth?.registerEndpoints(app, FRONTEND_ORIGIN);
   registerSessionEndpoints(app, authService, writeLog, SESSION_COOKIE_NAME);
   registerExpenseEndpoints(app, authService, writeLog);
   registerBudgetEndpoints(app, authService, writeLog);

@@ -1,18 +1,23 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { AuthGuardService } from '../../../middleware/middleware.authguard';
 import { UserService } from '../../../services/user.service';
+import { environment } from '../../../environments/environment';
+import { RouterLink } from '@angular/router';
+import { IconComponent } from '../../ui/icon';
 
 @Component({
   selector: 'app-homepage',
-  imports: [],
+  imports: [RouterLink, IconComponent],
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
 })
 export class Homepage {
   private readonly authGuardService = inject(AuthGuardService);
   private readonly userService = inject(UserService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  public readonly adminConsoleUrl = 'https://keycloak-production-4c61.up.railway.app/';
+  public readonly adminConsoleUrl = `${environment.keycloakUrl}/`;
+  public readonly localAuth = !environment.production && environment.localAuth;
   public errorMessage = '';
   public isLoading = false;
   public infoMessage = '';
@@ -22,12 +27,22 @@ export class Homepage {
     return this.authGuardService.hasAnyRole(['admin']);
   }
 
+  public get isAuthenticated(): boolean { return this.authGuardService.isAuthenticated(); }
+
   public async loginWithKeycloak(): Promise<void> {
     this.errorMessage = '';
     this.infoMessage = '';
     this.loadingMessage = '';
 
-    await this.authGuardService.loginWithKeycloak();
+    this.isLoading = true;
+    try {
+      await this.authGuardService.loginWithKeycloak();
+    } catch (error) {
+      this.errorMessage = error instanceof Error ? error.message : 'Prijava nije uspjela.';
+    } finally {
+      this.isLoading = false;
+      this.cdr.markForCheck();
+    }
   }
 
   public async logoutFromBackend(): Promise<void> {

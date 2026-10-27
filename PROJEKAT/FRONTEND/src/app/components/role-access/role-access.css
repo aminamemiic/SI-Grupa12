@@ -25,7 +25,7 @@ h1 {
 }
 
 .status {
-  color: #1f4f8f;
+  color: var(--accent);
   font-weight: 700;
 }
 
@@ -42,13 +42,13 @@ h1 {
 }
 
 .result.success {
-  background: #ecfdf3;
-  color: #05603a;
+  background: #eef5e9;
+  color: var(--accent);
   border: 1px solid #abefc6;
 }
 
 .result.error {
-  background: #fff1f3;
-  color: #b42318;
+  background: var(--danger-soft);
+  color: var(--danger);
   border: 1px solid #fecdca;
 }

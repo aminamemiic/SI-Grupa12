@@ -46,6 +46,6 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.brand-link')?.textContent).toContain('Tim12');
+    expect(compiled.querySelector('.brand-link')?.textContent?.toLowerCase()).toContain('tim12');
   });
 });

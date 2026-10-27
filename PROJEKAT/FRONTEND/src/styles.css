@@ -1,156 +1,669 @@
+@import './styles/dashboard.css';
+:root {
+  --font: 'Segoe UI', Inter, Arial, sans-serif;
+  --canvas: #f6f7f3;
+  --surface: #fff;
+  --soft: #f0f3ed;
+  --ink: #24352e;
+  --muted: #788279;
+  --line: #e4e8e0;
+  --accent: #32634d;
+  --accent-hover: #244d3c;
+  --accent-soft: #edf3e7;
+  --sage: #d9e9c4;
+  --danger: #ab5a4a;
+  --danger-soft: #faf0ed;
+}
 * {
   box-sizing: border-box;
 }
-
 html {
   min-width: 320px;
-  background: #eef3f7;
+  background: var(--canvas);
+  scroll-behavior: smooth;
 }
-
 body {
   margin: 0;
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
 }
-
 button,
 input,
 select,
 textarea {
   font: inherit;
 }
-
 button,
 a {
   transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    color 0.18s ease,
-    transform 0.18s ease;
+    background 0.16s,
+    color 0.16s,
+    border-color 0.16s,
+    box-shadow 0.16s;
 }
-
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+a {
+  color: var(--accent);
+}
 button:hover,
 a:hover {
-  transform: translateY(-1px);
+  transform: none;
 }
-
-app-home .success-notice {
-  color: #05603a;
-  background: #ecfdf3;
-  border-color: #abefc6;
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #a7bf93;
+  outline-offset: 3px;
 }
-
-app-home .error-notice {
-  color: #b42318;
-  background: #fff1f3;
-  border-color: #fecdca;
+::selection {
+  background: #d9e9c4;
+  color: #24352e;
 }
-
-app-home .dashboard-table-wrap {
-  border: 1px solid #e3e9f2;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-app-home .dashboard-table {
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(
+    .dashboard-page,
+    .expenses-page,
+    .budget-page,
+    .reports-page,
+    .overview-page,
+    .notifications-page,
+    .expense-import-container,
+    .role-page
+  ) {
+  padding: 36px 40px 44px;
+  margin: 0 auto;
   width: 100%;
-  min-width: 820px;
-  border-collapse: collapse;
+  max-width: 1550px;
+  min-width: 0;
+  min-height: 0;
+  gap: 24px;
 }
-
-app-home .dashboard-table th,
-app-home .dashboard-table td {
-  padding: 12px;
-  border-bottom: 1px solid #e3e9f2;
-  text-align: left;
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(
+    .expenses-header,
+    .budget-header,
+    .reports-header,
+    .overview-header,
+    .notifications-header,
+    .import-header
+  ) {
+  padding: 0 0 4px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  align-items: flex-start;
 }
-
-app-home .dashboard-table th {
-  color: #667085;
-  background: #f8fafc;
-  font-size: 12px;
+app-root .app-shell .workspace main h1 {
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 550;
+  letter-spacing: -1px;
+  color: var(--ink);
+  margin: 0 0 9px;
+}
+app-root .app-shell .workspace main h2 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--ink);
+}
+app-root .app-shell .workspace main .eyebrow {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1.7px;
+  margin: 0 0 9px;
   text-transform: uppercase;
 }
-
-app-home .row-actions {
-  display: flex;
-  gap: 8px;
+app-root .app-shell .workspace main :is(.lead, .subtitle) {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--muted);
 }
-
-app-home .table-action {
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(.panel, .form-card, .list-card, .detail-card, .filter-panel, .import-step) {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 2px 3px #24352e02;
+  padding: 24px;
+  min-width: 0;
+}
+app-root .app-shell .workspace main :is(.panel-heading, .section-heading) {
+  margin-bottom: 22px;
+}
+app-root .app-shell .workspace main :is(.panel-heading, .section-heading) h2 {
+  margin: 0;
+}
+app-root .app-shell .workspace main .form-group {
+  padding: 0;
   border: 0;
+  background: none;
+  gap: 8px;
+  min-height: 80px;
+}
+app-root .app-shell .workspace main .form-grid {
+  gap: 22px;
+}
+app-root .app-shell .workspace main :is(label, .form-group label) {
+  font-weight: 550;
+  font-size: 11px;
+  color: #4d5e53;
+}
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(input:not([type='checkbox']):not([type='radio']):not([type='file']), select, textarea) {
+  border: 1px solid #dce2d7;
   border-radius: 7px;
-  padding: 7px 10px;
-  color: #1769ff;
-  background: #eef4ff;
-  font-weight: 900;
+  box-shadow: none;
+  background: #fff;
+  color: var(--ink);
+  padding: 11px 12px;
+  font-size: 12px;
+  min-height: 42px;
+  max-width: 100%;
 }
-
-app-home .table-action.danger,
-app-home .danger-action {
-  color: #b42318;
-  background: #fff1f3;
+app-root .app-shell .workspace main :is(input, select, textarea):focus {
+  border-color: #9ab38d;
+  box-shadow: 0 0 0 3px #eff3e9;
+  outline: none;
 }
-
+app-root .app-shell .workspace main :is(input[type='checkbox'], input[type='radio']) {
+  accent-color: var(--accent);
+  min-height: 0;
+}
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(button, .primary-button, .primary-action, .secondary-action, .admin-button) {
+  font-size: 11px;
+  font-weight: 550;
+  border-radius: 7px;
+  box-shadow: none;
+  letter-spacing: 0;
+  min-height: 36px;
+}
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(
+    .primary-action,
+    .primary-button,
+    .btn-primary,
+    .form-actions button[type='submit'],
+    .budget-header > button
+  ) {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 16px;
+}
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(
+    .primary-action,
+    .primary-button,
+    .btn-primary,
+    .form-actions button[type='submit'],
+    .budget-header > button
+  ):hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(
+    .secondary-action,
+    .btn-secondary,
+    .btn-refresh,
+    .export-action,
+    .btn-filter,
+    .btn-ai-suggestion,
+    .compare-action
+  ) {
+  background: #fff;
+  border: 1px solid #dce2d7;
+  color: #4d5e53;
+  padding: 9px 14px;
+}
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(
+    .secondary-action,
+    .btn-secondary,
+    .btn-refresh,
+    .export-action,
+    .btn-ai-suggestion
+  ):hover:not(:disabled) {
+  background: var(--soft);
+  border-color: #c8d1c2;
+}
+app-root .app-shell .workspace main :is(.filter-panel, .filter-bar, .filters) {
+  gap: 16px;
+}
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(.table-container, .table-wrapper, .table-wrap, .dashboard-table-wrap) {
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  box-shadow: none;
+}
+app-root .app-shell .workspace main table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  color: #4d5e53;
+}
+app-root .app-shell .workspace main th {
+  background: #f7f8f5;
+  color: #859080;
+  text-align: left;
+  font-size: 9px;
+  letter-spacing: 0.65px;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+app-root .app-shell .workspace main td {
+  padding: 16px;
+  border-bottom: 1px solid #edf0e9;
+  vertical-align: middle;
+  font-weight: 400;
+}
+app-root .app-shell .workspace main tr:last-child td {
+  border-bottom: 0;
+}
+app-root .app-shell .workspace main tbody tr:hover {
+  background: #fafbf8;
+}
+app-root
+  .app-shell
+  .workspace
+  main
+  :is(.badge, .status-badge, .priority-pill, .severity-badge, .budget-status) {
+  font-weight: 550;
+  font-size: 9px;
+  border-radius: 5px;
+  padding: 5px 8px;
+  letter-spacing: 0.15px;
+}
+app-root .app-shell .workspace main :is(.metric-card, .summary-card, .stat-card) {
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: none;
+  padding: 22px;
+}
+app-root .app-shell .workspace main .metric-card span {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+app-root .app-shell .workspace main .metric-card strong {
+  font-size: 25px;
+  font-weight: 550;
+  letter-spacing: -0.75px;
+  color: var(--ink);
+}
+app-root .app-shell .workspace main .metric-card small {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--muted);
+}
+app-root .app-shell .workspace main :is(.notice, .alert, .success, .error) {
+  border-radius: 8px;
+  font-weight: 450;
+  font-size: 12px;
+  line-height: 1.6;
+}
+app-root .app-shell .workspace main :is(.empty-state, .table-empty-state) {
+  background: #fafbf8;
+  border: 1px dashed #dce3d6;
+  border-radius: 9px;
+  box-shadow: none;
+  padding: 30px 20px;
+  color: var(--muted);
+}
+app-root .app-shell .workspace main .empty-state strong {
+  font-weight: 550;
+  color: #657660;
+  font-size: 12px;
+}
+app-root .app-shell .workspace main .empty-state p {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+app-root .app-shell .workspace main .header-actions {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+app-root .app-shell .workspace main .section-heading p {
+  font-size: 11px;
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+app-root .app-shell .workspace main :is(.segmented-control, .filter-row) {
+  gap: 4px;
+  background: var(--soft);
+  border-radius: 7px;
+  padding: 4px;
+}
+app-root .app-shell .workspace main :is(.segmented-control, .filter-row) button {
+  background: transparent;
+  color: var(--muted);
+  border: 0;
+  min-height: 32px;
+  padding: 7px 13px;
+}
+app-root .app-shell .workspace main :is(.segmented-control, .filter-row) button.active {
+  background: white;
+  color: var(--accent);
+  box-shadow: 0 1px 4px #25392b0a;
+}
+app-root .app-shell .workspace main .upload-box {
+  border: 1px dashed #aabc9c;
+  border-radius: 10px;
+  background: #f6f8f1;
+  padding: 48px 24px;
+}
+app-root .app-shell .workspace main .import-step h2 {
+  border: 0;
+  padding-bottom: 0;
+  margin-bottom: 24px;
+}
+app-root .app-shell .workspace main .import-header {
+  margin-bottom: 24px;
+}
+app-root .app-shell .workspace main .step-indicator {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+  border-radius: 6px;
+  padding: 6px 11px;
+  display: inline-block;
+}
+app-root .app-shell .workspace main .notification-item {
+  border: 1px solid var(--line);
+  background: white;
+  box-shadow: none;
+  border-radius: 9px;
+  padding: 16px;
+}
+app-root .app-shell .workspace main .notification-item.active {
+  border-color: #9fbb8b;
+  background: #f6f9f1;
+}
+app-root .app-shell .workspace main .item-title {
+  font-size: 12px;
+  font-weight: 600;
+}
+app-root .app-shell .workspace main .item-summary {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+app-root .app-shell .workspace main .item-meta {
+  font-size: 9px;
+  font-weight: 400;
+}
+app-root .app-shell .workspace main :is(.modal-overlay, .dialog-overlay) {
+  background: #152c2559;
+  backdrop-filter: blur(5px);
+  z-index: 70;
+  padding: 20px;
+}
+app-root .app-shell .workspace main :is(.modal-card, .modal-content, .dialog-container) {
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 100px #132e2826;
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  background: #fff;
+  padding: 28px;
+}
 app-home .modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 30;
   display: grid;
   place-items: center;
-  padding: 20px;
-  background: rgba(15, 23, 42, 0.54);
 }
-
 app-home .modal-card {
   width: min(760px, 100%);
-  max-height: calc(100vh - 40px);
-  overflow: auto;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 8px;
 }
-
 app-home .edit-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 18px;
 }
-
 app-home .edit-grid label {
   display: grid;
-  gap: 7px;
-  color: #344054;
-  font-size: 13px;
-  font-weight: 900;
+  gap: 8px;
 }
-
 app-home .edit-grid input,
 app-home .edit-grid select,
 app-home .edit-grid textarea {
   width: 100%;
-  min-height: 40px;
-  border: 1px solid #d9e2ef;
-  border-radius: 8px;
-  padding: 9px 11px;
 }
-
 app-home .wide-field {
-  grid-column: 1 / -1;
+  grid-column: 1/-1;
 }
-
 app-home .edit-grid small {
-  color: #b42318;
+  color: var(--danger);
 }
-
 app-home .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 24px;
 }
-
-@media (max-width: 900px) {
+app-home .row-actions {
+  display: flex;
+  gap: 8px;
+}
+app-home .table-action {
+  border: 0;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 6px 10px;
+}
+app-home .danger-action,
+app-home .table-action.danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+@media (min-width: 1750px) {
+  app-root
+    .app-shell
+    .workspace
+    main
+    :is(
+      .dashboard-page,
+      .expenses-page,
+      .budget-page,
+      .reports-page,
+      .overview-page,
+      .notifications-page,
+      .expense-import-container
+    ) {
+    padding-inline: 60px;
+  }
+}
+@media (max-width: 1100px) {
+  app-root
+    .app-shell
+    .workspace
+    main
+    :is(
+      .dashboard-page,
+      .expenses-page,
+      .budget-page,
+      .reports-page,
+      .overview-page,
+      .notifications-page,
+      .expense-import-container
+    ) {
+    padding: 28px 26px 36px;
+  }
+  app-root .app-shell .workspace main .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  app-root
+    .app-shell
+    .workspace
+    main
+    :is(
+      .dashboard-page,
+      .expenses-page,
+      .budget-page,
+      .reports-page,
+      .overview-page,
+      .notifications-page,
+      .expense-import-container
+    ) {
+    padding: 26px 20px 32px;
+    gap: 20px;
+  }
+  app-root .app-shell .workspace main h1 {
+    font-size: 26px;
+  }
+  app-root
+    .app-shell
+    .workspace
+    main
+    :is(
+      .expenses-header,
+      .budget-header,
+      .reports-header,
+      .overview-header,
+      .notifications-header
+    ) {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  app-root
+    .app-shell
+    .workspace
+    main
+    :is(.panel, .form-card, .list-card, .detail-card, .filter-panel, .import-step) {
+    padding: 19px;
+  }
+  app-root .app-shell .workspace main :is(.form-grid, .metric-grid) {
+    grid-template-columns: 1fr 1fr;
+  }
   app-home .edit-grid {
     grid-template-columns: 1fr;
   }
+  app-root .app-shell .workspace main .form-group.full-width {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 480px) {
+  app-root .app-shell .workspace main .form-grid {
+    grid-template-columns: 1fr;
+  }
+  app-root .app-shell .workspace main .metric-grid {
+    grid-template-columns: 1fr;
+  }
+  app-root .app-shell .workspace main .metric-card {
+    padding: 19px;
+  }
+  app-root .app-shell .workspace main .header-actions {
+    justify-content: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+app-root .app-shell .workspace main .status-pill {
+  font-size: 9px;
+  font-weight: 500;
+  padding: 5px 8px;
+  background: #f7f2e6;
+  color: #9c8654;
+  border-radius: 5px;
+}
+app-root .app-shell .workspace main .status-pill.status-anomalija {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+app-root .app-shell .workspace main .btn-chat-table {
+  background: #f3f6ed;
+  color: #6d835a;
+  border-color: #e2e9d8;
+}
+app-data-overview .data-tabs {
+  display: flex;
+  gap: 26px;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+}
+app-data-overview .data-tabs button {
+  flex: none;
+  position: relative;
+  border: 0;
+  border-radius: 0 !important;
+  background: transparent;
+  padding: 0 0 16px;
+  color: var(--muted);
+  font-size: 11px !important;
+}
+app-data-overview .data-tabs button.selected {
+  color: var(--accent);
+}
+app-data-overview .data-tabs button.selected:after {
+  content: '';
+  height: 2px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
 }

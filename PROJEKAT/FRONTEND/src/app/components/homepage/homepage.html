@@ -1,36 +1,86 @@
 <div class="homepage-wrapper">
   <section class="welcome-panel">
     <div class="hero-copy">
-      <p class="eyebrow">Interni finansijski sistem</p>
-      <h1>Tim12</h1>
+      <span class="welcome-kicker"><span></span>VAŠ FINANSIJSKI RADNI PROSTOR</span>
+      <h1>Jasne finansije.<br /><span>Mirnije odluke.</span></h1>
       <p class="lead">
-        Centralno mjesto za unos, pregled i validaciju troškova po odjelima, projektima i dobavljačima.
+        Troškovi, budžeti i poslovni uvidi na jednom mjestu. Manje vremena u tabelama, više kontrole
+        nad onim što je važno.
       </p>
-
       <div class="hero-actions">
-        @if (isAdmin) {
-          <a class="primary-button" [href]="adminConsoleUrl" target="_blank" rel="noopener noreferrer">
-            Admin Panel
-          </a>
+        @if (isAuthenticated) {
+          <a class="primary-button" routerLink="/home"
+            >Otvori radni prostor<ui-icon name="arrow"
+          /></a>
         } @else {
-          <button type="button" class="primary-button" (click)="loginWithKeycloak()" [disabled]="isLoading">
-            Prijavi se
+          <button
+            type="button"
+            class="primary-button"
+            (click)="loginWithKeycloak()"
+            [disabled]="isLoading"
+          >
+            {{ isLoading ? 'Otvaranje…' : 'Prijavi se' }}<ui-icon name="arrow" />
           </button>
         }
       </div>
+      @if (localAuth && !isAuthenticated) {
+        <p class="local-access"><ui-icon name="check" />Lokalni pristup bez lozinke</p>
+      }
+      <div class="hero-trust">
+        <span><ui-icon name="wallet" />Troškovi</span><span><ui-icon name="pie" />Budžeti</span
+        ><span><ui-icon name="sparkle" />AI uvidi</span>
+      </div>
     </div>
-
+    <div class="hero-visual" aria-hidden="true">
+      <div class="visual-caption">
+        <span class="visual-dot"></span>JEDAN PROSTOR. POTPUNA SLIKA.
+      </div>
+      <div class="preview-card">
+        <div class="preview-heading">
+          <span class="mini-logo">t12.</span><span>Finansijski pregled</span
+          ><span class="mini-menu">···</span>
+        </div>
+        <div class="preview-total">
+          <span>FINANSIJE POD KONTROLOM</span><strong>Šira slika.<br />Svaki detalj.</strong>
+        </div>
+        <div class="preview-bars">
+          <span></span><span></span><span></span><span></span><span></span><span></span
+          ><span></span>
+        </div>
+        <div class="preview-rule"></div>
+        <div class="preview-row">
+          <span class="preview-icon"><ui-icon name="wallet" /></span
+          ><span>Troškovi i aktivnosti<small>Sve što trebate, na jednom mjestu.</small></span
+          ><ui-icon name="check" />
+        </div>
+        <div class="preview-row">
+          <span class="preview-icon"><ui-icon name="pie" /></span
+          ><span>Planiranje budžeta<small>Jasan plan za naredni korak.</small></span
+          ><ui-icon name="check" />
+        </div>
+      </div>
+      <div class="floating-note">
+        <span><ui-icon name="sparkle" /></span>
+        <div><strong>Od podataka do odluke.</strong><small>Uz pametne poslovne uvide.</small></div>
+      </div>
+      <span class="visual-footnote">Dizajnirano za jasniji radni dan.</span>
+    </div>
   </section>
-
-  @if (isLoading) {
-    <p class="status-text">{{ loadingMessage || 'U toku...' }}</p>
-  }
-
   @if (errorMessage) {
-    <p class="error-text">{{ errorMessage }}</p>
+    <p class="error-text" role="alert">{{ errorMessage }}</p>
   }
-
-  @if (infoMessage) {
-    <p class="info-text">{{ infoMessage }}</p>
-  }
+  <section class="welcome-benefits">
+    <div>
+      <span>01</span><strong>Jednostavniji pregled</strong>
+      <p>Finansije koje razumijete na prvi pogled.</p>
+    </div>
+    <div>
+      <span>02</span><strong>Manje ručnog rada</strong>
+      <p>Uvezite podatke i nastavite gdje ste stali.</p>
+    </div>
+    <div>
+      <span>03</span><strong>Pametniji naredni korak</strong>
+      <p>Prepoznajte obrasce koji prave razliku.</p>
+    </div>
+  </section>
 </div>
