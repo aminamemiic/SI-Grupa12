@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthGuardService } from '../middleware/middleware.authguard';
 import { NotificationService } from '../services/notification.service';
 import { UserService } from '../services/user.service';
+import { environment } from '../environments/environment';
+import { IconComponent } from './ui/icon';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, IconComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -17,6 +19,7 @@ export class App implements OnInit, OnDestroy {
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly subscriptions = new Subscription();
 
   public readonly expenseRoles = ['admin', 'administrativni_radnik', 'administrativni_zaposlenik'];
@@ -24,7 +27,31 @@ export class App implements OnInit, OnDestroy {
   public readonly dataOverviewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly reportRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly notificationRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
-  public readonly adminConsoleUrl = 'https://keycloak-production-4c61.up.railway.app/';
+  public readonly adminConsoleUrl = `${environment.keycloakUrl}/`;
+  public mobileNavigationOpen = false;
+  public readonly localEnvironment = environment.localAuth;
+  public readonly todayLabel = (() => {
+    const today = new Date();
+    const months = ['januar', 'februar', 'mart', 'april', 'maj', 'juni', 'juli', 'august', 'septembar', 'oktobar', 'novembar', 'decembar'];
+    return `${today.getDate()}. ${months[today.getMonth()]} ${today.getFullYear()}.`;
+  })();
+  public readonly navigation = [
+    { path: '/home', label: 'Pregled', icon: 'grid', roles: [] as string[] },
+    { path: '/troskovi', label: 'Troškovi', icon: 'wallet', roles: this.expenseRoles },
+    { path: '/troskovi/import', label: 'Uvoz podataka', icon: 'upload', roles: this.expenseRoles },
+    { path: '/budzeti', label: 'Budžeti', icon: 'pie', roles: this.budgetRoles },
+    { path: '/izvjestaji', label: 'Izvještaji', icon: 'chart', roles: this.reportRoles },
+    { path: '/podaci/pregled', label: 'Baza podataka', icon: 'layers', roles: this.dataOverviewRoles },
+  ];
+
+  public get currentPageLabel(): string {
+    return this.navigation.find(item => this.router.url.split('?')[0] === item.path)?.label
+      || (this.router.url.startsWith('/notifikacije') ? 'Notifikacije' : this.router.url.startsWith('/profile') ? 'Moj profil' : 'Dobro došli');
+  }
+
+  public canAccessNavigation(roles: string[]): boolean {
+    return roles.length === 0 || this.authService.hasAnyRole(roles);
+  }
   public isLoading = false;
   public navMessage = '';
   public isLoggedIn = false;
@@ -84,7 +111,12 @@ export class App implements OnInit, OnDestroy {
 
   public async signIn(): Promise<void> {
     this.navMessage = '';
-    await this.authService.loginWithKeycloak();
+    try {
+      await this.authService.loginWithKeycloak();
+    } catch (error) {
+      this.navMessage = error instanceof Error ? error.message : 'Prijava nije uspjela.';
+      this.cdr.markForCheck();
+    }
   }
 
   public async signOut(): Promise<void> {
@@ -100,6 +132,8 @@ export class App implements OnInit, OnDestroy {
     } catch (error) {
       console.warn('Backend logout nije uspio, nastavljam Keycloak logout.', error);
     } finally {
+      this.isLoading = false;
+      this.cdr.markForCheck();
       window.location.href = logoutUrl;
     }
   }

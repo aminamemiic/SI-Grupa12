@@ -1,7 +1,11 @@
 <div class="expense-import-container">
   <!-- Zaglavlje -->
   <div class="import-header">
-    <h1>Import Troškova</h1>
+    <div>
+      <p class="eyebrow">UVOZ PODATAKA</p>
+      <h1>Manje unosa. Više vremena.</h1>
+      <p class="lead">Uvezite troškove iz CSV ili Excel datoteke u tri jednostavna koraka.</p>
+    </div>
     <p class="step-indicator">Korak {{ currentStep }} od 3</p>
   </div>
 
@@ -11,7 +15,18 @@
 
     <div class="upload-box">
       <div class="upload-content">
-        <div class="upload-icon">📁</div>
+        <div class="upload-icon" aria-hidden="true">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.2"
+          >
+            <path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6" />
+          </svg>
+        </div>
         <h3>Odaberite CSV ili XLSX fajl</h3>
         <p>Fajl ne može biti veći od 10 MB</p>
 
@@ -24,11 +39,7 @@
           hidden
         />
 
-        <button
-          class="btn btn-primary"
-          (click)="fileInput.click()"
-          [disabled]="isUploading"
-        >
+        <button class="btn btn-primary" (click)="fileInput.click()" [disabled]="isUploading">
           Odaberite fajl
         </button>
       </div>
@@ -48,7 +59,7 @@
         (click)="previewImport()"
         [disabled]="!selectedFile || isUploading"
       >
-        <span *ngIf="!isUploading">Učitaj i prikaži preview</span>
+        <span *ngIf="!isUploading">Učitaj i pregledaj</span>
         <span *ngIf="isUploading">Učitavam...</span>
       </button>
     </div>
@@ -105,10 +116,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            *ngFor="let row of previewData?.rows"
-            [ngClass]="getRowStatusClass(row)"
-          >
+          <tr *ngFor="let row of previewData?.rows" [ngClass]="getRowStatusClass(row)">
             <td class="col-check">
               <input
                 type="checkbox"
@@ -119,31 +127,24 @@
             </td>
             <td class="col-number">{{ row.rowNumber }}</td>
             <td class="col-status">
-              <span
-                [ngClass]="'badge-' + (row.isValid ? 'success' : 'danger')"
-                class="badge"
-              >
+              <span [ngClass]="'badge-' + (row.isValid ? 'success' : 'danger')" class="badge">
                 {{ getRowStatusText(row) }}
               </span>
             </td>
             <td class="col-naziv">{{ row.expense?.naziv || '-' }}</td>
             <td class="col-iznos">{{ row.expense?.iznos || '-' }}</td>
-            <td class="col-datum">{{ row.expense?.datum ? (row.expense.datum | date: 'dd.MM.yyyy') : '-' }}</td>
+            <td class="col-datum">
+              {{ row.expense?.datum ? (row.expense.datum | date: 'dd.MM.yyyy') : '-' }}
+            </td>
             <td class="col-kategorija">{{ row.raw?.kategorija || '-' }}</td>
             <td class="col-odjel">{{ row.raw?.odjel || '-' }}</td>
             <td class="col-valuta">{{ row.raw?.valuta || '-' }}</td>
             <td class="col-errors">
               <div class="error-list">
-                <div
-                  *ngFor="let error of getErrorMessages(row)"
-                  class="error-item"
-                >
+                <div *ngFor="let error of getErrorMessages(row)" class="error-item">
                   ❌ {{ error }}
                 </div>
-                <div
-                  *ngFor="let warning of getWarningMessages(row)"
-                  class="warning-item"
-                >
+                <div *ngFor="let warning of getWarningMessages(row)" class="warning-item">
                   ⚠️ {{ warning }}
                 </div>
               </div>
@@ -154,11 +155,7 @@
     </div>
 
     <div class="button-group">
-      <button
-        class="btn btn-secondary"
-        (click)="currentStep = 1"
-        [disabled]="isConfirming"
-      >
+      <button class="btn btn-secondary" (click)="currentStep = 1" [disabled]="isConfirming">
         Nazad
       </button>
       <button
@@ -199,9 +196,7 @@
       <h3 class="errors-title">Greške pri importu:</h3>
       <div class="errors-list">
         <div *ngFor="let error of confirmResult?.errors" class="error-item">
-          <span class="error-row-number" *ngIf="error.rowNumber">
-            Red {{ error.rowNumber }}:
-          </span>
+          <span class="error-row-number" *ngIf="error.rowNumber"> Red {{ error.rowNumber }}: </span>
           {{ error.message }}
         </div>
       </div>
@@ -236,9 +231,7 @@
     </div>
 
     <div class="button-group">
-      <button class="btn btn-primary" (click)="goBackToUpload()">
-        Novi import
-      </button>
+      <button class="btn btn-primary" (click)="goBackToUpload()">Novi import</button>
     </div>
   </div>
 </div>

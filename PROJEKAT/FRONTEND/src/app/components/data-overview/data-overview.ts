@@ -483,9 +483,20 @@ export class DataOverviewComponent implements OnInit {
   }
 
   sectionSearch: string = '';
+  dataSection = 'troskovi';
+  readonly dataSections = [
+    { key: 'troskovi', label: 'Troškovi' },
+    { key: 'budzeti', label: 'Budžeti' },
+    { key: 'reference', label: 'Šifarnici' },
+    { key: 'historija', label: 'Historija uvoza' },
+  ];
 
 showSection(name: string): boolean {
-  if (!this.sectionSearch.trim()) return true;
+  if (!this.sectionSearch.trim()) {
+    return this.dataSection === 'reference'
+      ? ['kategorije', 'odjeli', 'valute', 'projekti', 'dobavljaci'].includes(name)
+      : name === this.dataSection;
+  }
   const q = this.sectionSearch.toLowerCase().trim();
   const map: Record<string, string[]> = {
     'troskovi': ['trošak', 'troskovi', 'trosak', 'expense'],

@@ -15,6 +15,8 @@ import {
 } from '../../../services/ai-analysis.service';
 import { ExpenseService } from '../../../services/expense.service';
 import { ReportService } from '../../../services/report.service';
+import { environment } from '../../../environments/environment';
+import { IconComponent } from '../../ui/icon';
 
 type ExpenseBreakdown = {
   label: string;
@@ -25,7 +27,7 @@ type ExpenseBreakdown = {
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, IconComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -43,9 +45,75 @@ export class HomeComponent implements OnInit {
   public readonly budgetRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly dataOverviewRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
   public readonly reportRoles = ['admin', 'glavni_racunovodja', 'finansijski_direktor'];
-  public readonly adminConsoleUrl = 'https://keycloak-production-4c61.up.railway.app/';
+  public readonly adminConsoleUrl = `${environment.keycloakUrl}/`;
 
   public accessNotice = '';
+  public dashboardTab: 'overview' | 'insights' = 'overview';
+  public breakdownView: 'category' | 'department' = 'category';
+  public trendMonths = 6;
+  public readonly chartColors = ['#32634d', '#8eac79', '#c2d5a8', '#cfb985', '#9fb4b5', '#b6bfae'];
+
+  public get activeBreakdown(): ExpenseBreakdown[] {
+    return this.breakdownView === 'category' ? this.categoryBreakdown : this.departmentBreakdown;
+  }
+
+  public get displayCurrency(): string {
+    const currencies = new Set(this.expenses.map(expense => expense.valuta || 'BAM'));
+    const currency = currencies.size === 1 ? [...currencies][0] : currencies.size > 1 ? 'više valuta' : 'BAM';
+    return currency === 'BAM' ? 'KM' : currency;
+  }
+
+  public get donutBackground(): string {
+    let offset = 0;
+    const slices = this.activeBreakdown.map((item, index) => {
+      const start = offset;
+      offset += item.percentage;
+      return `${this.chartColors[index % this.chartColors.length]} ${start}% ${offset}%`;
+    });
+    return slices.length ? `conic-gradient(${slices.join(',')})` : '#edf1e7';
+  }
+
+  public get recentExpenses(): Expense[] {
+    return [...this.expenses].sort((a, b) => Date.parse(b.datum) - Date.parse(a.datum)).slice(0, 4);
+  }
+
+  public get monthlyTrend(): Array<{ label: string; total: number; percentage: number }> {
+    const end = new Date();
+    const months = Array.from({ length: this.trendMonths }, (_, index) => {
+      const date = new Date(end.getFullYear(), end.getMonth() - this.trendMonths + 1 + index, 1);
+      const total = this.expenses.reduce((sum, expense) => {
+        const expenseDate = new Date(expense.datum);
+        return expenseDate.getFullYear() === date.getFullYear() && expenseDate.getMonth() === date.getMonth()
+          ? sum + Number(expense.iznos || 0) : sum;
+      }, 0);
+      return { label: ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'][date.getMonth()], total, percentage: 0 };
+    });
+    const maximum = Math.max(...months.map(month => month.total), 1);
+    return months.map(month => ({ ...month, percentage: month.total / maximum * 100 }));
+  }
+
+  public get trendMaximum(): number {
+    return Math.max(...this.monthlyTrend.map(month => month.total), 0);
+  }
+
+  public get trendTotal(): number {
+    return this.monthlyTrend.reduce((sum, month) => sum + month.total, 0);
+  }
+
+  public compactAmount(value: number): string {
+    return new Intl.NumberFormat('bs-BA', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+  }
+
+  public expenseDate(value: string): string {
+    const date = new Date(value);
+    if (!Number.isFinite(date.getTime()) || date.getFullYear() > 9999 || date.getFullYear() < 1900) return 'Provjeriti datum';
+    return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+  }
+
+  public expenseStatus(expense: Expense): string {
+    const labels: Record<string, string> = { VALIDAN: 'Validiran', NA_CEKANJU: 'Na provjeri', POTENCIJALNI_DUPLIKAT: 'Duplikat', ANOMALIJA: 'Za provjeru', ODBIJEN: 'Odbijen', ZAKLJUCAN: 'Zaključan' };
+    return labels[expense.statusValidacije || 'NA_CEKANJU'] || 'Na provjeri';
+  }
   public expenses: Expense[] = [];
   public referenceData: ExpenseReferenceData = {
     kategorije: [],
@@ -571,13 +639,13 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  public idiNaTroskove(): void {
+  public idiNaTroskove(novi = false): void {
     if (!this.canOpenExpenses) {
       this.accessNotice = 'Pristup formi za unos troškova je dozvoljen samo ulogama admin i administrativni_radnik.';
       return;
     }
 
-    void this.router.navigate(['/troskovi']);
+    void this.router.navigate(['/troskovi'], { queryParams: novi ? { new: 'true' } : {} });
   }
 
   public idiNaImportTroskova(): void {
@@ -626,14 +694,14 @@ export class HomeComponent implements OnInit {
       totals.set(label, existing);
     });
 
-    const maxTotal = Math.max(...Array.from(totals.values()).map((item) => item.total), 0);
+    const totalAmount = Array.from(totals.values()).reduce((sum, item) => sum + item.total, 0);
 
     return Array.from(totals.entries())
       .map(([label, value]) => ({
         label,
         total: value.total,
         count: value.count,
-        percentage: maxTotal > 0 ? Math.max((value.total / maxTotal) * 100, 6) : 0,
+        percentage: totalAmount > 0 ? (value.total / totalAmount) * 100 : 0,
       }))
       .sort((a, b) => b.total - a.total);
   }

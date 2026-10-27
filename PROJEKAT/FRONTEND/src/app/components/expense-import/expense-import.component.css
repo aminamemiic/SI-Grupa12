@@ -32,17 +32,17 @@
   font-size: 20px;
   margin-bottom: 20px;
   color: #333;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid var(--accent);
   padding-bottom: 10px;
 }
 
 /* KORAK 1: UPLOAD */
 .upload-box {
-  border: 2px dashed #007bff;
+  border: 2px dashed var(--accent);
   border-radius: 8px;
   padding: 40px;
   text-align: center;
-  background: #f8f9ff;
+  background: #f4f7ef;
   margin-bottom: 20px;
 }
 
@@ -111,11 +111,11 @@
 }
 
 .summary-value.valid {
-  color: #28a745;
+  color: #749363;
 }
 
 .summary-value.invalid {
-  color: #dc3545;
+  color: var(--danger);
 }
 
 /* TABELE */
@@ -141,8 +141,8 @@
   -ms-user-select: none;
 }
 
-.preview-table input[type="checkbox"],
-.results-table input[type="checkbox"] {
+.preview-table input[type='checkbox'],
+.results-table input[type='checkbox'] {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -197,7 +197,7 @@
   -ms-user-select: none !important;
 }
 
-.preview-table tbody td.col-check input[type="checkbox"] {
+.preview-table tbody td.col-check input[type='checkbox'] {
   user-select: auto;
   -webkit-user-select: auto;
   -moz-user-select: auto;
@@ -275,7 +275,7 @@
 }
 
 .error-item {
-  color: #dc3545;
+  color: var(--danger);
 }
 
 .warning-item {
@@ -301,12 +301,12 @@
 
 .result-item.success {
   background: #d4edda;
-  border-color: #28a745;
+  border-color: #749363;
 }
 
 .result-item.error {
   background: #f8d7da;
-  border-color: #dc3545;
+  border-color: var(--danger);
 }
 
 .result-icon {
@@ -332,11 +332,11 @@
 }
 
 .result-item.success .result-value {
-  color: #28a745;
+  color: #749363;
 }
 
 .result-item.error .result-value {
-  color: #dc3545;
+  color: var(--danger);
 }
 
 /* GREŠKE I USPJESI */
@@ -350,11 +350,11 @@
 }
 
 .errors-title {
-  color: #dc3545;
+  color: var(--danger);
 }
 
 .success-title {
-  color: #28a745;
+  color: #749363;
 }
 
 .errors-list {
@@ -364,7 +364,7 @@
   margin-bottom: 20px;
   padding: 15px;
   background: #fff5f5;
-  border-left: 4px solid #dc3545;
+  border-left: 4px solid var(--danger);
   border-radius: 4px;
 }
 
@@ -372,7 +372,7 @@
   display: flex;
   gap: 10px;
   font-size: 14px;
-  color: #dc3545;
+  color: var(--danger);
 }
 
 .error-row-number {
@@ -425,7 +425,7 @@
 }
 
 .btn-primary {
-  background: #007bff;
+  background: var(--accent);
   color: white;
 }
 
@@ -434,7 +434,7 @@
 }
 
 .btn-success {
-  background: #28a745;
+  background: #749363;
   color: white;
 }
 
